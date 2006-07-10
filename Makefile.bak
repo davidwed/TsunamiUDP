@@ -1,0 +1,65 @@
+CLIENT	= tsunami
+SERVER	= tsunamid
+UTILS	= readtest writetest
+
+CC	= /usr/bin/gcc
+CFLAGS	= -g -Wall -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64
+INCLUDE	= -I../include
+LIB	= -lpthread
+
+RM	= -rm -rf
+
+OBJS	= $(COMMON:.c=.o)
+
+.c.o:
+	($(CC) $(CFLAGS) -c $<)
+
+all: $(CLIENT) $(SERVER) $(UTILS)
+
+readtest: util/readtest.c
+	cd util; $(CC) $(CFLAGS) $(INCLUDE) -o readtest readtest.c $(LIB); cd ..
+	cp util/readtest bin
+
+writetest: util/writetest.c
+	cd util; $(CC) $(CFLAGS) $(INCLUDE) -o writetest writetest.c $(LIB); cd ..
+	cp util/writetest bin
+
+tsunami:
+
+tsunamid:
+
+
+#writetest:
+#	cd util; make writetest; cd ..
+#	cp util/writetest bin
+
+#$(CLIENT):
+#	cd client; make tsunami; cd ..
+#	cp client/tsunami bin
+
+#$(SERVER):
+#	cd server; make tsunamid; cd ..
+#	cp server/tsunamid bin
+
+#readtest: readtest.c
+#	$(CC) $(CFLAGS) -o readtest readtest.c $(LIB)
+
+#writetest: writetest.c
+#	$(CC) $(CFLAGS) -o writetest writetest.c $(LIB)
+
+#tsunamid: tsunamid.c $(OBJS)
+#	$(CC) $(CFLAGS) -o tsunamid tsunamid.c $(OBJS) $(LIB)
+
+#tsunami: tsunami.c $(OBJS)
+#	$(CC) $(CFLAGS) -o tsunami tsunami.c $(OBJS) $(LIB)
+
+clean:
+	-$(RM) $(OBJS) $(TARGETS)
+
+depend:
+	makedepend -f Makefile \
+	$(SRCS) util/readtest.c util/writetest.c
+
+# DO NOT DELETE
+
+
