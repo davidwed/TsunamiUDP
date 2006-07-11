@@ -70,8 +70,6 @@
 
 #include "client.h"
 
-#define usetabs 1
-
 /*------------------------------------------------------------------------
  * int ttp_authenticate(ttp_session_t *session, u_char *secret);
  *
@@ -474,7 +472,7 @@ int ttp_update_stats(ttp_session_t *session)
 	return warn("Could not send error rate information");
 
     /* build the stats string */
-#ifdef usetabs
+#ifndef STATS_MATLABFORMAT
     sprintf(stats_line, "%02d\t%02d\t%02d\t%03d\t%4u\t%6.2f\t%6.1f\t%5.1f\t%7u\t%6.1f\t%6.1f\t%5.1f\t%5d\t%5d\t%6.1f\n",
 #else
     sprintf(stats_line, "%02d:%02d:%02d.%03d %4u %6.2fM %6.1fMbps %5.1f%% %7u %6.1fG %6.1fMbps %5.1f%% %5d %5d %6.1fMbps\n",
@@ -515,7 +513,7 @@ int ttp_update_stats(ttp_session_t *session)
 	} else {
 
 	    /* print a header if necessary */
-#if annoyme
+#ifndef STATS_NOHEADER
 	    if (!(iteration++ % 23)) {
 		printf("             last_interval                   transfer_total                   buffers\n");
 		printf("time          blk    data       rate rexmit     blk    data       rate rexmit queue  ring\n");
@@ -544,4 +542,7 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
+ * deleted unnecessary files
+ *
  */

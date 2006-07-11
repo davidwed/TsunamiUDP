@@ -86,7 +86,7 @@
 int build_datagram(ttp_session_t *session, u_int32_t block_index,
 		   u_int16_t block_type, u_char *datagram)
 {
-#if 1   
+#ifdef DEBUG_DISKLESS
     /* build the datagram header */
     *((u_int32_t *) (datagram + 0)) = htonl(block_index);
     *((u_int16_t *) (datagram + 4)) = htons(block_type);
@@ -120,4 +120,7 @@ int build_datagram(ttp_session_t *session, u_int32_t block_index,
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2006/07/10 12:39:52  jwagnerhki
+ * added to trunk
+ *
  */

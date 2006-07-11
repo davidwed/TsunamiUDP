@@ -87,7 +87,7 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
     if (write_size == 0)
 	write_size = block_size;
 
-#if 1
+#ifndef DEBUG_DISKLESS
     /* seek to the proper location */
     if (block_index != (last_block + 1)) {
 	status = fseeko64(transfer->file, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
@@ -115,4 +115,7 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
+ * deleted unnecessary files
+ *
  */

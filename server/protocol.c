@@ -382,11 +382,11 @@ int ttp_open_transfer(ttp_session_t *session)
 
     /* try to find the file statistics */
     fseeko64(xfer->file, 0, SEEK_END);
-#if 0
+#ifndef DEBUG_DISKLESS
     param->file_size   = ftello64(xfer->file);
     fseeko64(xfer->file, 0, SEEK_SET);
 #else
-    param->file_size   = 4*6400000000L; // 6.4 GByte   //99999999999L;
+    param->file_size   = 4*6400000000L; // nearly diskless operation, 6.4 GByte of data "invented" from RAM
 #endif
     param->block_count = (param->file_size / param->block_size) + ((param->file_size % param->block_size) != 0);
     param->epoch       = time(NULL);
@@ -416,4 +416,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2006/07/10 12:39:52  jwagnerhki
+ * added to trunk
+ *
  */
