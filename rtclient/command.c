@@ -523,7 +523,19 @@ int command_set(command_t *command, ttp_parameter_t *parameter)
  	  else if (!strcasecmp(command->text[1], "transcript")) parameter->transcript_yn = (strcmp(command->text[2], "yes") == 0);
 	  else if (!strcasecmp(command->text[1], "ip"))         parameter->ipv6_yn       = (strcmp(command->text[2], "v6")  == 0);
 	  else if (!strcasecmp(command->text[1], "output"))     parameter->output_mode   = (strcmp(command->text[2], "screen") ? LINE_MODE : SCREEN_MODE);
-	  else if (!strcasecmp(command->text[1], "rate"))       parameter->target_rate   = atol(command->text[2]);
+	  else if (!strcasecmp(command->text[1], "rate"))       { 
+         long multiplier = 1;
+         char *cmd = command->text[2];
+         char cpy[256];
+         int l = strlen(cmd);
+         strcpy(cpy, cmd);
+         if(l>1 && (cpy[l-1])=='m') { 
+            multiplier = 1000000; cpy[l-1]='\0';  
+         } else if(l>1 && cpy[l-1]=='g') { 
+            multiplier = 1000000000; cpy[l-1]='\0';   
+         }
+         parameter->target_rate   = multiplier * atol(cpy); 
+   }
 	  else if (!strcasecmp(command->text[1], "error"))      parameter->error_rate    = atof(command->text[2]) * 1000.0;
 	  else if (!strcasecmp(command->text[1], "slowdown"))   parse_fraction(command->text[2], &parameter->slower_num, &parameter->slower_den);
 	  else if (!strcasecmp(command->text[1], "speedup"))    parse_fraction(command->text[2], &parameter->faster_num, &parameter->faster_den);
@@ -620,4 +632,7 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2006/07/10 12:35:11  jwagnerhki
+ * added to trunk
+ *
  */
