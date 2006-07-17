@@ -338,6 +338,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
     /* VLBI-related variables */
     char             start_time_ascii[MAX_FILENAME_LENGTH];  /* start time in ASCII     */
+    bool             start_immediately = false;
     double starttime;
     struct timeval d;
 
@@ -386,9 +387,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
     /* try to open the vsib for input */
 
-    xfer->vsib = fopen64("/home/amn/proj/vsib/vsib", "r");
+    xfer->vsib = fopen64("/dev/vsib", "r");
     if (xfer->vsib == NULL) {
-	sprintf(g_error, "VSIB board does not exist or cannot be read");
+	sprintf(g_error, "VSIB board does not exist in /dev/vsib or it cannot be read");
 	return warn(g_error);
 	}
 
@@ -403,15 +404,19 @@ int ttp_open_transfer(ttp_session_t *session)
     /* Get and convert target UTC time to Unix seconds. */
     if (getDateTime(start_time_ascii, &starttime)) {
       fprintf(stderr, "%s: failed to convert ISO 8601 UTC date/time \n", start_time_ascii);
-      return warn(g_error);
+      // return warn(g_error);
+      fprintf(stderr, "warning: assuming starting time to be immediate.");
+      start_immediately = true;
     }
  
     /* Start half a second before full UTC seconds change. */
-    starttime -= 0.5;
-
-    assert( gettimeofday(&d, NULL) == 0 );
-
-    usleep_that_works((unsigned long)((starttime - (double)d.tv_sec)* 1000000.0) - (double)d.tv_usec);
+    if (!start_immediately) {
+       starttime -= 0.5;
+   
+       assert( gettimeofday(&d, NULL) == 0 );
+   
+       usleep_that_works((unsigned long)((starttime - (double)d.tv_sec)* 1000000.0) - (double)d.tv_usec);
+    }
 
     start_vsib(session);                        /* start at next 1PPS pulse */
 
@@ -464,4 +469,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2006/07/10 12:37:21  jwagnerhki
+ * added to trunk
+ *
  */
