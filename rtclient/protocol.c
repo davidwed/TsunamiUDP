@@ -222,9 +222,9 @@ int ttp_open_transfer(ttp_session_t *session, const char *remote_filename, const
 	return warn("Could not open local file for writing");
 
     /* try to open the vsib for output */
-    xfer->vsib = fopen64("/home/amn/proj/vsib/vsib", "wb");
+    xfer->vsib = fopen64("/dev/vsib", "wb");
     if (xfer->vsib == NULL)
-	return warn("Could not open vsib");
+	return warn("SIB board does not exist in /dev/vsib or it cannot be read");
 
     /* Reserve the ring buffer */ 
  
@@ -541,4 +541,7 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2006/07/10 12:35:12  jwagnerhki
+ * added to trunk
+ *
  */
