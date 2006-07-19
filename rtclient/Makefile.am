@@ -25,6 +25,7 @@ tsunami_SOURCES		= \
 			network.c \
 			protocol.c \
 			ring.c \
+			vsibctl.c \
 			transcript.c
 tsunami_LDADD		= $(common_lib) -lpthread
 tsunami_DEPENDENCIES	= $(common_lib)

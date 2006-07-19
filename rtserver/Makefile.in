@@ -143,7 +143,7 @@ tsunamid_SOURCES = \
 
 tsunamid_LDADD = $(common_lib)
 tsunamid_DEPENDENCIES = $(common_lib)
-subdir = server
+subdir = rtserver
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_CLEAN_FILES =
 bin_PROGRAMS = tsunamid$(EXEEXT)
@@ -151,7 +151,7 @@ PROGRAMS = $(bin_PROGRAMS)
 
 am_tsunamid_OBJECTS = config.$(OBJEXT) io.$(OBJEXT) log.$(OBJEXT) \
 	main.$(OBJEXT) network.$(OBJEXT) protocol.$(OBJEXT) \
-	transcript.$(OBJEXT)
+	transcript.$(OBJEXT) vsibctl.$(OBJEXT)
 tsunamid_OBJECTS = $(am_tsunamid_OBJECTS)
 tsunamid_LDFLAGS =
 
@@ -176,7 +176,7 @@ all: all-am
 .SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  Makefile.am  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --foreign  server/Makefile
+	  $(AUTOMAKE) --foreign  rtserver/Makefile
 Makefile:  $(srcdir)/Makefile.in  $(top_builddir)/config.status
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@ $(am__depfiles_maybe)
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)

@@ -95,7 +95,7 @@ common_lib = $(top_builddir)/common/libtsunami_common.a
 
 bin_PROGRAMS = tsunami
 
-tsunami_SOURCES =  			client.h 			command.c 			config.c 			io.c 			main.c 			network.c 			protocol.c 			ring.c 			transcript.c
+tsunami_SOURCES =  			client.h 			command.c 			config.c 			io.c 			main.c 			network.c 			protocol.c 			ring.c 			transcript.c	vsibctl.c
 
 tsunami_LDADD = $(common_lib) -lpthread
 tsunami_DEPENDENCIES = $(common_lib)
@@ -109,7 +109,7 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 tsunami_OBJECTS =  command.o config.o io.o main.o network.o protocol.o \
-ring.o transcript.o
+ring.o transcript.o vsibctl.o
 tsunami_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -131,7 +131,7 @@ all: all-redirect
 .SUFFIXES:
 .SUFFIXES: .S .c .o .s
 $(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
-	cd $(top_srcdir) && $(AUTOMAKE) --gnu client/Makefile
+	cd $(top_srcdir) && $(AUTOMAKE) --gnu rtclient/Makefile
 
 Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
@@ -214,14 +214,14 @@ maintainer-clean-tags:
 
 distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
 
-subdir = client
+subdir = rtclient
 
 distdir: $(DISTFILES)
 	here=`cd $(top_builddir) && pwd`; \
 	top_distdir=`cd $(top_distdir) && pwd`; \
 	distdir=`cd $(distdir) && pwd`; \
 	cd $(top_srcdir) \
-	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu client/Makefile
+	  && $(AUTOMAKE) --include-deps --build-dir=$$here --srcdir-name=$(top_srcdir) --output-dir=$$top_distdir --gnu rtclient/Makefile
 	@for file in $(DISTFILES); do \
 	  d=$(srcdir); \
 	  if test -d $$d/$$file; then \

@@ -24,6 +24,7 @@ tsunamid_SOURCES	= \
 			network.c \
 			protocol.c \
 			transcript.c \
+			vsibctl.c \
 			server.h
 tsunamid_LDADD		= $(common_lib)
 tsunamid_DEPENDENCIES	= $(common_lib)
