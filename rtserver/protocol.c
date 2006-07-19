@@ -338,7 +338,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
     /* VLBI-related variables */
     char             start_time_ascii[MAX_FILENAME_LENGTH];  /* start time in ASCII     */
-    bool             start_immediately = false;
+    char             start_immediately = 0;
     double starttime;
     struct timeval d;
 
@@ -406,11 +406,11 @@ int ttp_open_transfer(ttp_session_t *session)
       fprintf(stderr, "%s: failed to convert ISO 8601 UTC date/time \n", start_time_ascii);
       // return warn(g_error);
       fprintf(stderr, "warning: assuming starting time to be immediate.");
-      start_immediately = true;
+      start_immediately = 1;
     }
  
     /* Start half a second before full UTC seconds change. */
-    if (!start_immediately) {
+    if ( 0 == start_immediately) {
        starttime -= 0.5;
    
        assert( gettimeofday(&d, NULL) == 0 );
@@ -469,6 +469,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/07/17 12:18:05  jwagnerhki
+ * now /dev/vsib, start immediate or at specified time
+ *
  * Revision 1.1  2006/07/10 12:37:21  jwagnerhki
  * added to trunk
  *
