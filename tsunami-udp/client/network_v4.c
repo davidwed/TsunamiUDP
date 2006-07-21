@@ -149,7 +149,7 @@ int create_udp_socket_v4(ttp_parameter_t *parameter)
     memset(&socket_address, 0, sizeof(struct sockaddr_in));
     socket_address.sin_family      = AF_INET;
     socket_address.sin_addr.s_addr = htonl(INADDR_ANY);
-    socket_address.sin_port        = 0;
+    socket_address.sin_port        = htons(parameter->client_port);
 
     /* create the socket */
     socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
@@ -184,6 +184,9 @@ int create_udp_socket_v4(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.1.1  2006/07/20 09:21:18  jwagnerhki
+ * reimport
+ *
  * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
  * deleted unnecessary files
  *
