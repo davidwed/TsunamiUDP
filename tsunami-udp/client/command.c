@@ -68,6 +68,7 @@
 #include <sys/time.h>     /* for gettimeofday()                    */
 #include <time.h>         /* for time()                            */
 #include <unistd.h>       /* for standard Unix system calls        */
+#include <ctype.h>        /* for toupper() etc                     */
 
 #include "client.h"
 
@@ -638,6 +639,9 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/07/21 07:48:56  jwagnerhki
+ * set rate now also with mM gG
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:18  jwagnerhki
  * reimport
  *
