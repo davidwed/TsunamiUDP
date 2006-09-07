@@ -203,12 +203,12 @@ int create_udp_socket(ttp_parameter_t *parameter)
           continue;
       }
 
-      //~ /* make the socket reusable */
-      //~ status = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-      //~ if (status < 0) {
-          //~ close(socket_fd);
-          //~ continue;
-      //~ }
+      /* make the socket reusable */
+      status = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+      if (status < 0) {
+          close(socket_fd);
+          continue;
+      }
    
       /* set the receive buffer size */
       status = setsockopt(socket_fd, SOL_SOCKET, SO_RCVBUF, &parameter->udp_buffer, sizeof(parameter->udp_buffer));
@@ -243,6 +243,9 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/07/21 07:58:01  jwagnerhki
+ * concurrent clients by scannig for next available UDP port
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:18  jwagnerhki
  * reimport
  *
