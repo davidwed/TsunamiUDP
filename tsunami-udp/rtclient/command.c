@@ -491,7 +491,8 @@ int command_quit(command_t *command, ttp_session_t *session)
 
     /* wave good-bye */
     printf("Thank you for using Tsunami.\n");
-    printf("The ANML web site can be found at:  http://www.anml.iu.edu/\n\n");
+    printf("The ANML web site can be found at:    http://www.anml.iu.edu/\n");
+    printf("The SourceForge site can be found at: http://tsunami-udp.sf.net/\n\n");
 
     /* and quit */
     exit(1);
@@ -635,6 +636,9 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.4  2006/09/07 13:56:57  jwagnerhki
+ * udp socket reusable, udp port selectable in client
+ *
  * Revision 1.3  2006/08/08 06:04:27  jwagnerhki
  * included ctype.h
  *
