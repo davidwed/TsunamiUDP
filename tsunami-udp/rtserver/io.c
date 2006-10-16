@@ -92,8 +92,11 @@ int build_datagram(ttp_session_t *session, u_int32_t block_index,
     int              status; 
     u_int32_t        write_size;
 
-
-
+    if (1 == block_index) {
+       /* reset static vars to zero, so that the next transfer works ok also */
+       last_vsib_block = 0;
+       last_block = 0;
+    }
 
     if (block_index != (last_block + 1))
       fseeko64(session->transfer.vsib, (
@@ -141,6 +144,9 @@ int build_datagram(ttp_session_t *session, u_int32_t block_index,
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
+ * reimport
+ *
  * Revision 1.1  2006/07/10 12:37:21  jwagnerhki
  * added to trunk
  *
