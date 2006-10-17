@@ -69,7 +69,7 @@
 #include <unistd.h>       /* for standard Unix system calls        */
 
 #include "client.h"
-#define DEBUG_RETX xxx
+//#define DEBUG_RETX xxx // enable to show retransmit debug infos
 
 /*------------------------------------------------------------------------
  * int ttp_authenticate(ttp_session_t *session, u_char *secret);
@@ -555,6 +555,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.3  2006/08/08 08:38:20  jwagnerhki
+ * added some debug output trying to catch file corruption issues
+ *
  * Revision 1.2  2006/07/21 08:50:41  jwagnerhki
  * merged client and rtclient protocol.c
  *
