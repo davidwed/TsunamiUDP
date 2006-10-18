@@ -1,0 +1,259 @@
+-----------------------------------------------------------
+
+ CONTENTS
+
+ 0. Program Files
+ 1. Very Quick Guide
+ 2. Not So Quick Guide
+ 3. Getting Help
+ 4. Realtime Tsunami Notes
+ 5. Troubleshooting
+
+-----------------------------------------------------------
+
+ CHANGES
+ 17 Oct 2006: 
+   - realtime and normal applications now named differently
+   that is, tsunami/tsunamid and rttsunami/rttsunamid             
+
+-----------------------------------------------------------
+
+ Program Files
+ =============
+
+ The program files are:
+
+   Application       Command      Alternatively call from
+   -----------------------------------------------------
+   Tsunami server    tsunamid     ./server/tsunamid
+   Tsunami client    tsunami      ./client/tsunami
+   Realtime server   rttsunamid   ./rtserver/rttsunamid
+   Realtime client   rttsunami    ./rtclient/rttsunami
+
+ If you have followed COMPILING.txt and the "sudo make install",
+ you can execute the program files from anywhere on the command
+ line.
+
+ If you omitted the "sudo make install", you'll have to call
+ the programs from within the source code directories.
+
+
+ Very Quick Guide
+ ================
+
+ --Server--
+
+ On the server PC, go to the directory where you
+ have the files that should be served, and
+ start the Tsunami server with e.g.:
+ $ cd /where/my/files/are
+ $ tsunamid
+
+ The server serves files from its current
+ working directory.
+
+ For the realtime server extensions and its 
+ file naming conventions, see the Realtime 
+ Tsunami Notes section.
+
+ --Client--
+
+ On the client PC, start the command line client: 
+ $ cd /where/to/receive/files
+ $ tsunami
+
+ The client will store downloaded files into
+ the current working directory.
+
+ Usual commands in the client are like crude FTP:
+ tsunami> connect server.domain.com
+ tsunami> get filename
+
+ Old tsunami server versions will as for a password.
+ The default password is 'kitten'.
+
+
+ The source code documents the rest ;-))
+
+ For the generic details on how Tsunami works and
+ how the protocol is structured, please see README.txt
+
+
+ Not So Quick Guide
+ ==================
+
+ Typical usage example where PC1 is the server and PC2 the client.
+
+ Preparations on PC1:
+
+ pc1$ cd /home/guest/outfiles/
+ pc1$ tsunamid
+
+ Connecting from PC2:
+
+ pc2$ cd /home/guest/infiles/
+ pc2$ tsunami
+   tsunami> set rate 512M
+   rate = 512000000
+
+   tsunami> connect myserver.domain.com
+   Connected.
+
+   tsunami> get nameoffile
+   00     00      00      368      499     15.59   354.7    0.0       499    0.0   354.7    0.0       0  1      354.7
+   ...
+
+ Alternative way of connecting from PC2:
+  - all commands you'd enter into tsunami's own command line you
+  may also concatenate onto the console command line, i.e.:
+
+ pc2$ cd /home/guest/infiles/
+ pc2$ tsunami set rate 512M connect myserver.domain.com get nameoffile
+   tsunami>
+   00     00      00      368      499     15.59   354.7    0.0       499    0.0   354.7    0.0       0  1      354.7
+   ...
+   ...
+
+
+ Getting Help
+ ============
+
+ Server application, to get a list of command line options use:
+ $ tsunamid --help
+ 
+ Client application, to get a list of options use:
+ $ tsunami
+   tsunami> help
+ And to see the current settings in the client (not persistent
+ i.e. not stored between program restarts), use:
+   tsunami> set
+
+ Settings in the client can be changed using the "set" command
+ which has the format:
+   set [option] [value]
+
+ You should also read the README.txt.
+
+ Finally, look at the source code. :-)
+
+ You can also use the sourceforge project site
+   http://sourceforge.net/projects/tsunami-udp
+ to add a support request or send an email to the developer(s).
+
+
+
+ Realtime Tsunami Notes
+ ======================
+ 
+ The realtime version of the tsunami applications uses the 
+ Metsähovi VSIB card.
+
+ This section refers mainly to the realtime versions of 
+ the tsunami applications, namely, in the source code tree
+ these are the ./rtserver/tsunamid and ./rtclient/tsunami
+ applications.
+
+ --VSIB driver--
+
+ You'll need a post-01/2006 version of the vsib.c driver.
+ Tsunami tries to access the VSIB card via /dev/vsib.
+
+ --Realtime Server--
+
+ The realtime server will read data from the VSIB card and send
+ the data over the network. 
+
+ The filename requested by the client in the "get" command
+ tells the realtime server when to start recording. If the
+ name is an UTC format time/date string, this will be used
+ as the starting time. Otherwise, recording starts immediately
+ on the next 1 second rollover.
+
+ If the file name contains a path i.e. the character "/", 
+ the server will locally create a file with that name. Data
+ streamed to the network will then also be saved into that
+ local file.
+
+ File naming convention, UTC time:
+
+    [2 letter station code]-[yyyy]-[mm]-[dd]T[hh]:[mm]:[ss]
+
+ Examples:
+
+  Metsähovi station, begin recording on 17th Oct 2006 at 12:25:30UTC
+    Mh-2006-10-17T12:25:30
+
+  Same as above but also make a local backup on the server 
+  into the /i1/ directory (should be a fast RAID0 disk):
+    /i1/Mh-2006-10-17T12:25:30
+
+ Recording VSIB mode is currently hard-coded in the source code, 
+ see 
+   ./rtserver/vsibctl.c
+   int vsib_mode = ...
+ and the docs/modes.txt file found in the VSIB source code that
+ is available separately from Metsähovi. The default settings 
+ work for nearly all cases (defaults are, for reference if you
+ accidentally change the source code: mode 2, embed pps 1, 
+ skip 0 or 1, gigabit mode 0).
+
+ The recording time is hard-coded to 15 minutes.
+
+ TODO: In a later tsunami version the length will be specified in
+ the file name. For now, to change the recording time, search 
+ ./rtserver/protocol.c for the string "15 minutes", and
+ edit the 15 in the code below to any other desired value.
+
+ 
+ --Realtime Client--
+
+ The realtime client will write back data from the network
+ to the VSIB card, i.e. is in "playback" mode. Again, the 
+ playback mode is hard-coded but now in
+   ./rtclient/vsibctl.c
+
+ To transfer a file from memory/VSIB-in to disk, use the
+ realtime server and normal client i.e.:
+    pc1$ rttsunamid
+    pc2$ tsunami
+
+ To transfer a file from disk to VSIB-out, use the
+ normal server and realtime client i.e.:
+    pc1$ tsunamid
+    pc2$ rttsunami
+
+ To transfer a file from VSIB-in to VSIB-out, use the
+ realtime server and realtime client i.e.:
+    pc1$ rttsunamid
+    pc2$ rttsunami
+    (this is not fully tested yet)
+
+
+
+ Troubleshooting
+ ===============
+
+ If no data goes through over the connection, check that
+ no firewalls are blocking the default TCP and UDP port 46224.
+ This can also be tested using the 'netcat' (or 'nc') linux/unix
+ command line tool.
+   pc1$ netcat -u -l -p 46224 
+   pc2$ netcat -u pc1.domain.com 46224
+ and typing in something into pc2 and hitting <enter> should
+ then appear on the pc1 as netcat output, unless there are
+ firewall problems.
+
+ Another possibility is MTU mismatch and no path MTU discovery.
+ Tsunami uses a default block size of 32768 bytes. In the 
+ client you could change this to below 10 Mbit LAN MTU using
+ the client console command 
+   tsunami>  set blocksize 1430
+ and then reattempt the transfer (commands: connect, get). If
+ this works, then you or your ISP need to fix the network MTU.
+
+ If you get "could not create socket on port xxx" errors, this
+ very likely means a zombie tsunamid or tsunami process is 
+ running. Try killing that process ('ps axuf', 'kill') or 
+ rebooting if it is really stuck.
+
+

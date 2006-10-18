@@ -1,0 +1,36 @@
+
+For compiling tsunami, go through the normal process of:
+
+   ./configure
+
+ From the configure output errors find all those missing packages that you 
+ had never even heard of and install them, then try ./configure again.
+
+   make
+
+ That should build the entire tsunami, including everything in
+ the subdirectories (in /server, /client, etc).
+
+ And optional 
+
+   sudo make install
+
+ will install the tsunami binaries onto the system. 
+ The binaries that will be installed are:
+   App              Name        From
+   Tsunami server   tsunamid    ./server/tsunamid 
+   Tsunami client   tsunami     ./client/tsunami
+   Realtime server  rttsunamid  ./rtserver/rttsunamid
+   Realtime client  rttsunami   ./rtclient/rttsunami
+ The binaries will be placed into /usr/local/bin or similar.
+
+ Contents of individual subdirectories can be recompiled with
+ for example
+
+   cd client
+   make clean
+   make
+
+ (note that you should first have to compile the entire 
+ source tree via ./configure and make, only after that
+ recompiling individual subdirectories works without problems)
