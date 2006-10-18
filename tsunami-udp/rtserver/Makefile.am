@@ -12,7 +12,7 @@
 
 INCLUDES		= -I$(top_srcdir)/include
 
-common_lib		= $(top_builddir)/common/libtsunami_common.a
+common_lib		= $(top_builddir)/common/libtsunami_common.a -lm
 
 bin_PROGRAMS		= tsunamid
 
