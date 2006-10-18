@@ -94,9 +94,11 @@ fi
 AC_CONFIG_FILES([
     Makefile
     client/Makefile
+    rtclient/Makefile
     common/Makefile
     include/Makefile
     server/Makefile
+    rtserver/Makefile
     util/Makefile
 ])
 AC_OUTPUT
