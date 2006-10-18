@@ -342,6 +342,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
     /* VLBI-related variables */
     char             start_time_ascii[MAX_FILENAME_LENGTH];  /* start time in ASCII     */
+    char             end_time_ascii[MAX_FILENAME_LENGTH];    /* end time in ASCII     */
     char             start_immediately = 0;
     double starttime;
     struct timeval d;
@@ -411,6 +412,8 @@ int ttp_open_transfer(ttp_session_t *session)
       // return warn(g_error);
       fprintf(stderr, "warning: assuming starting time to be immediate.");
       start_immediately = 1;
+    } else {
+      fprintf(stderr, "%s: time string parsed successfully\n", start_time_ascii);
     }
  
     /* Start half a second before full UTC seconds change. */
@@ -418,7 +421,7 @@ int ttp_open_transfer(ttp_session_t *session)
        starttime -= 0.5;
    
        assert( gettimeofday(&d, NULL) == 0 );
-   
+       fprintf(stderr, "sleeping until specified time...\n");
        usleep_that_works((unsigned long)((starttime - (double)d.tv_sec)* 1000000.0) - (double)d.tv_usec);
     }
 
@@ -473,6 +476,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/07/21 08:45:22  jwagnerhki
+ * merged server and rtserver protocol.c
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
  * reimport
  *
