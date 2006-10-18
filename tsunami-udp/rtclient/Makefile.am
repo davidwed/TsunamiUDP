@@ -14,9 +14,9 @@ INCLUDES		= -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/common/libtsunami_common.a
 
-bin_PROGRAMS		= tsunami
+bin_PROGRAMS		= rttsunami
 
-tsunami_SOURCES		= \
+rttsunami_SOURCES		= \
 			client.h \
 			command.c \
 			config.c \
@@ -27,5 +27,5 @@ tsunami_SOURCES		= \
 			ring.c \
 			vsibctl.c \
 			transcript.c
-tsunami_LDADD		= $(common_lib) -lpthread
-tsunami_DEPENDENCIES	= $(common_lib)
+rttsunami_LDADD		= $(common_lib) -lpthread
+rttsunami_DEPENDENCIES	= $(common_lib)
