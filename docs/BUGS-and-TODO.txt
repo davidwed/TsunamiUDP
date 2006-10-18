@@ -1,16 +1,51 @@
+--------------------------------------------------------------------------------
+Current TODO and BUGS list:
+--------------------------------------------------------------------------------
 
-general:
+==GENERAL==
+
  BUGS
- - a server side "get abc*" will truncate files on the server, not nice
+ - a server side "get abc*" i.e. filename with wildcards will truncate files 
+   on the server leading to loss of all data
  TODO
- - add a "dir" command
+ - add a "dir" or "ls" command
  - "blocking": ring buffer blocking, add timeout so it doesn't 
    block indefinitely and in the worst case lock the disk/filesys...
 
-realtime versions:
+==REALTIME SPECIFIC==
   BUGS
   TODO
-  - add
+  - add to filename parsing some string that specifies the timelength, not 
+    just the starting time
   - calculate correct default rate from VSIB mode, skip
   - from rate, calculate correct data length required for specified timelength
-  
+  - VSIB mode configurability, i.e. do not hard-code
+
+--------------------------------------------------------------------------------
+Past TODO and BUGS list:
+--------------------------------------------------------------------------------
+
+==GENERAL==
+
+ BUGS
+ - tsunami client, command line argument parsing, the command "get" doesn't work
+   * fixed: 16 Oct 06 / CVS
+ TODO
+
+==REALTIME SPECIFIC==
+
+  BUGS
+  - make local copy via filename containing "/" character only works for first file, 
+    next files are always 0 size
+    * fixed: 16 Oct 06 / CVS
+  TODO
+  - rtserver does not compile from CVS, bad Makefile.in/.am
+    * fixed: 17 Oct 06 / CVS
+  - realtime and normal versions have same binary file names
+    * fixed: 17 Oct 06 / CVS  - prefixed realtime binaries with 'rt' (rttsunami(d))  
+
+
+--------------------------------------------------------------------------------
+ For bug fixes and changes earlier to 16 Oct 06 - please see CVS history. 
+ Those updates are not listed here.
+--------------------------------------------------------------------------------
