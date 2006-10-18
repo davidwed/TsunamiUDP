@@ -14,9 +14,9 @@ INCLUDES		= -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/common/libtsunami_common.a -lm
 
-bin_PROGRAMS		= tsunamid
+bin_PROGRAMS		= rttsunamid
 
-tsunamid_SOURCES	= \
+rttsunamid_SOURCES	= \
 			config.c \
 			io.c \
 			log.c \
@@ -26,5 +26,5 @@ tsunamid_SOURCES	= \
 			transcript.c \
 			vsibctl.c \
 			server.h
-tsunamid_LDADD		= $(common_lib)
-tsunamid_DEPENDENCIES	= $(common_lib)
+rttsunamid_LDADD	= $(common_lib)
+rttsunamid_DEPENDENCIES	= $(common_lib)
