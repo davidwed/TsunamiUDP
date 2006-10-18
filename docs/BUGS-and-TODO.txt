@@ -1,0 +1,16 @@
+
+general:
+ BUGS
+ - a server side "get abc*" will truncate files on the server, not nice
+ TODO
+ - add a "dir" command
+ - "blocking": ring buffer blocking, add timeout so it doesn't 
+   block indefinitely and in the worst case lock the disk/filesys...
+
+realtime versions:
+  BUGS
+  TODO
+  - add
+  - calculate correct default rate from VSIB mode, skip
+  - from rate, calculate correct data length required for specified timelength
+  
