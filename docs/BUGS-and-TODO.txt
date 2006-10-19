@@ -20,6 +20,8 @@ Current TODO and BUGS list:
   - calculate correct default rate from VSIB mode, skip
   - from rate, calculate correct data length required for specified timelength
   - VSIB mode configurability, i.e. do not hard-code
+  - server can send text messages back to client (e.g. "specified start time
+    in the past, starting now", "Disk buffers full. Waiting.... Continuing.")
 
 --------------------------------------------------------------------------------
 Past TODO and BUGS list:
