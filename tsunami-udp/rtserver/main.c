@@ -64,8 +64,6 @@
 #define _GNU_SOURCE
 #endif
 
-#define VSIB_REALTIME    /* compile into realtime mode with VSIB  support */
-
 #include <errno.h>       /* for the errno variable and perror()   */
 #include <fcntl.h>       /* for the fcntl() function              */
 #include <getopt.h>      /* for getopt_long()                     */
