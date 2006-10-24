@@ -61,7 +61,7 @@
  * INFORMATION GENERATED USING SOFTWARE.
  *========================================================================*/
 
-#include "server.h"
+#include <tsunami-server.h>
 
 
 /*------------------------------------------------------------------------
@@ -159,6 +159,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
+ * reimport
+ *
  * Revision 1.1  2006/07/10 12:37:21  jwagnerhki
  * added to trunk
  *

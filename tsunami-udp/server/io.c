@@ -60,7 +60,7 @@
  * INFORMATION GENERATED USING SOFTWARE.
  *========================================================================*/
 
-#include "server.h"
+#include <tsunami-server.h>
 
 
 /*------------------------------------------------------------------------
@@ -120,6 +120,9 @@ int build_datagram(ttp_session_t *session, u_int32_t block_index,
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
+ * reimport
+ *
  * Revision 1.2  2006/07/11 07:39:29  jwagnerhki
  * new debug defines
  *

@@ -71,7 +71,7 @@
 #include <math.h>        /* floor() */
 
 
-#include "server.h"
+#include <tsunami-server.h>
 
 /* ASCII to double seconds conversion */
 #include "tstamp.c"
@@ -485,6 +485,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.4  2006/10/19 09:18:24  jwagnerhki
+ * catch if specified UTC time is in the past
+ *
  * Revision 1.3  2006/10/18 07:45:50  jwagnerhki
  * more verbose when waiting till UTC starttime
  *

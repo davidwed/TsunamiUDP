@@ -64,7 +64,7 @@
 #include <stdarg.h>  /* for the va_start, va_arg, va_end macros */
 #include <time.h>    /* for time-related functions              */
 
-#include "server.h"
+#include <tsunami-server.h>
 
 
 /*------------------------------------------------------------------------
@@ -100,6 +100,9 @@ void log(FILE *log_file, const char *format, ...)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
+ * reimport
+ *
  * Revision 1.1  2006/07/10 12:39:52  jwagnerhki
  * added to trunk
  *

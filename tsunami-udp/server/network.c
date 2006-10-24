@@ -68,7 +68,7 @@
 #include <sys/socket.h>   /* for the BSD socket library     */
 #include <unistd.h>       /* for standard Unix system calls */
 
-#include "server.h"
+#include <tsunami-server.h>
 
 
 /*------------------------------------------------------------------------
@@ -178,6 +178,9 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
+ * reimport
+ *
  * Revision 1.1  2006/07/10 12:39:52  jwagnerhki
  * added to trunk
  *
