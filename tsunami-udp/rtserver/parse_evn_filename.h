@@ -17,3 +17,9 @@ struct evn_filename *parse_evn_filename(char *filename);
 char *get_aux_entry(char *key, char **auxinfo, int nr_auxinfo);
 
 #endif
+
+/*
+ * $Log$
+ */ 
+
+
