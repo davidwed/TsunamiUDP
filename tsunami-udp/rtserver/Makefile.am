@@ -25,6 +25,7 @@ rttsunamid_SOURCES	= \
 			protocol.c \
 			transcript.c \
 			vsibctl.c \
+			parse_evn_filename.c \
 			server.h
 rttsunamid_LDADD	= $(common_lib)
 rttsunamid_DEPENDENCIES	= $(common_lib)
