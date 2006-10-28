@@ -5,12 +5,11 @@ Current TODO and BUGS list:
 ==GENERAL==
 
  BUGS
- - a server side "get abc*" i.e. filename with wildcards will truncate files 
-   on the server leading to loss of all data
  - using two tsunami clients concurrently does not work right now
    - receiving zero data and no connect(?)
  TODO
  - add a "dir" or "ls" command
+   [now $ tsunamid *   and $ tsunami connect x get *  do this, in a way]
  - "blocking": ring buffer blocking, add timeout so it doesn't 
    block indefinitely and in the worst case lock the disk/filesys...
  - rework the TCP control channel, add new "command control block"
@@ -47,6 +46,10 @@ Past TODO and BUGS list:
 ==GENERAL==
 
  BUGS
+ - a server side "get abc*" i.e. filename with wildcards will truncate files 
+   on the server leading to loss of all data
+   * fixed: 26 Oct 06 / CVS, fixed by merging Jamil's GET* command into server
+     and client code
  - tsunami client, command line argument parsing, the command "get" doesn't work
    * fixed: 16 Oct 06 / CVS
  TODO
