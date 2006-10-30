@@ -429,16 +429,6 @@ int ttp_open_transfer(ttp_session_t *session)
 
     #else
 
-    /* reserve the ring buffer */
-    param->ringbuf = malloc(param->block_size * RINGBUF_BLOCKS);
-    if (param->ringbuf == NULL) {
-        status = write(session->client_fd, "\004", 1);
-        if (status < 0) {
-            warn("Could not signal request failure to client");
-        }
-        return warn("Could not reserve space for ring buffer");
-    }
-
     /* get starting time (UTC) and detect whether local disk copy is wanted */
     start_immediately = 0; // default: start at specified time/date
     if (strrchr(filename,'/') == NULL) {
@@ -589,6 +579,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.8  2006/10/28 17:00:12  jwagnerhki
+ * block type defines
+ *
  * Revision 1.7  2006/10/25 13:56:47  jwagnerhki
  * 'get *' mini fix, Jamil roundtrip time guess added
  *

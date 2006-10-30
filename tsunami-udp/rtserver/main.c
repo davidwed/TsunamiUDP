@@ -337,9 +337,6 @@ void client_handler(ttp_session_t *session)
     /* stop the VSIB */
     stop_vsib(session);
 
-    /* Free the ring buffer */
-    free(param->ringbuf);
-
     #endif
     
     /* close the UDP socket */
@@ -475,6 +472,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.9  2006/10/28 17:00:12  jwagnerhki
+ * block type defines
+ *
  * Revision 1.8  2006/10/25 14:27:10  jwagnerhki
  * typo fix
  *
