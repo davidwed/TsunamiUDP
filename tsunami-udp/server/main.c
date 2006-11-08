@@ -192,6 +192,7 @@ void client_handler(ttp_session_t *session)
     ttp_transfer_t   *xfer  = &session->transfer;
     ttp_parameter_t  *param =  session->parameter;
     u_int64_t         delta;
+    u_char            block_new;
 
     /* negotiate the connection parameters */
     status = ttp_negotiate(session);
@@ -247,6 +248,9 @@ void client_handler(ttp_session_t *session)
 	/* start by blasting out every block */
 	xfer->block = 0;
 	while (xfer->block <= param->block_count) {
+
+            /* default: flag as retransmitted block */
+            block_new = 0;
 
 	    /* see if transmit requests are available */
 	    gettimeofday(&delay, NULL);
@@ -306,7 +310,13 @@ void client_handler(ttp_session_t *session)
 	    /* delay for the next packet */
 	    ipd_time = get_usec_since(&delay);
 	    ipd_time = ((ipd_time + 50) < xfer->ipd_current) ? ((u_int64_t) (xfer->ipd_current - ipd_time - 50)) : 0;
-	    usleep_that_works(ipd_time);
+            #ifdef VSIB_REALTIME
+            if (block_new != 1) { /* delay/throttle only the retransmissions, keep VSIB read rate */ 
+                usleep_that_works(ipd_time);
+            }
+            #else
+            usleep_that_works(ipd_time);
+            #endif
 	}
 
 	/*---------------------------
@@ -475,6 +485,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.8  2006/10/30 08:46:58  jwagnerhki
+ * removed memory leak unused ringbuf
+ *
  * Revision 1.7  2006/10/28 17:00:12  jwagnerhki
  * block type defines
  *
