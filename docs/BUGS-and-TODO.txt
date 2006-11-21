@@ -23,21 +23,14 @@ Current TODO and BUGS list:
 ==REALTIME SPECIFIC==
   BUGS
   TODO
-  - add to filename parsing some string that specifies the timelength, not 
-    just the starting time
-  - calculate correct (upper limit) default rate from VSIB mode skip
-  - from rate, calculate correct data length required for specified timelength
-     -> previous three points above: only user has knowledge of
-        the actual rate, hence, time length should be specified by
-        user as number of bytes to record
-  - fix the parsing in protocol.c so that it accepts not just one
-    starttime format but most of those already parseable by tstamp.c
   - VSIB mode configurability, i.e. do not hard-code
+  - server could allow more start time formats
   - server can send text messages back to client (e.g. "specified start time
     in the past, starting now", "Disk buffers full. Waiting.... Continuing.")
   - check if retransmit request falls outside of current VSIB buffer window
     i.e. request for too old data: add some method of discarding such
     retransmit requests or tell client to flag these missing parts as "ok"
+    (but: there does not seem to be any way of knowing what data is outdated...)
 
 --------------------------------------------------------------------------------
 Past TODO and BUGS list:
@@ -50,9 +43,11 @@ Past TODO and BUGS list:
    on the server leading to loss of all data
    * fixed: 26 Oct 06 / CVS, fixed by merging Jamil's GET* command into server
      and client code
- - tsunami client, command line argument parsing, the command "get" doesn't work
+ - client, command line argument parsing, the command "get" doesn't work
    * fixed: 16 Oct 06 / CVS
  TODO
+ - server, IPD not displayed correctly in server stats
+   * changed: 08 Nov 06 / CVS, display real IPD before limiting it between bounds
 
 ==REALTIME SPECIFIC==
 
@@ -61,6 +56,12 @@ Past TODO and BUGS list:
     next files are always 0 size
     * fixed: 16 Oct 06 / CVS
   TODO
+  - rtserver allow user to specify recording length
+    * added: 21 Nov 06 / CVS - byte length can be passed as aux parameter 'flen=...'
+      inside the filename and protocol.c parses the parameter; default is 4min@512Mbps
+  - rtserver calculate correct rate from VSIB mode
+    * changed: 08 Nov 06 / CVS - default 650mbps ipd usleep() for retransmits, new blocks 
+      are limited by VSIB read() speed
   - rtserver does not compile from CVS, bad Makefile.in/.am
     * fixed: 17 Oct 06 / CVS
   - realtime and normal versions have same binary file names
