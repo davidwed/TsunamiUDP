@@ -1,11 +1,12 @@
 
-Brief Introduction to the Tsunami UDP Protocol and the Real-Time DAQ Extensions
+
+Brief Introduction to the Tsunami UDP Protocol
 
 The Tsunami protocol was created in 2002 by the Pervasive Technology Labs of Indiana University and was
 released to the public as open-source under a UI Open Source License. After release, several people have 
 improved the code and have added more functionality. Currently a generic and real-time version of the 
-Tsunami UDP protocol are maintained by Metsähovi / Jan Wagner. Everyone interested is invited to join 
-development at http://tsunami-udp.sf.net.
+Tsunami UDP protocol are maintained by Metsähovi Radio Observatory / Jan Wagner. Everyone interested is 
+invited to join development at http://tsunami-udp.sf.net.
 
 Tsunami is one of the several currently available UDP-based transfer protocols for high-speed transfer over high 
 bandwidth-delay product network paths. Such paths are for example the route from a local server PC hookup to a 
@@ -33,6 +34,7 @@ the client - this is useful since the Tsunami user often has a priori knowledge 
 connection and the speed of their harddisks, and can then pass suitable settings to the server via the Tsunami
 client. Finally, the client already contains a command line interface so that no extra software is necessary. 
 The client command line commands are similar to FTP commands.
+
 
 How It Works
 
@@ -76,11 +78,16 @@ Both the server and client regularly output a summary of transfer statistics to 
 reporting the target and actual rate, transmission error percentage, etc. The statistics can be used for example in
 Matlab to graph the characteristics of the transfer.
 
+
 How The Real-Time Tsunami Works
 
-The real-time version of Tsunami works exactly the same way as the normal version. The main difference is
-that instead of a "real" file the VSIB board block device /dev/vsib is opened for reading. This block device
-supports all normal file operations such as read, write and seek. 
+The real-time version of Tsunami, created by Jouko Ritakari at the Metsähovi Radio Observatory, works exactly the 
+same way as the normal version. It uses the VSIB board developed at Metsähovi by Ari Mujunen and Jouko Ritakari,
+a digital I/O "sampler" board used in Very Long Baseline Interferomentry in astronomy. 
+
+The main difference of the real-time Tsunami compared to the normal version is that instead of a "real" file, the 
+VSIB board Linux block device "/dev/vsib" is opened for reading. This block device supports all normal file operations 
+such as read, write and seek. 
 
 The kernel module of the VSIB board keeps a large ring buffer of VSI data in main memory, for example of 
 128MB size. Data of the /dev/vsib block device is internally read from this memory buffer. In this sense the 
@@ -113,7 +120,3 @@ Since the transmission is in real-time at the rate that data comes in from the V
 able to write to disk faster than at this real-time VSIB data rate. In addition, the VSIB driver buffer size on the 
 server (configured in the kernel and passed to the VSIB module/driver) should be large enough to accomodate at least 0.5s of 
 past data so that the usual short glitches present in any shared network connection e.g. over Internet do not cause data loss.
-
-
-
-
