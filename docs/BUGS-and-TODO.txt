@@ -7,6 +7,8 @@ Current TODO and BUGS list:
  BUGS
  - using two tsunami clients concurrently does not work right now
    - receiving zero data and no connect(?)
+ - changing the blocksize to e.g. 65532 does not work in the 
+   server -> "Warning: Could not transmit block #..."
  TODO
  - add a "dir" or "ls" command
    [now $ tsunamid *   and $ tsunami connect x get *  do this, in a way]
