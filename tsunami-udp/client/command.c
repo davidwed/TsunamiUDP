@@ -270,7 +270,10 @@ int command_get(command_t *command, ttp_session_t *session)
        /* total number of file */
        sscanf(file_size, "%d", &totalNumber);
 
-       printf("\nGot file size: %d\n",totalSize);
+       printf("Got file size: %d\n",totalSize);
+       if (totalSize<=0) {
+          return warn("Server advertised no files to get");
+       }
        if((file_names=malloc(totalSize*sizeof(char)))==NULL)
           error("Could not allocate memory\n");
 
@@ -766,6 +769,9 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.10  2006/11/10 11:32:42  jwagnerhki
+ * indentation, transmit termination fix
+ *
  * Revision 1.9  2006/11/06 07:42:44  jwagnerhki
  * changed defaults, added 144MiB bigbufsize mention
  *
