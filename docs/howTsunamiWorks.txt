@@ -10,29 +10,29 @@ interested is invited to join development at http://tsunami-udp.sf.net.
 
 Tsunami is one of several currently available UDP-based transfer protocols that were developed for high
 speed transfer over network paths that have a high bandwidth-delay product. Such paths can for example
-be found in the European GEANT research network. It can for example be a route from a local server PC NIC
-to the local GEANT2 access node such as FUNET or SURFNET, then via GEANT's internal 10G to another country,
-and finally a local link via another node such as NORDUNET to some client PC. Currently typical network
-links are capable of 1G..10G and may have some hundred milliseconds of roundtrip delay between the client
+be found in the European GEANT research network. It can for example be a route from a local server PC
+to a local GEANT2 access node such as FUNET or SURFNET, then via GEANT's internal 10G to another country,
+and finally a local link via another node such as NORDUNET to some client PC. Currently these network
+links are capable of 1G..10G and can have some hundred milliseconds of roundtrip delay between the client
 and server PCs.
 
-Custom UDP protocols are needed because average TCP/IP is not very well suited for large bandwidth-delay
-product paths. To take full advantage of the available bandwidth, the standard TCP slow-start congestion
-control algorithm needs to be replaced with e.g. HighSpeedTCP, CompoundTCP, or one of several others.
-Some TCP parameters need to be tweaked, such as SACK, dynamic TCP window size. Most of the extended TCP
-features are already part of Windows Vista, with some partly implemented but not enabled in Windows XP
+Custom UDP protocols are needed because average TCP/IP is not very well suited for paths with a large 
+bandwidth-delay product. To take full advantage of the available bandwidth, the standard TCP slow-start 
+congestion control algorithm needs to be replaced with e.g. HighSpeed TCP, Compound TCP, or one of several 
+others. Some TCP parameters need to be tweaked, such as SACK, dynamic TCP window size. Most of the extended 
+TCP features are already part of Windows Vista, with some partly implemented but not enabled in Windows XP
 and 2000. In Linux, far more extensive support and a much broader choice of options and congestion
 control algorithms is available.
 
-Currently Tsunami runs in Linux and Unix. The source code should be POSIX compliant. It might be
+Currently Tsunami runs in Linux and Unix. The source code should be largely POSIX compliant. It might be
 easily ported to Windows XP and Vista as they have a POSIX layer, but, porting has not been attempted yet.
 
 In Very Long Baseline Interferometry, an interferometry based observation method in radio astronomy, the
 digitized noise recorded from stellar radio sources is often streamed over the network, and there's no
 requirement for reliable data transport as is guaranteed with TCP. A fraction of data can be lost without
-affecting the sensitivity of the method. In some cases, for example to maintain a high data stream throughput,
-it may be be preferred to just stream the data and not care about transmission errors i.e. not request
-retransmission of old missing data.
+degrading the sensitivity of the method too much. In some cases, for example to maintain a high data stream 
+throughput, it may be be preferred to just stream the data and not care about transmission errors i.e. not 
+request retransmission of old missing data.
 
 The Tsunami UDP protocol has several advantages over TCP and most other UDP-based similar protocols: it is
 high-speed (a maintained 900Mbps through 1Gbit NICs and switches isn't unusual), it offers data transmission
@@ -53,18 +53,24 @@ Tsunami performs a file transfer by sectioning the file into numbered blocks of 
 Communication between the client and server applications flows over a low bandwidth TCP connection.
 The bulk data is transferred over UDP.
 
-Most of the protocol intelligence is worked into the client code - the server simply sends all requested
-blocks to the client in UDP packets. The client specifies nearly all parameters of the transfer, such as the
-requested file name, target data rate, blocksize, target port, congestion behaviour, etc, and controls which
-blocks are requested from the server and when these requests are sent.
+Most of the protocol intelligence is worked into the client code - the server simply sends out all blocks,
+and resends blocks that the client requests. The client specifies nearly all parameters of the transfer, 
+such as the requested file name, target data rate, blocksize, target port, congestion behaviour, etc, and 
+controls which blocks are requested from the server and when these requests are sent.
 
-Transfers are initiated by the client. At the first stage of a transfer the client passes all its
-transfer parameters to the server in a get-file request. The server reports back the length of the
-requested file in bytes, so that the client can calculate how many blocks it needs to receive.
+Clients connect to the server and authenticate with a MD5 hash in challenge-response using a shared secret.
+The default is "kitten". In the current client, per default the user is not asked for a password.
 
-The client requests blocks from the server in large batches i.e. not just one block at a time. To limit
-the transmission rate to the rate specified by the client, the server pauses for the correct amount of time
-before sending the next block.
+The client starts file transfers with a get-file request. At the first stage of a transfer the client passes 
+all its transfer parameters to the server inside the request. The server reports back the length of the
+requested file in bytes, so that the client can calculate how many blocks it needs to receive. 
+
+Immediately after a get-file request the server begins to send out file blocks on its own, starting from the 
+first block. It flags these blocks as "original blocks". The client can request blocks to be sent again. These
+blocks are flagged as "retransmitted blocks" by the server.
+
+When sending out blocks, to throttle the transmission rate to the rate specified by the client, the server pauses 
+for the correct amount of time after each block before sending the next.
 
 The client regularly sends error rate information to the server. The server uses this information to adjust
 the transmission rate; the server can gradually slow down the transmission when the client reports it is
@@ -94,6 +100,63 @@ to the server.
 During a file transfer, both server and client applications regularly output a summary of transfer statistics
 to the console window, reporting the target and actual rate, transmission error percentage, etc. These
 statistics may be used in e.g. Matlab to graph the characteristics of the transfer and network path.
+
+All client file I/O is performed in a separate disk thread, with a memory ring buffer used to communicate
+new data from the main process to the I/O thread for writing to disk.
+
+In pseudo-code, the server and client operate approximately like this:
+
+**Server**
+ start
+ while(running) {
+   wait(new incoming client TCP connection)
+   fork server process:
+   [
+     check_authenticate(MD5, "kitten")
+     while(live) {
+       wait(request, nonblocking)
+       switch(request) {
+          case no request received yet: { send next block in sequence; }
+          case request_stop:            { close file, clean up; exit; }
+          case request_retransmit:      { send requested blocks; }
+       }
+       sleep(throttling)
+     }
+   ]
+ }
+
+**Client**
+ start, show command line
+ while(running) {
+    read user command;
+    switch(command) {
+       case command_exit:    { clean up; exit; }
+       case command_set:     { edit the specified parameter; }
+       case command_connect: { TCP connect to server; auth; protocol version compare;
+                               send some parameters; }
+       case command_get && connected:  { 
+           send get-file request containing all transfer parameters;
+           read server response - filesize, block count;
+           initialize bit array of received blocks, allocate retransmit list;
+           start separate disk I/O thread;
+           while (not received all blocks yet) {
+              receive_UDP();
+              if timeout { send retransmit request(); }
+
+              pass block to I/O thread for later writing to disk;
+              if block nr > expected block { add intermediate blocks to retransmit list; }
+
+              if it is time { 
+                 process retransmit list and send it to server as a transmit request;
+                 update and display statistics, send stats to server;
+              } 
+           }
+           sync with disk I/O, finalize, clean up;
+       }
+       case command_help:    { display available commands etc; }
+    }
+ }
+ 
 
 
 How The Real-Time Tsunami Works
