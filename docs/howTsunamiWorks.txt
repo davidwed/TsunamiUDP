@@ -112,7 +112,8 @@ In pseudo-code, the server and client operate approximately like this:
    wait(new incoming client TCP connection)
    fork server process:
    [
-     check_authenticate(MD5, "kitten")
+     check_authenticate(MD5, "kitten");
+     exchange settings and values with client;
      while(live) {
        wait(request, nonblocking)
        switch(request) {
@@ -143,20 +144,22 @@ In pseudo-code, the server and client operate approximately like this:
               receive_UDP();
               if timeout { send retransmit request(); }
 
-              pass block to I/O thread for later writing to disk;
-              if block nr > expected block { add intermediate blocks to retransmit list; }
+              if block not marked as received yet in the bit array {
+                 pass block to I/O thread for later writing to disk;
+                 if block nr > expected block { add intermediate blocks to retransmit list; }
+              }
 
               if it is time { 
-                 process retransmit list and send it to server as a transmit request;
-                 update and display statistics, send stats to server;
+                 process retransmit list, send assembled request_retransmit to server;
+                 send updated statistics to server, print to screen;
               } 
            }
+           send request_stop;
            sync with disk I/O, finalize, clean up;
        }
        case command_help:    { display available commands etc; }
     }
  }
- 
 
 
 How The Real-Time Tsunami Works
