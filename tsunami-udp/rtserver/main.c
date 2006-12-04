@@ -119,15 +119,15 @@ int main(int argc, char *argv[])
 
     /* now show version / build information */
     #ifdef VSIB_REALTIME
-    fprintf(stderr, "Tsunami Server for protocol rev %X\nBuild version %s %s\n"
+    fprintf(stderr, "Tsunami Server for protocol rev %X\nRevision: %s\nCompiled: %s %s\n"
                     "   /dev/vsib VSIB accesses mode is %d, gigabit=%d, 1pps embed=%d, sample skip=%d\n"
                     "Waiting for clients to connect.\n",
-            PROTOCOL_REVISION, __DATE__ , __TIME__,
+            PROTOCOL_REVISION, TSUNAMI_CVS_BUILDNR, __DATE__ , __TIME__,
             vsib_mode, vsib_mode_gigabit, vsib_mode_embed_1pps_markers, vsib_mode_skip_samples);
     #else
-    fprintf(stderr, "Tsunami Server for protocol rev %X\nBuild version %s %s\n"
+    fprintf(stderr, "Tsunami Server for protocol rev %X\nRevision: %s\nCompiled: %s %s\n"
                     "Waiting for clients to connect.\n",
-            PROTOCOL_REVISION, __DATE__ , __TIME__);
+            PROTOCOL_REVISION, TSUNAMI_CVS_BUILDNR, __DATE__ , __TIME__);
     #endif
     
     /* while our little world keeps turning */
@@ -482,6 +482,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.11  2006/11/08 11:05:30  jwagnerhki
+ * vsib read without IPD throttling
+ *
  * Revision 1.10  2006/10/30 08:46:58  jwagnerhki
  * removed memory leak unused ringbuf
  *
