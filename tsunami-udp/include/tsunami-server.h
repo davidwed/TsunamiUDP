@@ -141,6 +141,7 @@ typedef struct {
     ttp_parameter_t    *parameter;    /* the TTP protocol parameters                */
     ttp_transfer_t      transfer;     /* the current transfer in progress, if any   */
     int                 client_fd;    /* the connection to the remote client        */
+    int                 session_id;   /* the ID of the server session, autonumber   */
 } ttp_session_t;
 
 
@@ -187,6 +188,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/10/25 12:32:43  jwagnerhki
+ * merged with joukos rttest server.h
+ *
  * Revision 1.1  2006/10/24 19:11:05  jwagnerhki
  * common tsunami-server.h for server apps
  *
