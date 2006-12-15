@@ -61,7 +61,7 @@
  *========================================================================*/
 
 #include "client.h"
-
+#include <string.h>    /* for memcpy() */
 
 /*------------------------------------------------------------------------
  * int accept_block(ttp_session_t *session,
@@ -127,6 +127,9 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/10/28 17:08:42  jwagnerhki
+ * fixed jr's nonworking rtclient
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:19  jwagnerhki
  * reimport
  *
