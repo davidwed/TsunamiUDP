@@ -5,8 +5,6 @@ Current TODO and BUGS list:
 ==GENERAL==
 
  BUGS
- - using two tsunami clients concurrently does not work right now
-   - receiving zero data and no connect(?)
  - changing the blocksize to e.g. 65532 does not work in the 
    server -> "Warning: Could not transmit block #..."
  TODO
@@ -23,6 +21,7 @@ Current TODO and BUGS list:
    control code (get, mget, ls, quote, ...)
 
 ==REALTIME SPECIFIC==
+
   BUGS
   TODO
   - VSIB mode configurability, i.e. do not hard-code
@@ -41,6 +40,10 @@ Past TODO and BUGS list:
 ==GENERAL==
 
  BUGS
+ - client segfaults on CLOSE if not connected
+   * fixed: 11 Dec 06 / CVS, better checking
+ - using two tsunami clients concurrently does not work right
+   * fixed: 5 Dec 06 / CVS, by disabling UDP socket reuse
  - a server side "get abc*" i.e. filename with wildcards will truncate files 
    on the server leading to loss of all data
    * fixed: 26 Oct 06 / CVS, fixed by merging Jamil's GET* command into server
