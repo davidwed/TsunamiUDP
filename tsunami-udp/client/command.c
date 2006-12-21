@@ -412,7 +412,14 @@ int command_get(command_t *command, ttp_session_t *session)
       this_block = ntohl(*((u_int32_t *) local_datagram));
       this_type  = ntohs(*((u_int16_t *) (local_datagram + 4)));
 
-      if (!(session->transfer.received[this_block / 8] & (1 << (this_block % 8))) || this_type == TS_BLOCK_TERMINATE) 
+      if (xfer->restart_pending) {
+          if (this_block > session->transfer.restart_lastidx) {
+              //printf("discard %u\n", this_block);
+              continue;
+          }
+      }
+
+      if (!(session->transfer.received[this_block / 8] & (1 << (this_block % 8))) || this_type == TS_BLOCK_TERMINATE || xfer->restart_pending) 
       {
    
           /* reserve a datagram slot */
@@ -435,6 +442,7 @@ int command_get(command_t *command, ttp_session_t *session)
                       goto abort;
                   }
               }
+        
           }
    
           /* if this is the last block */
@@ -451,6 +459,11 @@ int command_get(command_t *command, ttp_session_t *session)
           if (this_type == TS_BLOCK_ORIGINAL) {
               xfer->stats.total_blocks = this_block;
               xfer->next_block         = this_block + 1;
+          }
+
+          /* if a restart transmission request was going and last block met, reset flag */
+          if (xfer->restart_pending && xfer->next_block>=session->transfer.restart_lastidx) {
+              xfer->restart_pending = 0;
           }
 
       }//if(not a duplicate block)
@@ -796,6 +809,9 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.15  2006/12/15 12:57:41  jwagnerhki
+ * added client 'blockdump' block bitmap dump to file feature
+ *
  * Revision 1.14  2006/12/11 13:44:17  jwagnerhki
  * OS UDP err count now done in ttp_update_stats(), cleaned stats printout align, fixed CLOSE cmd segfault
  *
