@@ -217,6 +217,8 @@ int ttp_open_transfer(ttp_session_t *session, const char *remote_filename, const
     xfer->blocks_left = xfer->block_count;
 
     /* try to open the file for writing */
+    if (access(local_filename, X_OK))
+        printf("Warning: overwriting existing file '%s'\n", local_filename);     
     xfer->file = fopen64(local_filename, "wb");
     if (xfer->file == NULL)
 	return warn("Could not open local file for writing");
@@ -602,6 +604,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.6  2006/12/19 12:12:41  jwagnerhki
+ * corrected bad reallocs
+ *
  * Revision 1.5  2006/12/11 13:44:17  jwagnerhki
  * OS UDP err count now done in ttp_update_stats(), cleaned stats printout align, fixed CLOSE cmd segfault
  *
