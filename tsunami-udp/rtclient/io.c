@@ -77,8 +77,9 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
     u_int32_t        write_size;
     static u_int32_t last_block = 0;
     int              status;
+    #ifdef VSIB_REALTIME
     u_int32_t       ringbuf_pointer;
-
+    #endif
 
     /* see if we need this block */
     if (session->transfer.received[block_index / 8] & (1 << (block_index % 8)))
@@ -89,37 +90,39 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
     if (write_size == 0)
 	write_size = block_size;
 
+    #ifdef VSIB_REALTIME
     /*These were added for real-time eVLBI */
-
-    ringbuf_pointer = ((block_index-1) % RINGBUF_BLOCKS)
-      * session->parameter->block_size; 
-
+    ringbuf_pointer = ((block_index-1) % RINGBUF_BLOCKS) * session->parameter->block_size;
+    
     if (session->parameter->ringbuf != NULL) /* If we have a ring buffer */
-        memcpy(session->parameter->ringbuf + ringbuf_pointer, block,
-	   write_size);
- 
+        memcpy(session->parameter->ringbuf + ringbuf_pointer, block, write_size);
+
     /* check if we need to feed the VSIB */
-    write_vsib(block, write_size);
+    write_vsib(block, write_size);                
+    #endif
  
+    #ifndef DEBUG_DISKLESS
     /* seek to the proper location */
     if (block_index != (last_block + 1)) {
-	status = fseeko64(transfer->file, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
-	if (status < 0) {
-	    sprintf(g_error, "Could not seek at block %d of file", block_index);
-	    return warn(g_error);
-	}
+        status = fseeko64(transfer->file, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
+        if (status < 0) {
+            sprintf(g_error, "Could not seek at block %d of file", block_index);
+            return warn(g_error);
+        }
     }
 
     /* write the block to disk */
     status = fwrite(block, 1, write_size, transfer->file);
     if (status < write_size) {
-	sprintf(g_error, "Could not write block %d of file", block_index);
-	return warn(g_error);
+        sprintf(g_error, "Could not write block %d of file", block_index);
+        return warn(g_error);
     }
+    #endif
 
     /* we succeeded */
     session->transfer.received[block_index / 8] |= (1 << (block_index % 8));
-    --(session->transfer.blocks_left);
+    if (session->transfer.blocks_left > 0) // should not happen...
+       --(session->transfer.blocks_left);
     last_block = block_index;
     return 0;
 }
@@ -127,6 +130,9 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
 
 /*========================================================================
  * $Log$
+ * Revision 1.3  2006/12/15 12:57:41  jwagnerhki
+ * added client 'blockdump' block bitmap dump to file feature
+ *
  * Revision 1.2  2006/10/28 17:08:42  jwagnerhki
  * fixed jr's nonworking rtclient
  *
