@@ -383,12 +383,12 @@ int main(int argc, char *argv[]) {
 	   for (i=0; i<ef->nr_auxinfo; i++)
 		  printf("ef->auxinfo[%d] = %s\n", i, ef->auxinfo[i]);
        if (get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo) != 0) {
-            sscanf(get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo), "%ld", &li);
-            printf("  parsed flen param: %ld\n", li);
+            sscanf(get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo), "%lld", &li);
+            printf("  parsed flen param: %lld\n", li);
        } 
        if (get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo) != 0) {
-            sscanf(get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo), "%ld", &li);
-            printf("  parsed dl param: %ld\n", li);
+            sscanf(get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo), "%lld", &li);
+            printf("  parsed dl param: %lld\n", li);
        } 
        printf("\n");
        cnt++;
@@ -399,6 +399,9 @@ int main(int argc, char *argv[]) {
 
 /*
  * $Log$
+ * Revision 1.9  2007/02/13 13:47:31  jwagnerhki
+ * UTC parse fixes and extensions, dl in addition to flen for realtime bytelength
+ *
  * Revision 1.8  2007/02/12 13:41:21  jwagnerhki
  * mktime() post-fix now parsing really to utc, added 'dl' same as 'flen', added some EVN formats, added parse validity flag
  *
