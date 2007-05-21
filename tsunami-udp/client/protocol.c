@@ -216,13 +216,22 @@ int ttp_open_transfer(ttp_session_t *session, const char *remote_filename, const
     /* we start out with every block yet to transfer */
     xfer->blocks_left = xfer->block_count;
 
-    /* try to open the file for writing */
-    if (!access(local_filename, F_OK))
+    /* try to open the local file for writing */
+    if (!access(xfer->local_filename, F_OK))
         printf("Warning: overwriting existing file '%s'\n", local_filename);     
-    xfer->file = fopen64(local_filename, "wb");
-    if (xfer->file == NULL)
-	return warn("Could not open local file for writing");
-    
+    xfer->file = fopen64(xfer->local_filename, "wb");
+    if (xfer->file == NULL) {
+        const char* old_filename = xfer->local_filename;
+        xfer->local_filename = rindex(xfer->local_filename, '/') + 1;
+        printf("Warning: could not open file %s for writing, placing in local directory instead.\n", old_filename);
+        if (!access(xfer->local_filename, F_OK))
+	       printf("Warning: overwriting existing file '%s'\n", xfer->local_filename);     
+	    xfer->file = fopen64(xfer->local_filename, "wb");
+        if(xfer->file == NULL) {
+	       return warn("Could not open local file for writing");
+	    }
+    }
+
     #ifdef VSIB_REALTIME
     /* try to open the vsib for output */
     xfer->vsib = fopen64("/dev/vsib", "wb");
@@ -614,6 +623,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.16  2007/01/11 15:15:48  jwagnerhki
+ * rtclient merge, io.c now with VSIB_REALTIME, blocks_left not allowed negative fix, overwriting file check fixed, some memset()s to keep Valgrind warnings away
+ *
  * Revision 1.15  2006/12/22 12:06:21  jwagnerhki
  * warn about file overwrite, truncate could take long time
  *
