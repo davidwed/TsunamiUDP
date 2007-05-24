@@ -9,8 +9,11 @@ Current TODO and BUGS list:
    server -> "Warning: Could not transmit block #..."
  - Ind.Univ. design fault: REQUEST_RESTART gets stuck in loop if
    more new (wrt sequence number) packets are still going on the line 
-   than what the retransmit request length limit is
+   than what the retransmit request length limit is (possibly fixed
+   since v1.1 cvsbuild 11, but no guarantees that fix works in 100%
+   of cases)
  TODO
+ - CPU load of server and client apps is much higher than necessary
  - add a "dir" or "ls" command
    [now $ tsunamid *   and $ tsunami connect x get *  do this, in a way]
  - "blocking": ring buffer blocking, add timeout so it doesn't 
