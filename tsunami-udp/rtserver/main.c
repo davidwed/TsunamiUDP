@@ -291,6 +291,7 @@ void client_handler(ttp_session_t *session)
 		    warn(g_error);
 		    continue;
 		}
+                block_new = 1;
 
 	    /* if we have a partial retransmission message */
 	    } else if (result > 0) {
@@ -507,6 +508,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.15  2007/03/23 07:23:15  jwagnerhki
+ * added rttsunamid vsib mode and skip CLI options
+ *
  * Revision 1.14  2006/12/05 15:24:50  jwagnerhki
  * now noretransmit code in client only, merged rt client code
  *

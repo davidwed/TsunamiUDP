@@ -293,6 +293,7 @@ void client_handler(ttp_session_t *session)
 		    warn(g_error);
 		    continue;
 		}
+                block_new = 1;
 
 	    /* if we have a partial retransmission message */
 	    } else if (result > 0) {
@@ -510,6 +511,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.14  2007/05/18 12:49:32  jwagnerhki
+ * added Realtime to printed name
+ *
  * Revision 1.13  2007/03/23 07:23:15  jwagnerhki
  * added rttsunamid vsib mode and skip CLI options
  *
