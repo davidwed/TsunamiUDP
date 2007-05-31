@@ -70,7 +70,7 @@
  *------------------------------------------------------------------------*/
 
 const u_int32_t  DEFAULT_BLOCK_SIZE    = 32768;     /* default size of a single file block     */
-const u_char    *DEFAULT_SECRET        = "kitten";  /* default shared secret                   */
+const u_char    *DEFAULT_SECRET        = (u_char*)"kitten";  /* default shared secret                   */
 const u_int16_t  DEFAULT_TCP_PORT      = TS_TCP_PORT;/* default TCP port to listen on           */
 const u_int32_t  DEFAULT_UDP_BUFFER    = 20000000;  /* default size of the UDP transmit buffer */
 const u_char     DEFAULT_VERBOSE_YN    = 1;         /* the default verbosity setting           */
@@ -100,6 +100,9 @@ void reset_server(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2007/05/31 09:32:04  jwagnerhki
+ * removed some signedness warnings, added Mark5 server devel start code
+ *
  * Revision 1.4  2006/12/05 15:24:50  jwagnerhki
  * now noretransmit code in client only, merged rt client code
  *
