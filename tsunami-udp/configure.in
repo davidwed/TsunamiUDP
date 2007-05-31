@@ -99,6 +99,7 @@ AC_CONFIG_FILES([
     include/Makefile
     server/Makefile
     rtserver/Makefile
+    mk5server/Makefile
     util/Makefile
 ])
 AC_OUTPUT

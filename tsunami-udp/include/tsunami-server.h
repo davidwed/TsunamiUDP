@@ -158,7 +158,7 @@ int  build_datagram       (ttp_session_t *session, u_int32_t block_index, u_int1
 #ifdef VSIB_REALTIME
 void start_vsib (ttp_session_t *session);
 void stop_vsib (ttp_session_t *session);
-void read_vsib_block(char *memblk, int blksize);
+void read_vsib_block(unsigned char *memblk, size_t blksize);
 #endif
 
 /* log.c */
@@ -187,6 +187,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.4  2006/12/05 15:24:50  jwagnerhki
+ * now noretransmit code in client only, merged rt client code
+ *
  * Revision 1.3  2006/12/05 13:38:20  jwagnerhki
  * identify concurrent server transfers by an own ID
  *

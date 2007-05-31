@@ -84,7 +84,7 @@ void parse_command(command_t *command, char *buffer);
 int main(int argc, const char *argv[])
 {
     command_t        command;                           /* the current command being processed */
-    u_char           command_text[MAX_COMMAND_LENGTH];  /* the raw text of the command         */
+    char             command_text[MAX_COMMAND_LENGTH];  /* the raw text of the command         */
     ttp_session_t   *session = NULL;
     ttp_parameter_t  parameter;
    
@@ -241,6 +241,9 @@ void parse_command(command_t *command, char *buffer)
 
 /*========================================================================
  * $Log$
+ * Revision 1.6  2006/12/05 15:24:50  jwagnerhki
+ * now noretransmit code in client only, merged rt client code
+ *
  * Revision 1.5  2006/12/04 14:45:33  jwagnerhki
  * added more proper TSUNAMI_CVS_BUILDNR, added exit and bye commands to client
  *

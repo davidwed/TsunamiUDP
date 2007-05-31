@@ -10,7 +10,7 @@
 # $Id$
 #
 
-SUBDIRS			= include common client server util rtserver rtclient
+SUBDIRS			= include common client server util rtserver rtclient mk5server
 
 # For some reason, we have to list depcomp explicitly, even though
 # it's an automake-generated file.  :-(

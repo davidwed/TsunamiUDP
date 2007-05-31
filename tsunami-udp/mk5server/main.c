@@ -409,7 +409,7 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
 		     break;
 
 	    /* --secret=s   : shared secret for the client and server */
-        case 5:  parameter->secret     = (unsigned char*)optarg;
+	    case 5:  parameter->secret     = (u_char*)optarg;
 		     break;
 
 	    /* --datagram=i : size of datagrams in bytes */
