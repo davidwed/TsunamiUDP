@@ -61,7 +61,6 @@
  *========================================================================*/
 
 #include <tsunami-server.h>
-//#define MODE_34TH 1
 
 /*------------------------------------------------------------------------
  * int build_datagram(ttp_session_t *session, u_int32_t block_index,
@@ -151,6 +150,9 @@ int build_datagram(ttp_session_t *session, u_int32_t block_index,
 
 /*========================================================================
  * $Log$
+ * Revision 1.1  2007/05/31 09:32:04  jwagnerhki
+ * removed some signedness warnings, added Mark5 server devel start code
+ *
  * Revision 1.7  2006/10/27 08:52:34  jwagnerhki
  * guifres bugfix
  *
