@@ -12,7 +12,7 @@
 
 INCLUDES		= -I$(top_srcdir)/include
 
-common_lib		= $(top_builddir)/common/libtsunami_common.a -lm
+common_lib		= $(top_builddir)/common/libtsunami_common.a $(top_builddir)/common/libssapi.a -lm
 
 bin_PROGRAMS		= mk5tsunamid
 
