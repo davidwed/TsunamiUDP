@@ -212,7 +212,7 @@ u_char *prepare_proof(u_char *buffer, size_t bytes, const u_char *secret, u_char
     u_int32_t offset;         /* iterator for the buffer         */
 
     /* get the length of the secret */
-    secret_length = strlen(secret);
+    secret_length = strlen((char*)secret);
 
     /* prepare the buffer for the digest */
     for (offset = 0; offset < bytes; ++offset)
@@ -319,6 +319,9 @@ u_int64_t get_udp_in_errors()
 
 /*========================================================================
  * $Log$
+ * Revision 1.5  2006/12/11 11:11:56  jwagnerhki
+ * show operating system UDP rx error stats in summary
+ *
  * Revision 1.4  2006/11/10 15:05:37  jwagnerhki
  * using /dev/urandom instead of unbearably slow /dev/random
  *
