@@ -29,6 +29,8 @@ mk5tsunamid_SOURCES	= \
 mk5tsunamid_LDADD	= $(common_lib)
 mk5tsunamid_DEPENDENCIES	= $(common_lib)
 mk5tsunamid_LDFLAGS     = -L$(top_builddir)/common
+mk5tsunamid_CFLAGS = -DMK5SERVER
+mk5tsunamid_CXXFLAGS = -DMK5SERVER
 
 # libssapi.a requires g++ instead of gcc, version 3.x or 2.x
 #    mk5tsunamid_CC = g++  -- this is not supported by automake

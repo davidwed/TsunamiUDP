@@ -91,7 +91,7 @@ install_sh = @install_sh@
 
 INCLUDES = -I$(top_srcdir)/include
 
-common_lib = $(top_builddir)/common/libtsunami_common.a -lm $(top_builddir)/common/libssapi.a -lpthread
+common_lib = -lm $(top_builddir)/common/libtsunami_common.a -lm $(top_builddir)/common/libssapi.a -lpthread
 
 bin_PROGRAMS = mk5tsunamid
 
