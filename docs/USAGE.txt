@@ -159,7 +159,6 @@ tsunami> set
    lossless = yes          -- change to 'no' to allow data loss e.g. rate priority transfers
    losswindow = 1000 msec  -- used if lossless='no', sets how old missing data should still be 
                               requested again. If too old, data is considered lost.
-
    blockdump = no          -- 'yes' to write a block bitmap dump to a file, shows
                               packets that were not received as bit value 0,
                               file format is 4 bytes (long) contains number of blocks (bits),
@@ -238,7 +237,7 @@ tsunami> set
  recording length specified in bytes is as follows:
 
     [exp]_[station]_[scan]_[yyyy]-[mm]-[dd]T[hh]:[mm]:[ss].vsi   
-    [exp]_[station]_[scan]_[yyyy]-[mm]-[dd]T[hh]:[mm]:[ss]_flen=[bytes].vsi
+    [exp]_[station]_[scan]_[yyyy]-[mm]-[dd]T[hh]:[mm]:[ss]_dl=[bytes].vsi
 
     Where     
     Exp:     experiment, arbitrary string
@@ -246,7 +245,7 @@ tsunami> set
     Scan:    name of the scan, arbitrary, format often similar to "fr0089"
     Date:    US order, month first
     Time:    UTC time
-    Bytes:   flen file length in bytes, length of recording
+    Bytes:   dl file length in bytes, length of recording
     
  Examples:
 
@@ -261,7 +260,7 @@ tsunami> set
 
     Recording length specified to be 1536000000 bytes.
     
-      exp01_mh_scan01_2006-10-17T12:25:30_flen=1536000000.vsi
+      exp01_mh_scan01_2006-10-17T12:25:30_dl=1536000000.vsi
       
 
  The default recording length is equal to the amount of bytes
