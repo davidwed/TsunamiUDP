@@ -29,3 +29,4 @@ rttsunamid_SOURCES	= \
 			server.h
 rttsunamid_LDADD	= $(common_lib)
 rttsunamid_DEPENDENCIES	= $(common_lib)
+AM_CFLAGS		= -DVSIB_REALTIME

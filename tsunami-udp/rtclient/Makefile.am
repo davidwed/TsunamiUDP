@@ -29,3 +29,4 @@ rttsunami_SOURCES		= \
 			transcript.c
 rttsunami_LDADD		= $(common_lib) -lpthread
 rttsunami_DEPENDENCIES	= $(common_lib)
+AM_CFLAGS               = -DVSIB_REALTIME
