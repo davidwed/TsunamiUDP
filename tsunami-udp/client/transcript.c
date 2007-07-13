@@ -150,6 +150,9 @@ void xscript_open(ttp_session_t *session)
     fprintf(xfer->transcript, "faster_num = %u\n",      param->faster_num);
     fprintf(xfer->transcript, "faster_den = %u\n",      param->faster_den);
     fprintf(xfer->transcript, "history = %u\n",         param->history);
+    fprintf(xfer->transcript, "lossless = %u\n",        param->lossless);
+    fprintf(xfer->transcript, "losswindow = %u\n",      param->losswindow_ms);
+    fprintf(xfer->transcript, "blockdump = %u\n",       param->blockdump);
     fprintf(xfer->transcript, "update_period = %llu\n", UPDATE_PERIOD);
     fprintf(xfer->transcript, "rexmit_period = %llu\n", UPDATE_PERIOD);
     fprintf(xfer->transcript, "version = 0x%x\n",       PROTOCOL_REVISION);
@@ -160,6 +163,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.1.1  2006/07/20 09:21:19  jwagnerhki
+ * reimport
+ *
  * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
  * deleted unnecessary files
  *
