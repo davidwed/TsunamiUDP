@@ -231,7 +231,11 @@ int create_udp_socket(ttp_parameter_t *parameter)
         /* free the allocated memory */
         freeaddrinfo(info_save);
 
-    } while ((info == NULL) && (++higher_port_attempt < 16));
+    } while ((++higher_port_attempt < 256) && (info == NULL));
+
+    /* warn about other transfers running concurrently */
+    if(higher_port_attempt>1)
+    fprintf(stderr, "Warning: there are %d other Tsunami clients running\n", higher_port_attempt-1);
     
     /* make sure that we succeeded with at least one address */
     if (info == NULL)
@@ -244,6 +248,9 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.5  2007/01/11 15:15:49  jwagnerhki
+ * rtclient merge, io.c now with VSIB_REALTIME, blocks_left not allowed negative fix, overwriting file check fixed, some memset()s to keep Valgrind warnings away
+ *
  * Revision 1.4  2006/12/05 14:24:13  jwagnerhki
  * disabled client UDP socket reuse, multi client per PC now ok
  *

@@ -28,3 +28,4 @@ tsunami_SOURCES		= \
 			transcript.c
 tsunami_LDADD		= $(common_lib) -lpthread
 tsunami_DEPENDENCIES	= $(common_lib)
+AM_CFLAGS               = -DRETX_REQBLOCK_SORTING
