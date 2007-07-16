@@ -222,7 +222,7 @@ int create_udp_socket(ttp_parameter_t *parameter)
             status = bind(socket_fd, info->ai_addr, info->ai_addrlen);
             if (status == 0) {
                 parameter->client_port = ntohs(((struct sockaddr_in*)info->ai_addr)->sin_port);
-                printf("Receiving data on UDP port %d\n", parameter->client_port);
+                fprintf(stderr, "Receiving data on UDP port %d\n", parameter->client_port);
                 break;
             }
    
@@ -248,6 +248,9 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.6  2007/07/16 08:55:54  jwagnerhki
+ * build 21, upped 16 to 256 clients, reduced end block blast speed, enabled RETX_REQBLOCK_SORTING compile flag
+ *
  * Revision 1.5  2007/01/11 15:15:49  jwagnerhki
  * rtclient merge, io.c now with VSIB_REALTIME, blocks_left not allowed negative fix, overwriting file check fixed, some memset()s to keep Valgrind warnings away
  *
