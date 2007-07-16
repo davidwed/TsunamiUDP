@@ -72,6 +72,7 @@
 #include <string.h>      /* for memset(), sprintf(), etc.         */
 #include <sys/types.h>   /* for standard system data types        */
 #include <sys/socket.h>  /* for the BSD sockets library           */
+#include <arpa/inet.h>   /* for inet_ntoa()                       */
 #include <sys/wait.h>    /* for waitpid()                         */
 #include <unistd.h>      /* for Unix system calls                 */
 
@@ -510,6 +511,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.19  2007/07/14 17:06:25  jwagnerhki
+ * show client IP prior to auth
+ *
  * Revision 1.18  2007/07/10 08:18:06  jwagnerhki
  * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
  *
