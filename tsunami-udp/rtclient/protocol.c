@@ -421,6 +421,10 @@ int ttp_request_retransmit(ttp_session_t *session, u_int32_t block)
    u_int32_t    *ptr;
    retransmit_t *rexmit = &(session->transfer.retransmit);
 
+   /* double checking: if we already got the block, don't add it */
+   if (session->transfer.received[block / 8] & (1 << (block % 8)))
+      return 0;
+
    /* if we don't have space for the request */
    if (rexmit->index_max >= rexmit->table_size) {
 
@@ -637,6 +641,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.9  2007/07/10 08:18:06  jwagnerhki
+ * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
+ *
  * Revision 1.8  2007/01/11 15:15:49  jwagnerhki
  * rtclient merge, io.c now with VSIB_REALTIME, blocks_left not allowed negative fix, overwriting file check fixed, some memset()s to keep Valgrind warnings away
  *

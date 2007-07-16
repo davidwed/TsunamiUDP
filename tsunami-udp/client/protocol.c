@@ -421,6 +421,10 @@ int ttp_request_retransmit(ttp_session_t *session, u_int32_t block)
    u_int32_t    *ptr;
    retransmit_t *rexmit = &(session->transfer.retransmit);
 
+   /* double checking: if we already got the block, don't add it */
+   if (session->transfer.received[block / 8] & (1 << (block % 8)))
+      return 0;
+
    /* if we don't have space for the request */
    if (rexmit->index_max >= rexmit->table_size) {
 
@@ -637,6 +641,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.19  2007/06/19 13:35:24  jwagnerhki
+ * replaced notretransmit option with better time-limited restransmission window, reduced ringbuffer from 8192 to 4096 entries
+ *
  * Revision 1.18  2007/05/23 11:58:33  jwagnerhki
  * slightly better filename path trim
  *
