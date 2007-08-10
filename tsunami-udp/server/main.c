@@ -334,8 +334,8 @@ void client_handler(ttp_session_t *session)
             usleep_that_works(ipd_time);
 
             if ((deadconnection_counter++) > 2048) {
-               if (get_usec_since(&lastfeedback) > 5000000) {
-                  fprintf(stderr, "No feedback from client during the last 5 seconds. Terminating transfer.\n");
+               if (get_usec_since(&lastfeedback) > CLIENT_FEEDBACK_TIMEOUT*1000000) {
+                  fprintf(stderr, "No feedback from client during the last %d seconds. Terminating transfer.\n", CLIENT_FEEDBACK_TIMEOUT);
                   break;
                }
             }
@@ -530,6 +530,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.21  2007/08/10 09:05:06  jwagnerhki
+ * 5 second timeout on no client feedback
+ *
  * Revision 1.20  2007/07/16 09:51:10  jwagnerhki
  * rt-server now ipd-throttled again
  *
