@@ -138,6 +138,7 @@ int create_tcp_socket(ttp_session_t *session, const char *server_name, u_int16_t
 
 	    /* copy the address */
 	    session->server_address = (struct sockaddr *) malloc(info->ai_addrlen);
+            session->server_address_length = info->ai_addrlen;
 	    if (session->server_address == NULL)
 		error("Could not allocate space for server address");
 	    memcpy(session->server_address, info->ai_addr, info->ai_addrlen);
@@ -248,6 +249,9 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.7  2007/07/16 09:09:45  jwagnerhki
+ * printf into fprintf stderr
+ *
  * Revision 1.6  2007/07/16 08:55:53  jwagnerhki
  * build 21, upped 16 to 256 clients, reduced end block blast speed, enabled RETX_REQBLOCK_SORTING compile flag
  *

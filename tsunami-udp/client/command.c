@@ -386,8 +386,7 @@ int command_get(command_t *command, ttp_session_t *session)
       ++iteration;
 
       /* try to receive a datagram */
-      status = recvfrom(xfer->udp_fd, local_datagram, 6 + session->parameter->block_size, 0, 
-                        (struct sockaddr *) &session->server_address, &session->server_address_length);
+      status = recvfrom(xfer->udp_fd, local_datagram, 6 + session->parameter->block_size, 0, NULL, 0);
       if (status < 0) {
           warn("UDP data transmission error");
           printf("Apparently frozen transfer, trying to do retransmit request\n");
@@ -858,6 +857,9 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.21  2007/07/10 08:18:05  jwagnerhki
+ * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
+ *
  * Revision 1.20  2007/06/19 13:35:24  jwagnerhki
  * replaced notretransmit option with better time-limited restransmission window, reduced ringbuffer from 8192 to 4096 entries
  *
