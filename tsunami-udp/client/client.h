@@ -196,6 +196,7 @@ typedef struct {
     u_int64_t           file_size;                /* the total file size (in bytes)              */
     u_int32_t           block_count;              /* the total number of blocks in the file      */
     u_int32_t           next_block;               /* the index of the next block we expect       */
+    u_int32_t           gapless_till_block;       /* the last block in the fully received range  */
     retransmit_t        retransmit;               /* the retransmission data for the transfer    */
     statistics_t        stats;                    /* the statistical data for the transfer       */
     ring_buffer_t      *ring_buffer;              /* the blocks waiting for a disk write         */
@@ -276,6 +277,9 @@ void           xscript_open          (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.9  2007/06/19 13:35:23  jwagnerhki
+ * replaced notretransmit option with better time-limited restransmission window, reduced ringbuffer from 8192 to 4096 entries
+ *
  * Revision 1.8  2007/05/24 10:07:21  jwagnerhki
  * client can 'set' passphrase to other than default
  *
