@@ -120,6 +120,7 @@ typedef struct {
     int                 totalslots;     /* How many slots do we have?                 */
     int                 samplerate;     /* Sample rate in MHz (optional)              */
     char                **file_names;   /* Store the local file_names on server       */
+    size_t              *file_sizes;    /* Store the local file sizes on server       */
     u_int16_t           file_name_size; /* Store the total size of the array          */
     u_int16_t           total_files;    /* Store the total number of served files     */
     long                wait_u_sec;
@@ -195,6 +196,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.8  2007/08/10 09:19:35  jwagnerhki
+ * server closes connection if no client feedback in 15s
+ *
  * Revision 1.7  2007/07/10 08:18:05  jwagnerhki
  * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
  *
