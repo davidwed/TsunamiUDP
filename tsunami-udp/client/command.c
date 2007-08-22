@@ -218,7 +218,7 @@ int command_dir(command_t *command, ttp_session_t *session)
     status = fread(&result, 1, 1, session->server);
     if (status < 1)
         return warn("Could not read response to directory request");
-    if (result == 16)
+    if (result == 8)
         return warn("Server does no support listing of shared files");
     
     read_str[0] = result;  
@@ -916,6 +916,9 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.24  2007/08/22 14:07:30  jwagnerhki
+ * build 27: first implementation of client dir command
+ *
  * Revision 1.23  2007/08/17 10:56:31  jwagnerhki
  * added gapless_till_block client side counter
  *
