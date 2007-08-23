@@ -14,8 +14,6 @@ Current TODO and BUGS list:
    of cases)
  TODO
  - CPU load of server and client apps is much higher than necessary
- - add a "dir" or "ls" command
-   [now $ tsunamid *   and $ tsunami connect x get *  do this, in a way]
  - "blocking": ring buffer blocking, add timeout so it doesn't 
    block indefinitely and in the worst case lock the disk/filesys...
  - rework the TCP control channel, add new "command control block"
@@ -31,7 +29,8 @@ Current TODO and BUGS list:
   BUGS
   TODO
   - server could send text messages back to client (e.g. "specified start time
-    in the past, starting now", "Disk buffers full. Waiting.... Continuing.")
+    in the past, starting now", "Disk buffers full. Waiting.... Continuing."),
+    however this breaks the entire Tsunami v1.1 protocol...
 
 --------------------------------------------------------------------------------
 Past TODO and BUGS list:
@@ -51,6 +50,11 @@ Past TODO and BUGS list:
  - client, command line argument parsing, the command "get" doesn't work
    * fixed: 16 Oct 06 / CVS
  TODO
+ - client, server: "dir" command:
+   * added: 23 Aug 07 / CVS, build 27, now a "dir" in the client will
+     retrieve a list of files and their lenghts. The list only contains files 
+     the tsunamid was explicitly told to share from the command line (i.e., often 
+     not all actually downloadable files are in the list)
  - client allow specifying a different passphrase from command line
    * added: 24 May 07 / CVS, new 'set passphrase xxx' command
  - server, IPD not displayed correctly in server stats
