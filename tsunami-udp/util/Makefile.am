@@ -14,7 +14,7 @@ INCLUDES		= -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/util/libtsunami_common.a
 
-bin_PROGRAMS		= readtest writetest
+bin_PROGRAMS		= readtest writetest fusereadtest
 readtest_SOURCES	= readtest.c
 #readtest_LDADD		= $(common_lib)
 #readtest_DEPENDENCIES	= $(common_lib)
@@ -22,3 +22,5 @@ readtest_SOURCES	= readtest.c
 writetest_SOURCES	= writetest.c
 #writetest_LDADD	= $(common_lib)
 #writetest_DEPENDENCIES	= $(common_lib)
+
+fusereadtest_SOURCES	= fusereadtest.c
