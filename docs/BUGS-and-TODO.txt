@@ -67,6 +67,13 @@ Past TODO and BUGS list:
     next files are always 0 size
     * fixed: 16 Oct 06 / CVS
   TODO
+  - rtserver local backup feature, continue until end and possibly time out after 
+    that if client connection is lost at any time
+    * added  28 Oct 07 / CVS cvsbuild 31, now client heartbeat is monitored (reusing 
+      client error reports coming in at <350ms intervals) in both file
+      and realtime server, user-specified timeout valid after final block sent,
+      display progress on screen even if client not there, don't disconnect
+      if client TCP stream EOF happens
   - check if retransmit request falls outside of current VSIB buffer window
     * added: 19 Jun 07 / CVS cvsbuild 18, now a semi-lossless (losswindow) transfer 
       mode client feature
