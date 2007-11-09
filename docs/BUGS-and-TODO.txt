@@ -23,6 +23,9 @@ Current TODO and BUGS list:
    just forget about ancient Tsunami revisions.)
  - copy command control block things over from FTP client/server
    control code (get, mget, ls, quote, ...)
+ - the target rate (bit/sec) is of type u_int32_t and limits
+   the maximum rate to 4 Gbit/s, need to change this u_int64_t 
+   and then increase the protocol version to break compatibility
 
 ==REALTIME SPECIFIC==
 
