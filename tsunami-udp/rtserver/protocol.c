@@ -8,6 +8,8 @@
  * Copyright  2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -50,7 +52,7 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NOWARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
  * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
@@ -77,6 +79,7 @@
 #include "parse_evn_filename.h" /* EVN file name parsing for start time, station code, etc */
 #endif
 
+
 /*------------------------------------------------------------------------
  * int ttp_accept_retransmit(ttp_session_t *session,
  *                           retransmission_t *retransmission,
@@ -102,72 +105,79 @@ int ttp_accept_retransmit(ttp_session_t *session, retransmission_t *retransmissi
     static int       iteration = 0;
     static char      stats_line[80];
     int              status;
-    u_int16_t        type;
-  
+
     /* convert the retransmission fields to host byte order */
-    retransmission->block      = ntohl(retransmission->block);
-    retransmission->error_rate = ntohl(retransmission->error_rate);
-    type                       = ntohs(retransmission->request_type);
+    net_to_host(retransmission->block);
+    net_to_host(retransmission->error_rate);
+    net_to_host(retransmission->request_type);
 
-    /* if it's an error rate notification */
-    if (type == REQUEST_ERROR_RATE) {
+    /* handle error rate notification */
+    if (REQUEST_ERROR_RATE == retransmission->request_type) {
 
-	/* calculate a new IPD */
-	if (retransmission->error_rate > param->error_rate) {
-	    double factor1 = (1.0 * param->slower_num / param->slower_den) - 1.0;
-	    double factor2 = (1.0 + retransmission->error_rate - param->error_rate) / (100000.0 - param->error_rate);
-	    xfer->ipd_current *= 1.0 + (factor1 * factor2);
-	} else
-	    xfer->ipd_current = (u_int32_t) (xfer->ipd_current * (u_int64_t) param->faster_num / param->faster_den);
+        /* calculate a new IPD */
+        if (retransmission->error_rate > param->error_rate) {
+            double factor1 = (1.0 * param->slower_num / param->slower_den) - 1.0;
+            double factor2 = (1.0 + retransmission->error_rate - param->error_rate) / (100000.0 - param->error_rate);
+            xfer->ipd_current *= 1.0 + (factor1 * factor2);
+        } else {
+            xfer->ipd_current = (u_int32_t) (xfer->ipd_current * (u_int64_t) param->faster_num / param->faster_den);
+        }
 
-	/* build the stats string */
-	sprintf(stats_line, "%6u %5uus %5uus %7u %6.2f%% %3u\n",
-		retransmission->error_rate, xfer->ipd_current, param->ipd_time, xfer->block,
-		100.0 * xfer->block / param->block_count, session->session_id);
+        /* build the stats string */
+        sprintf(stats_line, "%6u %5uus %5uus %7llu %6.2f%% %3u\n",
+            retransmission->error_rate, xfer->ipd_current, param->ipd_time, xfer->block,
+            100.0 * xfer->block / param->block_count, session->session_id);
 
-    /* make sure the IPD is still in range, for later calculations */
-    xfer->ipd_current = max(min(xfer->ipd_current, 10000), param->ipd_time);
+        /* make sure the IPD is still in range, for later calculations */
+        xfer->ipd_current = max(min(xfer->ipd_current, 10000), param->ipd_time);
 
-	/* print a status report */
-	if (!(iteration++ % 23))
-	    printf(" erate     ipd  target   block   %%done srvNr\n");
-	printf(stats_line);
+        /* print a status report */
+        if (!(iteration++ % 23))
+            printf(" erate     ipd  target   block   %%done srvNr\n");
 
-	/* print to the transcript if the user wants */
-	if (param->transcript_yn)
-	    xscript_data_log(session, stats_line);
+        printf(stats_line);
 
-    /* if it's a restart request */
-    } else if (type == REQUEST_RESTART) {
+        /* print to the transcript if the user wants */
+        if (param->transcript_yn)
+            xscript_data_log(session, stats_line);
 
-	/* do range-checking first */
-	if ((retransmission->block == 0) || (retransmission->block > param->block_count)) {
-	    sprintf(g_error, "Attempt to restart at illegal block %u", retransmission->block);
-	    return warn(g_error);
-	} else
-	    xfer->block = retransmission->block;
+    /* handle request to restart from block X */
+    } else if (REQUEST_RESTART == retransmission->request_type) {
 
-    /* if it's a retransmit request */
-    } else if (type == REQUEST_RETRANSMIT) {
+        /* do range-checking first */
+        if ((retransmission->block == 0) || (retransmission->block > param->block_count)) {
+            sprintf(g_error, "Attempt to restart at illegal block %llu", retransmission->block);
+            return warn(g_error);
+        }
+
+        xfer->block = retransmission->block;
+
+    /* handle request to retransmit at block */
+    } else if (REQUEST_RETRANSMIT == retransmission->request_type) {
 
         /* build the retransmission */
         status = build_datagram(session, retransmission->block, TS_BLOCK_RETRANSMISSION, datagram);
         if (status < 0) {
-            sprintf(g_error, "Could not build retransmission for block %u", retransmission->block);
-            return warn(g_error);
-        }
-      
-        /* try to send out the block */
-        status = sendto(xfer->udp_fd, datagram, 6 + param->block_size, 0, xfer->udp_address, xfer->udp_length);
-        if (status < 0) {
-            sprintf(g_error, "Could not retransmit block %u", retransmission->block);
+            sprintf(g_error, "Could not build retransmission for block %llu", retransmission->block);
             return warn(g_error);
         }
 
-    /* if it's another kind of request */
+        /* try to send out the block */
+        status = sendto(xfer->udp_fd, datagram,
+                        sizeof(blockheader_t) + param->block_size, 0,
+                        xfer->udp_address,
+                        xfer->udp_length);
+        if (status < 0) {
+            sprintf(g_error, "Could not retransmit block %llu", retransmission->block);
+            return warn(g_error);
+        }
+
+    /* handle unknown request */
     } else {
-	sprintf(g_error, "Received unknown retransmission request of type %u", ntohs(retransmission->request_type));
-	return warn(g_error);
+
+        sprintf(g_error, "Received unknown retransmission request of type %u", retransmission->request_type);
+        return warn(g_error);
+
     }
 
     /* we're done */
@@ -206,30 +216,30 @@ int ttp_authenticate(ttp_session_t *session, const u_char *secret)
     /* obtain the random data */
     status = get_random_data(random, 64);
     if (status < 0)
-	return warn("Access to random data is broken");
+        return warn("Access to random data is broken");
 
     /* send the random data to the client */
     status = write(session->client_fd, random, 64);
     if (status < 0)
-	return warn("Could not send authentication challenge to client");
+        return warn("Could not send authentication challenge to client");
 
     /* read the results back from the client */
     status = read(session->client_fd, client_digest, 16);
     if (status < 0)
-	return warn("Could not read authentication response from client");
+        return warn("Could not read authentication response from client");
 
     /* compare the two digests */
     prepare_proof(random, 64, secret, server_digest);
     for (i = 0; i < 16; ++i)
-	if (client_digest[i] != server_digest[i]) {
-	    write(session->client_fd, "\001", 1);
-	    return warn("Authentication failed");
-	}
+    if (client_digest[i] != server_digest[i]) {
+        write(session->client_fd, "\001", 1);
+        return warn("Authentication failed");
+    }
 
     /* try to tell the client it worked */
     status = write(session->client_fd, "\000", 1);
     if (status < 0)
-	return warn("Could not send authentication confirmation to client");
+        return warn("Could not send authentication confirmation to client");
 
     /* we succeeded */
     return 0;
@@ -255,12 +265,12 @@ int ttp_negotiate(ttp_session_t *session)
     /* send our protocol revision number to the client */
     status = write(session->client_fd, &server_revision, 4);
     if (status < 0)
-	return warn("Could not send protocol revision number");
+        return warn("Could not send protocol revision number");
 
     /* read the protocol revision number from the client */
     status = read(session->client_fd, &client_revision, 4);
     if (status < 0)
-	return warn("Could not read protocol revision number");
+        return warn("Could not read protocol revision number");
 
     /* compare the numbers */
     return (client_revision == server_revision) ? 0 : -1;
@@ -285,7 +295,7 @@ int ttp_open_port(ttp_session_t *session)
     session->transfer.udp_length = ipv6_yn ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in);
     address = (struct sockaddr *) malloc(session->transfer.udp_length);
     if (address == NULL)
-	error("Could not allocate space for UDP socket address");
+        error("Could not allocate space for UDP socket address");
 
     /* prepare the UDP address structure, minus the UDP port number */
     getpeername(session->client_fd, address, &(session->transfer.udp_length));
@@ -293,20 +303,20 @@ int ttp_open_port(ttp_session_t *session)
     /* read in the port number from the client */
     status = read(session->client_fd, &port, 2);
     if (status < 0)
-	return warn("Could not read UDP port number");
+        return warn("Could not read UDP port number");
     if (ipv6_yn)
-	((struct sockaddr_in6 *) address)->sin6_port = port;
+        ((struct sockaddr_in6 *) address)->sin6_port = port;
     else
-	((struct sockaddr_in *)  address)->sin_port  = port;
+        ((struct sockaddr_in *)  address)->sin_port  = port; // note: sin_port is always in net byte order
 
     /* print out the port number */
     if (session->parameter->verbose_yn)
-	printf("Sending to client port %d\n", ntohs(port));
+        printf("Sending to client port %d\n", ntohs(port));
 
     /* open a new datagram socket */
     session->transfer.udp_fd = create_udp_socket(session->parameter);
     if (session->transfer.udp_fd < 0)
-	return warn("Could not create UDP socket");
+        return warn("Could not create UDP socket");
 
     /* we succeeded */
     session->transfer.udp_address = address;
@@ -331,7 +341,7 @@ int ttp_open_transfer(ttp_session_t *session)
     char             filename[MAX_FILENAME_LENGTH];  /* the name of the file to transfer     */
     u_int64_t        file_size;                      /* network-order version of file size   */
     u_int32_t        block_size;                     /* network-order version of block size  */
-    u_int32_t        block_count;                    /* network-order version of block count */
+    u_int64_t        block_count;                    /* network-order version of block count */
     time_t           epoch;
     int              status;
     ttp_transfer_t  *xfer  = &session->transfer;
@@ -361,57 +371,57 @@ int ttp_open_transfer(ttp_session_t *session)
 
     if(!strcmp(filename, TS_DIRLIST_HACK_CMD)) {
 
-      /* The client requested listing of files and their sizes (dir command)
-       * Send strings:   NNN \0   name1 \0 len1 \0     nameN \0 lenN \0
-       */
-       snprintf(file_no, sizeof(file_no), "%u", param->total_files);
-       write(session->client_fd, file_no, strlen(file_no)+1);
-       for(i=0; i<param->total_files; i++) {
-          write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
-          snprintf(message, sizeof(message), "%d", param->file_sizes[i]);
-          write(session->client_fd, message, strlen(message)+1);
-       }
-       read(session->client_fd, message, 1);
-       return warn("File list sent!");
+        /* The client requested listing of files and their sizes (dir command)
+        * Send strings:   NNN \0   name1 \0 len1 \0     nameN \0 lenN \0
+        */
+        snprintf(file_no, sizeof(file_no), "%u", param->total_files);
+        write(session->client_fd, file_no, strlen(file_no)+1);
+        for(i=0; i<param->total_files; i++) {
+            write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
+            snprintf(message, sizeof(message), "%d", param->file_sizes[i]);
+            write(session->client_fd, message, strlen(message)+1);
+        }
+        read(session->client_fd, message, 1);
+        return warn("File list sent!");
 
     } else if(!strcmp(filename,"*")) {
 
-      /* A multiple file request - sent the file names first, 
-       * and next the client requests a download of each in turn (get * command)
-       */
-       memset(size, 0, sizeof(size));
-       snprintf(size, sizeof(size), "%u", param->file_name_size);
-       write(session->client_fd, size, 10);
+        /* A multiple file request - sent the file names first, 
+        * and next the client requests a download of each in turn (get * command)
+        */
+        memset(size, 0, sizeof(size));
+        snprintf(size, sizeof(size), "%u", param->file_name_size);
+        write(session->client_fd, size, 10);
 
-       memset(file_no, 0, sizeof(file_no));
-       snprintf(file_no, sizeof(file_no), "%u", param->total_files);
-       write(session->client_fd, file_no, 10);
+        memset(file_no, 0, sizeof(file_no));
+        snprintf(file_no, sizeof(file_no), "%u", param->total_files);
+        write(session->client_fd, file_no, 10);
 
-       printf("\nSent multi-GET filename count and array size to client\n");
-       read(session->client_fd, message, 8);
-       printf("Client response: %s\n", message);
+        printf("\nSent multi-GET filename count and array size to client\n");
+        read(session->client_fd, message, 8);
+        printf("Client response: %s\n", message);
 
-       for(i=0; i<param->total_files; i++)
-          write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
+        for(i=0; i<param->total_files; i++)
+            write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
 
-       read(session->client_fd, message, 8);
-       printf("Sent file list, client response: %s\n", message);
+        read(session->client_fd, message, 8);
+        printf("Sent file list, client response: %s\n", message);
 
-       status = read_line(session->client_fd, filename, MAX_FILENAME_LENGTH);
+        status = read_line(session->client_fd, filename, MAX_FILENAME_LENGTH);
 
-       if (status < 0)
-          error("Could not read filename from client");
+        if (status < 0)
+            error("Could not read filename from client");
 
     }
 
     /* store the filename in the transfer object */
     xfer->filename = strdup(filename);
     if (xfer->filename == NULL)
-    return warn("Memory allocation error");
+        return warn("Memory allocation error");
 
     /* make a note of the request */
     if (param->verbose_yn)
-    printf("Request for file: '%s'\n", filename);
+        printf("Request for file: '%s'\n", filename);
 
     #ifndef VSIB_REALTIME
 
@@ -421,9 +431,8 @@ int ttp_open_transfer(ttp_session_t *session)
         sprintf(g_error, "File '%s' does not exist or cannot be read", filename);
         /* signal failure to the client */
         status = write(session->client_fd, "\x008", 1);
-        if (status < 0) {
-        warn("Could not signal request failure to client");
-    }
+        if (status < 0)
+            warn("Could not signal request failure to client");
         return warn(g_error);
     }
 
@@ -440,22 +449,6 @@ int ttp_open_transfer(ttp_session_t *session)
     if (!ef->valid) {
         fprintf(stderr, "Warning: EVN filename parsing failed, '%s' not following EVN File Naming Convention?\n", filename);
     }
-
-    /* get time multiplexing info from EVN filename (currently these are all unused) */
-    if (get_aux_entry("sl",ef->auxinfo, ef->nr_auxinfo) == 0)
-      param->totalslots= 1;          /* default to 1 */
-    else 
-      sscanf(get_aux_entry("sl",ef->auxinfo, ef->nr_auxinfo), "%d", &(param->totalslots));
-
-    if (get_aux_entry("sn",ef->auxinfo, ef->nr_auxinfo) == 0)
-      param->slotnumber= 1;          /* default to 1 */
-    else 
-      sscanf(get_aux_entry("sn",ef->auxinfo, ef->nr_auxinfo), "%d", &param->slotnumber);
-
-    if (get_aux_entry("sr",ef->auxinfo, ef->nr_auxinfo) == 0)
-      param->samplerate= 512;          /* default to 512 Msamples/s */
-    else 
-      sscanf(get_aux_entry("sr",ef->auxinfo, ef->nr_auxinfo), "%d", &param->samplerate);
 
     /* try to open the vsib for reading */
     xfer->vsib = fopen64("/dev/vsib", "r");
@@ -489,7 +482,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
         assert( gettimeofday(&d, NULL) == 0 );
         timedelta_usec = (unsigned long)((starttime - (double)d.tv_sec)* 1000000.0) - (double)d.tv_usec;
-        fprintf(stderr, "Sleeping until specified time (%s) for %lld usec...\n", ef->data_start_time_ascii, timedelta_usec);
+        fprintf(stderr, "Sleeping until specified time (%s) for %llu usec...\n", ef->data_start_time_ascii, timedelta_usec);
         usleep_that_works(timedelta_usec);
     }
 
@@ -511,21 +504,28 @@ int ttp_open_transfer(ttp_session_t *session)
     /* try to signal success to the client */
     status = write(session->client_fd, "\000", 1);
     if (status < 0)
-    return warn("Could not signal request approval to client");
+        return warn("Could not signal request approval to client");
 
     /* read in the block size, target bitrate, and error rate */
-    if (read(session->client_fd, &param->block_size,  4) < 0) return warn("Could not read block size");            param->block_size  = ntohl(param->block_size);
-    if (read(session->client_fd, &param->target_rate, 4) < 0) return warn("Could not read target bitrate");        param->target_rate = ntohl(param->target_rate);
-    if (read(session->client_fd, &param->error_rate,  4) < 0) return warn("Could not read error rate");            param->error_rate  = ntohl(param->error_rate);
+    if (read_into(session->client_fd, param->block_size)  < 0) return warn("Could not read block size");
+    if (read_into(session->client_fd, param->target_rate) < 0) return warn("Could not read target bitrate");
+    if (read_into(session->client_fd, param->error_rate)  < 0) return warn("Could not read error rate");
+    net_to_host(param->target_rate);
+    net_to_host(param->block_size);
+    net_to_host(param->error_rate);
 
     /* end round trip time estimation */
     gettimeofday(&ping_e,NULL);
 
     /* read in the slowdown and speedup factors */
-    if (read(session->client_fd, &param->slower_num,  2) < 0) return warn("Could not read slowdown numerator");    param->slower_num  = ntohs(param->slower_num);
-    if (read(session->client_fd, &param->slower_den,  2) < 0) return warn("Could not read slowdown denominator");  param->slower_den  = ntohs(param->slower_den);
-    if (read(session->client_fd, &param->faster_num,  2) < 0) return warn("Could not read speedup numerator");     param->faster_num  = ntohs(param->faster_num);
-    if (read(session->client_fd, &param->faster_den,  2) < 0) return warn("Could not read speedup denominator");   param->faster_den  = ntohs(param->faster_den);
+    if (read_into(session->client_fd, param->slower_num) < 0) return warn("Could not read slowdown numerator");
+    if (read_into(session->client_fd, param->slower_den) < 0) return warn("Could not read slowdown denominator");
+    if (read_into(session->client_fd, param->faster_num) < 0) return warn("Could not read speedup numerator");
+    if (read_into(session->client_fd, param->faster_den) < 0) return warn("Could not read speedup denominator");
+    net_to_host(param->slower_num);
+    net_to_host(param->slower_den);
+    net_to_host(param->faster_num);
+    net_to_host(param->faster_den);
 
     #ifndef VSIB_REALTIME
     /* try to find the file statistics */
@@ -535,23 +535,27 @@ int ttp_open_transfer(ttp_session_t *session)
     #else
     /* get length of recording in bytes from filename */
     if (get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo) != 0) {
-        sscanf(get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo), "%lld", (u_int64_t*) &(param->file_size));
+        sscanf(get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo), "%llu", (u_int64_t*) &(param->file_size));
     } else if (get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo) != 0) {
-        sscanf(get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo), "%lld", (u_int64_t*) &(param->file_size));
+        sscanf(get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo), "%llu", (u_int64_t*) &(param->file_size));
     } else {
         param->file_size = 60LL * 512000000LL * 4LL / 8; /* default to amount of bytes equivalent to 4 minutes at 512Mbps */
     }
-    fprintf(stderr, "Realtime file length in bytes: %lld\n", param->file_size);
+    fprintf(stderr, "Realtime file length in bytes: %llu\n", param->file_size);
     #endif
 
     param->block_count = (param->file_size / param->block_size) + ((param->file_size % param->block_size) != 0);
     param->epoch       = time(NULL);
 
     /* reply with the length, block size, number of blocks, and run epoch */
-    file_size   = htonll(param->file_size);    if (write(session->client_fd, &file_size,   8) < 0) return warn("Could not submit file size");
-    block_size  = htonl (param->block_size);   if (write(session->client_fd, &block_size,  4) < 0) return warn("Could not submit block size");
-    block_count = htonl (param->block_count);  if (write(session->client_fd, &block_count, 4) < 0) return warn("Could not submit block count");
-    epoch       = htonl (param->epoch);        if (write(session->client_fd, &epoch,       4) < 0) return warn("Could not submit run epoch");
+    file_size   = param->file_size;    host_to_net(file_size);
+    block_size  = param->block_size;   host_to_net(block_size);
+    block_count = param->block_count;  host_to_net(block_count);
+    epoch       = param->epoch;        host_to_net(epoch);
+    if (write_from(session->client_fd, file_size)   < 0) return warn("Could not submit file size");
+    if (write_from(session->client_fd, block_size)  < 0) return warn("Could not submit block size");
+    if (write_from(session->client_fd, block_count) < 0) return warn("Could not submit block count");
+    if (write_from(session->client_fd, epoch)       < 0) return warn("Could not submit run epoch");
 
     /*calculate and convert RTT to u_sec*/
     session->parameter->wait_u_sec=(ping_e.tv_sec - ping_s.tv_sec)*1000000+(ping_e.tv_usec-ping_s.tv_usec);
@@ -564,7 +568,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
     /* if we're doing a transcript */
     if (param->transcript_yn)
-    xscript_open(session);
+        xscript_open(session);
 
     /* we succeeded! */
     return 0;
@@ -573,88 +577,5 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
- * Revision 1.25  2007/08/10 16:37:17  jwagnerhki
- * remove unnecessary printf
- *
- * Revision 1.24  2007/08/10 13:39:00  jwagnerhki
- * send cleaner arrays (file_no, size)
- *
- * Revision 1.23  2007/07/10 08:18:06  jwagnerhki
- * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
- *
- * Revision 1.22  2007/02/13 13:47:31  jwagnerhki
- * UTC parse fixes and extensions, dl in addition to flen for realtime bytelength
- *
- * Revision 1.21  2007/02/12 13:41:21  jwagnerhki
- * mktime() post-fix now parsing really to utc, added 'dl' same as 'flen', added some EVN formats, added parse validity flag
- *
- * Revision 1.20  2006/12/05 15:24:50  jwagnerhki
- * now noretransmit code in client only, merged rt client code
- *
- * Revision 1.19  2006/12/05 13:38:20  jwagnerhki
- * identify concurrent server transfers by an own ID
- *
- * Revision 1.18  2006/11/26 14:12:29  jwagnerhki
- * fixed incorrect octals
- *
- * Revision 1.17  2006/11/21 09:25:02  jwagnerhki
- * cleaned up immediate vsib start code
- *
- * Revision 1.16  2006/11/21 08:13:15  jwagnerhki
- * old UTC timestamp parse moved to parse_evn_filename.c
- *
- * Revision 1.15  2006/11/21 07:28:48  jwagnerhki
- * realtime file length can be specified in filename
- *
- * Revision 1.14  2006/11/08 11:00:34  jwagnerhki
- * stats lied about real ipd
- *
- * Revision 1.13  2006/11/02 08:25:02  jwagnerhki
- * realtime file length shortened to 4min at 512mbps
- *
- * Revision 1.12  2006/10/30 08:46:58  jwagnerhki
- * removed memory leak unused ringbuf
- *
- * Revision 1.8  2006/10/28 17:00:12  jwagnerhki
- * block type defines
- *
- * Revision 1.7  2006/10/25 13:56:47  jwagnerhki
- * 'get *' mini fix, Jamil roundtrip time guess added
- *
- * Revision 1.6  2006/10/25 12:50:56  jwagnerhki
- * fallback to older datetime parser with immediate start support
- *
- * Revision 1.8  2006/10/25 12:09:08  jwagnerhki
- * multiget * support, parse_evn_filename called
- *
- * Revision 1.7  2006/10/24 21:06:00  jwagnerhki
- * file does not exist etc codes now returned to client
- *
- * Revision 1.6  2006/10/24 20:08:57  jwagnerhki
- * now realtime uses same protocol.c, VSIB_REALTIME compile flag
- *
- * Revision 1.5  2006/10/24 19:14:28  jwagnerhki
- * moved server.h into common tsunami-server.h
- *
- * Revision 1.4  2006/10/19 09:18:24  jwagnerhki
- * catch if specified UTC time is in the past
- *
- * Revision 1.3  2006/10/18 07:45:50  jwagnerhki
- * more verbose when waiting till UTC starttime
- *
- * Revision 1.2  2006/07/21 08:45:22  jwagnerhki
- * merged server and rtserver protocol.c
- *
- * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
- * reimport
- *
- * Revision 1.3  2006/07/19 06:31:13  jwagnerhki
- * bool 2 char
- *
- * Revision 1.2  2006/07/17 12:18:05  jwagnerhki
- * now /dev/vsib, start immediate or at specified time
- *
- * Revision 1.1  2006/07/10 12:37:21  jwagnerhki
- * added to trunk
  *
  */

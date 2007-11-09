@@ -5,7 +5,7 @@ Get the code
 If you have not yet downloaded the source code, you can do so with
 an anonymous CVS checkout:
 
-   cvs -z3 -d:pserver:anonymous@tsunami-udp.cvs.sf.net:/cvsroot/tsunami-udp co -P tsunami-udp
+   cvs -z3 -d:pserver:anonymous@tsunami-udp.cvs.sf.net:/cvsroot/tsunami-udp co -P tsunami-udp -r protocol_v12_branch
 
 Later you can use the usual
 

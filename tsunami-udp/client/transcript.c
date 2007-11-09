@@ -8,6 +8,8 @@
  * Copyright © 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -61,7 +63,7 @@
  * INFORMATION GENERATED USING SOFTWARE.
  *========================================================================*/
 
-#include "client.h"
+#include <tsunami-client.h>
 
 
 /*------------------------------------------------------------------------
@@ -135,18 +137,18 @@ void xscript_open(ttp_session_t *session)
     make_transcript_filename(filename, xfer->epoch, "tsuc");
     xfer->transcript = fopen(filename, "w");
     if (xfer->transcript == NULL) {
-	warn("Could not create transcript file");
-	return;
+        warn("Could not create transcript file");
+        return;
     }
 
     /* write out all the header information */
     fprintf(xfer->transcript, "remote_filename = %s\n", xfer->remote_filename);
     fprintf(xfer->transcript, "local_filename = %s\n",  xfer->local_filename);
     fprintf(xfer->transcript, "file_size = %llu\n",     xfer->file_size);
-    fprintf(xfer->transcript, "block_count = %u\n",     xfer->block_count);
+    fprintf(xfer->transcript, "block_count = %llu\n",   xfer->block_count);
     fprintf(xfer->transcript, "udp_buffer = %u\n",      param->udp_buffer);
     fprintf(xfer->transcript, "block_size = %u\n",      param->block_size);
-    fprintf(xfer->transcript, "target_rate = %u\n",     param->target_rate);
+    fprintf(xfer->transcript, "target_rate = %llu\n",   param->target_rate);
     fprintf(xfer->transcript, "error_rate = %u\n",      param->error_rate);
     fprintf(xfer->transcript, "slower_num = %u\n",      param->slower_num);
     fprintf(xfer->transcript, "slower_den = %u\n",      param->slower_den);
@@ -168,16 +170,5 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
- * Revision 1.3  2007/07/17 08:50:46  jwagnerhki
- * added fflush()es
- *
- * Revision 1.2  2007/07/13 18:43:56  jwagnerhki
- * added blockdump and lossless settings
- *
- * Revision 1.1.1.1  2006/07/20 09:21:19  jwagnerhki
- * reimport
- *
- * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
- * deleted unnecessary files
  *
  */

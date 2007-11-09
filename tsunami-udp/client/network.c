@@ -8,6 +8,8 @@
  * Copyright © 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -71,7 +73,7 @@
 #include <unistd.h>       /* for standard Unix system calls */
 #include <stdlib.h>       /* for *alloc() and free()        */
 
-#include "client.h"
+#include <tsunami-client.h>
 
 
 /*------------------------------------------------------------------------
@@ -100,50 +102,50 @@ int create_tcp_socket(ttp_session_t *session, const char *server_name, u_int16_t
     hints.ai_socktype = SOCK_STREAM;
 
     /* try to get address info for the server */
-    sprintf(buffer, "%d", server_port);
+    sprintf(buffer, "%u", server_port);
     status = getaddrinfo(server_name, buffer, &hints, &info);
     if (status)
-	return warn("Error in getting address information for server");
+        return warn("Error in getting address information for server");
 
     /* for each address structure returned */
     info_save = info;
     do {
 
-	/* try to create a socket of this type */
-	socket_fd = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
-	if (socket_fd < 0) {
-	    warn("Could not create socket");
-	    continue;
-	}
+        /* try to create a socket of this type */
+        socket_fd = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
+        if (socket_fd < 0) {
+            warn("Could not create socket");
+            continue;
+        }
 
-	/* make the socket reusable */
-	status = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
-	if (status < 0) {
-	    warn("Could not make socket reusable");
-	    close(socket_fd);
-	    continue;
-	}
+        /* make the socket reusable */
+        status = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
+        if (status < 0) {
+            warn("Could not make socket reusable");
+            close(socket_fd);
+            continue;
+        }
 
-	/* disable Nagle's algorithm */
-	status = setsockopt(socket_fd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes));
-	if (status < 0) {
-	    warn("Could not disable Nagle's algorithm");
-	    close(socket_fd);
-	    continue;
-	}
+        /* disable Nagle's algorithm */
+        status = setsockopt(socket_fd, IPPROTO_TCP, TCP_NODELAY, &yes, sizeof(yes));
+        if (status < 0) {
+            warn("Could not disable Nagle's algorithm");
+            close(socket_fd);
+            continue;
+        }
 
-	/* try to connect to the server */
-	status = connect(socket_fd, info->ai_addr, info->ai_addrlen);
-	if (status == 0) {
+        /* try to connect to the server */
+        status = connect(socket_fd, info->ai_addr, info->ai_addrlen);
+        if (status == 0) {
 
-	    /* copy the address */
-	    session->server_address = (struct sockaddr *) malloc(info->ai_addrlen);
+            /* copy the address */
+            session->server_address = (struct sockaddr *) malloc(info->ai_addrlen);
             session->server_address_length = info->ai_addrlen;
-	    if (session->server_address == NULL)
-		error("Could not allocate space for server address");
-	    memcpy(session->server_address, info->ai_addr, info->ai_addrlen);
-	    break;
-	}
+            if (session->server_address == NULL)
+                error("Could not allocate space for server address");
+            memcpy(session->server_address, info->ai_addr, info->ai_addrlen);
+            break;
+        }
 
     } while ((info = info->ai_next) != NULL);
 
@@ -152,7 +154,7 @@ int create_tcp_socket(ttp_session_t *session, const char *server_name, u_int16_t
 
     /* make sure that we succeeded with at least one address */
     if (info == NULL)
-	return warn("Error in connecting to Tsunami server");
+        return warn("Error in connecting to Tsunami server");
 
     /* return the file desscriptor */
     return socket_fd;
@@ -179,7 +181,7 @@ int create_udp_socket(ttp_parameter_t *parameter)
     // int              yes = 1;
     int              status;
     int              higher_port_attempt = 0;
-    
+
     /* set up the hints for getaddrinfo() */
     memset(&hints, 0, sizeof(hints));
     hints.ai_flags    = AI_PASSIVE;
@@ -187,48 +189,48 @@ int create_udp_socket(ttp_parameter_t *parameter)
     hints.ai_socktype = SOCK_DGRAM;
 
     do {
-  
+
         /* try to get address info for ourselves */
-        sprintf(buffer, "%d", parameter->client_port + higher_port_attempt);
+        sprintf(buffer, "%u", parameter->client_port + higher_port_attempt);
         status = getaddrinfo(NULL, buffer, &hints, &info);
         if (status) {
         return warn("Error in getting address information");
         }
-        
+
         /* for each address structure returned */
         info_save = info;
         do {
-   
+
             /* try to create a socket of this type */
             socket_fd = socket(info->ai_family, info->ai_socktype, info->ai_protocol);
             if (socket_fd < 0) {
                 continue;
             }
-            
+
             /* make the socket reusable (but then only one client can run per machine...) */
             //status = setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(yes));
             //if (status < 0) {
             //    close(socket_fd);
             //    continue;
             //}
-            
+
             /* set the receive buffer size */
             status = setsockopt(socket_fd, SOL_SOCKET, SO_RCVBUF, &parameter->udp_buffer, sizeof(parameter->udp_buffer));
             if (status < 0) {
                 close(socket_fd);
                 continue;
             }
-            
+
             /* and try to bind it */
             status = bind(socket_fd, info->ai_addr, info->ai_addrlen);
             if (status == 0) {
                 parameter->client_port = ntohs(((struct sockaddr_in*)info->ai_addr)->sin_port);
-                fprintf(stderr, "Receiving data on UDP port %d\n", parameter->client_port);
+                fprintf(stderr, "Receiving data on UDP port %u\n", parameter->client_port);
                 break;
             }
-   
+
         } while ((info = info->ai_next) != NULL);
-        
+
         /* free the allocated memory */
         freeaddrinfo(info_save);
 
@@ -236,12 +238,12 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
     /* warn about other transfers running concurrently */
     if(higher_port_attempt>1)
-    fprintf(stderr, "Warning: there are %d other Tsunami clients running\n", higher_port_attempt-1);
-    
+        fprintf(stderr, "Warning: there are %u other Tsunami clients running\n", higher_port_attempt-1);
+
     /* make sure that we succeeded with at least one address */
     if (info == NULL)
-    return warn("Error in creating UDP socket");
-    
+        return warn("Error in creating UDP socket");
+
     /* return the file desscriptor */
     return socket_fd;
 }
@@ -249,28 +251,5 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
- * Revision 1.7  2007/07/16 09:09:45  jwagnerhki
- * printf into fprintf stderr
- *
- * Revision 1.6  2007/07/16 08:55:53  jwagnerhki
- * build 21, upped 16 to 256 clients, reduced end block blast speed, enabled RETX_REQBLOCK_SORTING compile flag
- *
- * Revision 1.5  2007/01/11 15:15:48  jwagnerhki
- * rtclient merge, io.c now with VSIB_REALTIME, blocks_left not allowed negative fix, overwriting file check fixed, some memset()s to keep Valgrind warnings away
- *
- * Revision 1.4  2006/12/05 14:24:13  jwagnerhki
- * disabled client UDP socket reuse, multi client per PC now ok
- *
- * Revision 1.3  2006/09/07 13:56:57  jwagnerhki
- * udp socket reusable, udp port selectable in client
- *
- * Revision 1.2  2006/07/21 07:58:01  jwagnerhki
- * concurrent clients by scannig for next available UDP port
- *
- * Revision 1.1.1.1  2006/07/20 09:21:18  jwagnerhki
- * reimport
- *
- * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
- * deleted unnecessary files
  *
  */

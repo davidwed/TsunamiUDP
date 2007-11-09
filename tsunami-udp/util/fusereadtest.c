@@ -49,18 +49,18 @@ int main(int argc, char *argv[])
        randsleep = (10000LL * 100LL * rand())/ RAND_MAX; // 10ms * 1..100 as usecs
        tsleeps += 1e-6 * randsleep;
        usleep(randsleep);
-    } 
+    }
     fclose(file);
 
     gettimeofday(&t_closed, NULL);
     tdelta = (t_closed.tv_sec - t_start.tv_sec) + 1e-6 * (t_closed.tv_usec - t_start.tv_usec);
 
-	printf("Start    = %lu.%06lu\n",  t_start.tv_sec, t_start.tv_usec);
-	printf("Opened   = %lu.%06lu\n",  t_isopen.tv_sec, t_isopen.tv_usec);
-	printf("Finished = %lu.%06lu\n",  t_closed.tv_sec, t_closed.tv_usec);
-	printf("Delta    = %0.3lf sec\n", tdelta);
+    printf("Start    = %lu.%06lu\n",  t_start.tv_sec, t_start.tv_usec);
+    printf("Opened   = %lu.%06lu\n",  t_isopen.tv_sec, t_isopen.tv_usec);
+    printf("Finished = %lu.%06lu\n",  t_closed.tv_sec, t_closed.tv_usec);
+    printf("Delta    = %0.3lf sec\n", tdelta);
     printf("Sleeps   = %0.3lf sec\n", tsleeps);
-	printf("Speed    = %0.3lf Mbps\n",  totalread * 8.0 / (tdelta * 1024 * 1024));
+    printf("Speed    = %0.3lf Mbps\n",  totalread * 8.0 / (tdelta * 1024 * 1024));
 
     return 0;
 }

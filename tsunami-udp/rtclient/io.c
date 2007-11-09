@@ -7,6 +7,8 @@
  * Copyright © 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -60,61 +62,67 @@
  * INFORMATION GENERATED USING SOFTWARE.
  *========================================================================*/
 
-#include "client.h"
+#include <tsunami-client.h>
 #include <string.h>    /* for memcpy() */
 
 /*------------------------------------------------------------------------
  * int accept_block(ttp_session_t *session,
- *                  u_int32_t block_index, u_char *block);
+ *                  u_int64_t block_index,
+ *                  u_char *payload);
  *
- * Accepts the given block of data, which involves writing the block
- * to disk.  Returns 0 on success and nonzero on failure.
+ * Accepts the given block of data. Data is pure payload without headers.
+ * The block is written to disk and possibly to the VSIB ring buffer, too.
+ * Returns 0 on success and nonzero on failure.
  *------------------------------------------------------------------------*/
-int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
+int accept_block(ttp_session_t *session, u_int64_t block_index, u_char *payload)
 {
-    ttp_transfer_t  *transfer   = &session->transfer;
-    u_int32_t        block_size = session->parameter->block_size;
+    ttp_transfer_t  *transfer        = &session->transfer;
+    u_int32_t        block_size      = session->parameter->block_size;
+    static u_int64_t last_block      = 0;
+    static u_int64_t last_vsib_block = 0;
     u_int32_t        write_size;
-    static u_int32_t last_block = 0;
-    int              status;
-    #ifdef VSIB_REALTIME
-    u_int32_t       ringbuf_pointer;
-    #endif
+    size_t           status;
 
     /* see if we need this block */
     if (session->transfer.received[block_index / 8] & (1 << (block_index % 8)))
-	return 0;
-    
+        return 0;
+
+    /* reset static vars to zero on first block */
+    if (1 == block_index) {
+        last_block = 0;
+        last_vsib_block = 0;
+    }
+
     /* figure out how many bytes to write */
     write_size = (block_index == transfer->block_count) ? (transfer->file_size % block_size) : block_size;
     if (write_size == 0)
-	write_size = block_size;
+        write_size = block_size;
 
     #ifdef VSIB_REALTIME
-    /*These were added for real-time eVLBI */
-    ringbuf_pointer = ((block_index-1) % RINGBUF_BLOCKS) * session->parameter->block_size;
-    
-    if (session->parameter->ringbuf != NULL) /* If we have a ring buffer */
-        memcpy(session->parameter->ringbuf + ringbuf_pointer, block, write_size);
+    /* seek to VSIB buffer location */
+    if (block_index != (last_vsib_block + 1)) {
+        fseeko64(session->transfer.vsib, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
+    }
 
-    /* check if we need to feed the VSIB */
-    write_vsib(block, write_size);                
+    /* write the block into the VSIB buffer */
+    write_vsib(payload, write_size);
+    last_vsib_block = block_index;
     #endif
- 
-    #ifndef DEBUG_DISKLESS
+
+    #ifndef DISKLESS
     /* seek to the proper location */
     if (block_index != (last_block + 1)) {
         status = fseeko64(transfer->file, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
         if (status < 0) {
-            sprintf(g_error, "Could not seek at block %d of file", block_index);
+            sprintf(g_error, "Could not seek at block %llu of file", block_index);
             return warn(g_error);
         }
     }
 
     /* write the block to disk */
-    status = fwrite(block, 1, write_size, transfer->file);
+    status = fwrite(payload, 1, write_size, transfer->file);
     if (status < write_size) {
-        sprintf(g_error, "Could not write block %d of file", block_index);
+        sprintf(g_error, "Could not write block %llu of file", block_index);
         return warn(g_error);
     }
     #endif
@@ -122,7 +130,7 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
     /* we succeeded */
     session->transfer.received[block_index / 8] |= (1 << (block_index % 8));
     if (session->transfer.blocks_left > 0) // should not happen...
-       --(session->transfer.blocks_left);
+        --(session->transfer.blocks_left);
     last_block = block_index;
     return 0;
 }
@@ -130,16 +138,5 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
 
 /*========================================================================
  * $Log$
- * Revision 1.3  2006/12/15 12:57:41  jwagnerhki
- * added client 'blockdump' block bitmap dump to file feature
- *
- * Revision 1.2  2006/10/28 17:08:42  jwagnerhki
- * fixed jr's nonworking rtclient
- *
- * Revision 1.1.1.1  2006/07/20 09:21:19  jwagnerhki
- * reimport
- *
- * Revision 1.1  2006/07/10 12:35:11  jwagnerhki
- * added to trunk
  *
  */

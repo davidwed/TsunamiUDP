@@ -7,6 +7,8 @@
  * Copyright © 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -61,16 +63,16 @@
  *========================================================================*/
 
 #include <tsunami-server.h>
-
+// #define MODE_34TH 1 /* uncomment for 3/4th rate mode, valid in VSIB_REALTIME build */
 
 /*------------------------------------------------------------------------
- * int build_datagram(ttp_session_t *session, u_int32_t block_index,
+ * int build_datagram(ttp_session_t *session, u_int64_t block_index,
  *                    u_int16_t block_type, u_char *datagram);
  *
  * Constructs to hold the given block of data, with the given type
  * stored in it.  The format of the datagram is:
  *
- *     32                    0
+ *     64                    0
  *     +---------------------+
  *     |     block_number    |
  *     +----------+----------+
@@ -80,53 +82,153 @@
  *     +---------------------+
  *
  * The datagram is stored in the given buffer, which must be at least
- * six bytes longer than the block size for the transfer.  Returns 0 on
+ * ten bytes longer than the block size for the transfer.  Returns 0 on
  * success and non-zero on failure.
+ *
+ * There are two versions of this function. One is for the file server
+ * that reads data from normal files. The other is for the realtime server
+ * that reads data from the VSIB ring buffer and can create a local
+ * backup file of all the data.
+ *
  *------------------------------------------------------------------------*/
-int build_datagram(ttp_session_t *session, u_int32_t block_index,
-		   u_int16_t block_type, u_char *datagram)
+#ifndef VSIB_REALTIME
+int build_datagram(ttp_session_t *session, u_int64_t block_index,
+                   u_int16_t block_type, u_char *datagram)
 {
-#ifdef DEBUG_DISKLESS
-    /* build the datagram header */
-    *((u_int32_t *) (datagram + 0)) = htonl(block_index);
-    *((u_int16_t *) (datagram + 4)) = htons(block_type);
-
-   return 0;
-#else
     static u_int32_t last_block = 0;
     int              status;
+    blockheader_t   *hdr     = (blockheader_t*)datagram;
+    u_char          *payload = datagram + sizeof(blockheader_t);
+
+    /* assemble the datagram header */
+    hdr->block = block_index; host_to_net(hdr->block);
+    hdr->type  = block_type;  host_to_net(hdr->type);
+
+    #ifdef DISKLESS
+    /* do not read data if debugging or throughput test*/
+    return 0;
+    #else
 
     /* move the file pointer to the appropriate location */
-    if (block_index != (last_block + 1))
-	fseeko64(session->transfer.file, ((u_int64_t) session->parameter->block_size) * (block_index - 1), SEEK_SET);
+    // if (block_index != (last_block + 1)) {
+        fseeko64( session->transfer.file,
+                  ((u_int64_t) session->parameter->block_size) * (block_index - 1),
+                  SEEK_SET );
+    // }
 
-    /* try to read in the block */
-    status = fread(datagram + 6, 1, session->parameter->block_size, session->transfer.file);
+    /* read payload data into the datagram */
+    status = fread( payload,
+                    1, session->parameter->block_size,
+                    session->transfer.file );
     if (status < 0) {
-	sprintf(g_error, "Could not read block #%u", block_index);
-	return warn(g_error);
+        sprintf(g_error, "Could not read block #%llu", block_index);
+        return warn(g_error);
     }
 
-    /* build the datagram header */
-    *((u_int32_t *) (datagram + 0)) = htonl(block_index);
-    *((u_int16_t *) (datagram + 4)) = htons(block_type);
 
     /* return success */
     last_block = block_index;
     return 0;
-#endif
+    #endif
 }
 
+#else /* VSIB_REALTIME */
+
+int build_datagram(ttp_session_t *session, u_int64_t block_index,
+		   u_int16_t block_type, u_char *datagram)
+{
+    blockheader_t   *hdr          = (blockheader_t*)datagram;
+    u_char          *payload       = datagram + sizeof(blockheader_t);
+    u_int32_t        block_size    = session->parameter->block_size;
+    u_int64_t        block_size64  = (u_int64_t)block_size;
+    static u_int64_t last_block    = 0;
+    static u_int64_t last_written_vsib_block = 0;
+    size_t           status        = 0;
+    size_t           write_size    = 0;
+    #ifdef MODE_34TH
+    static u_char    packingbuffer[4*MAX_BLOCK_SIZE/3+8];
+    static u_int64_t vsib_byte_pos = 0L;
+    u_int32_t        inbufpos      = 0;
+    u_int32_t        outbufpos     = 0;
+    #endif
+
+    /* assemble the datagram header */
+    hdr->block = block_index; host_to_net(hdr->block);
+    hdr->type  = block_type;  host_to_net(hdr->type);
+
+    /* reset static vars to zero at first block, so that the next transfer works ok also */
+    if (1 == block_index) {
+        last_written_vsib_block = 0;
+        last_block = 0;
+    }
+
+    #ifdef MODE_34TH
+    /* ----------------------------------------------------------------------
+     * Take 3 bytes skip 4th : 6 lower BBCs included, 2 upper discarded
+     * ---------------------------------------------------------------------- */
+
+    /* calculate sent bytes plus the offset caused by discarded channel bytes */
+    vsib_byte_pos = (block_size64)*(block_index - 1) + (block_size64)*(block_index - 1)/3; /* 4/3 */
+
+    /* read enough data to get over 4/3th of blocksize */
+    fseeko64(session->transfer.vsib, vsib_byte_pos, SEEK_SET);
+    read_vsib_block(packingbuffer,  2 * block_size + 4); /* 2* vs. 4/3* */
+
+    /* copy, pack */
+    inbufpos=0; outbufpos=0;
+    while (outbufpos < block_size) {
+        if (3 == (vsib_byte_pos & 3)) {
+            inbufpos++; vsib_byte_pos++;
+        } else {
+            *(payload + (outbufpos++)) = packingbuffer[inbufpos++];
+            vsib_byte_pos++;
+        }
+    }
+
+    #else
+
+    /* ----------------------------------------------------------------------
+     * Normal read mode : take all data
+     * ---------------------------------------------------------------------- */
+
+    /* seek to non-sequential location if needed */
+    if (block_index != (last_block + 1)) {
+        fseeko64(session->transfer.vsib, block_size64 * (block_index - 1), SEEK_SET);
+    }
+
+    /* read payload data into the datagram */
+    read_vsib_block(payload, block_size);
+
+    #endif
+
+    /* need to maintain local backup copy of sent data? */
+    if (  (session->parameter->fileout) && (block_index != 0)
+          && (block_index == (last_written_vsib_block + 1)) )
+    {
+        /* remember what we have stored */
+        last_written_vsib_block++;
+
+        /* figure out how many bytes to write */
+        write_size = (block_index == session->parameter->block_count) ?
+                        (session->parameter->file_size % block_size)  :
+                        block_size;
+        if (write_size == 0)
+            write_size = block_size;
+
+        /* write the block to disk */
+        status = fwrite(payload, 1, write_size, session->transfer.file);
+        if (status < write_size) {
+           sprintf(g_error, "Could not write block %llu of file", block_index);
+           return warn(g_error);
+        }
+    }
+
+    /* return success */
+    return 0;
+}
+#endif
 
 /*========================================================================
  * $Log$
- * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
- * reimport
- *
- * Revision 1.2  2006/07/11 07:39:29  jwagnerhki
- * new debug defines
- *
- * Revision 1.1  2006/07/10 12:39:52  jwagnerhki
- * added to trunk
  *
  */

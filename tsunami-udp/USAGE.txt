@@ -1,4 +1,6 @@
 -----------------------------------------------------------
+  Tsunami Protocol v1.2 totally-alpha 1
+-----------------------------------------------------------
 
  CONTENTS
 
@@ -15,6 +17,9 @@
 -----------------------------------------------------------
 
  CHANGES
+ 09 Nov 2007:
+   - created new protocol_v12_branch in CVS, >4 Gbps 
+     support but same interface
  09 Nov 2007:
    - added description of heartbeat timeout feature
  31 Oct 2006:

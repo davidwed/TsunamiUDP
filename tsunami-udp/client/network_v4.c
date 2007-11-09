@@ -5,7 +5,7 @@
  * Tsunami file transfer client.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright  2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,10 +50,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NOWARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -67,7 +67,7 @@
 #include <sys/socket.h>   /* for the BSD socket library     */
 #include <unistd.h>       /* for standard Unix system calls */
 
-#include "client.h"
+#include <tsunami-client.h>
 
 
 /*------------------------------------------------------------------------
@@ -184,10 +184,5 @@ int create_udp_socket_v4(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
- * Revision 1.1.1.1  2006/07/20 09:21:18  jwagnerhki
- * reimport
- *
- * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
- * deleted unnecessary files
  *
  */

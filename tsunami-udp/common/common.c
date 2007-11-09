@@ -5,7 +5,7 @@
  * the Tsunami server.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright  2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,10 +50,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NOWARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -76,7 +76,7 @@
  * Definitions of global constants.
  *------------------------------------------------------------------------*/
 
-const u_int32_t PROTOCOL_REVISION  = 0x20061025; // yyyymmdd
+const u_int32_t PROTOCOL_REVISION  = 0x20071109; // yyyymmdd
 
 const u_int16_t REQUEST_RETRANSMIT = 0;
 const u_int16_t REQUEST_RESTART    = 1;
@@ -345,6 +345,9 @@ u_int64_t get_udp_in_errors()
 
 /*========================================================================
  * $Log$
+ * Revision 1.7  2007/07/10 08:18:05  jwagnerhki
+ * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
+ *
  * Revision 1.6  2007/05/31 11:45:26  jwagnerhki
  * removed compiler warning
  *

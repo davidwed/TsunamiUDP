@@ -7,6 +7,8 @@
  * Copyright  2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -68,7 +70,7 @@
 #include <sys/types.h>   /* for various system data types                */
 #include <mcheck.h>
 
-#include "tsunami.h"     /* for Tsunami function prototypes and the like */
+#include <tsunami.h>     /* for Tsunami function prototypes and the like */
 
 
 /*------------------------------------------------------------------------
@@ -92,6 +94,24 @@ extern const u_int16_t  DEFAULT_HEARTBEAT_TIMEOUT;  /* the default timeout after
  * Data structures.
  *------------------------------------------------------------------------*/
 
+/* VLBI data channel and channel subscription descriptors (for future RF-over-IP) */
+typedef struct {
+    u_char              bit_depth;      /* bits per sample                     */
+    u_char              modulation;     /* LSB, SSB, AM, ..., for demodulation */
+    u_int64_t           f_carrier;      /* carrier frequency in Hz             */
+    u_int32_t           delta_f;        /* signal or filter bandwidth          */
+    u_int32_t           f_s;            /* sampling rate in Hz                 */
+    u_char              agc;            /* 0=off, 1=fixed, 2='fast', 3=...     */
+    u_int16_t           vbr_flags;      /* 0=none, 1=bandwidth halving, 2=bit reduction, 4=... */
+    struct sockaddr    *udp_address;    /* the destination for the data stream */
+    socklen_t           udp_length;     /* the length of the UDP sockaddr      */
+} ttp_rfchannel_t;
+
+typedef struct {
+   u_int16_t            num_channels;   /* how many channels requested                */
+   ttp_rfchannel_t      channels[1024]; /* the actual channels with target host+port  */
+} ttp_rfoverip_subscription_t;
+
 /* Tsunami transfer protocol parameters */
 typedef struct {
     time_t              epoch;          /* the Unix epoch used to identify this run   */
@@ -104,8 +124,8 @@ typedef struct {
     const u_char       *secret;         /* the shared secret for users to prove       */
     u_int32_t           block_size;     /* the size of each block (in bytes)          */
     u_int64_t           file_size;      /* the total file size (in bytes)             */
-    u_int32_t           block_count;    /* the total number of blocks in the file     */
-    u_int32_t           target_rate;    /* the transfer rate that we're targetting    */
+    u_int64_t           block_count;    /* the total number of blocks in the file     */
+    u_int64_t           target_rate;    /* the transfer rate that we're targetting    */
     u_int32_t           error_rate;     /* the threshhold error rate (in % x 1000)    */
     u_int32_t           ipd_time;       /* the inter-packet delay in usec             */
     u_int16_t           slower_num;     /* the numerator of the increase-IPD factor   */
@@ -114,9 +134,6 @@ typedef struct {
     u_int16_t           faster_den;     /* the denominator of the decrease-IPD factor */
     char                *ringbuf;       /* Pointer to ring buffer start               */
     u_int16_t           fileout;        /* Do we store the data to file?              */
-    int                 slotnumber;     /* Slot number for distributed transfer       */
-    int                 totalslots;     /* How many slots do we have?                 */
-    int                 samplerate;     /* Sample rate in MHz (optional)              */
     char                **file_names;   /* Store the local file_names on server       */
     size_t              *file_sizes;    /* Store the local file sizes on server       */
     u_int16_t           file_name_size; /* Store the total size of the array          */
@@ -135,7 +152,7 @@ typedef struct {
     struct sockaddr    *udp_address;  /* the destination for our file data          */
     socklen_t           udp_length;   /* the length of the UDP socket address       */
     u_int32_t           ipd_current;  /* the inter-packet delay currently in usec   */
-    u_int32_t           block;        /* the current block that we're up to         */
+    u_int64_t           block;        /* the current block that we're up to         */
 } ttp_transfer_t;
 
 /* state of a Tsunami session as a whole */
@@ -155,7 +172,7 @@ typedef struct {
 void reset_server         (ttp_parameter_t *parameter);
 
 /* io.c */
-int  build_datagram       (ttp_session_t *session, u_int32_t block_index, u_int16_t block_type, u_char *datagram);
+int  build_datagram       (ttp_session_t *session, u_int64_t block_index, u_int16_t block_type, u_char *datagram);
 
 /* vsibctl.c */
 #ifdef VSIB_REALTIME
@@ -190,43 +207,5 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
- * Revision 1.9  2007/08/22 12:34:13  jwagnerhki
- * read in file length of commandline shared files
- *
- * Revision 1.8  2007/08/10 09:19:35  jwagnerhki
- * server closes connection if no client feedback in 15s
- *
- * Revision 1.7  2007/07/10 08:18:05  jwagnerhki
- * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
- *
- * Revision 1.6  2007/06/04 12:17:21  jwagnerhki
- * exclude mk5server from normal build, header fix
- *
- * Revision 1.5  2007/05/31 09:32:03  jwagnerhki
- * removed some signedness warnings, added Mark5 server devel start code
- *
- * Revision 1.4  2006/12/05 15:24:50  jwagnerhki
- * now noretransmit code in client only, merged rt client code
- *
- * Revision 1.3  2006/12/05 13:38:20  jwagnerhki
- * identify concurrent server transfers by an own ID
- *
- * Revision 1.2  2006/10/25 12:32:43  jwagnerhki
- * merged with joukos rttest server.h
- *
- * Revision 1.1  2006/10/24 19:11:05  jwagnerhki
- * common tsunami-server.h for server apps
- *
- * Revision 1.3  2006/10/17 11:52:19  jwagnerhki
- * removed log() declaration not working on SuSE
- *
- * Revision 1.2  2006/07/20 12:23:45  jwagnerhki
- * header file merge
- *
- * Revision 1.1.1.1  2006/07/20 09:21:21  jwagnerhki
- * reimport
- *
- * Revision 1.1  2006/07/10 12:39:52  jwagnerhki
- * added to trunk
  *
  */

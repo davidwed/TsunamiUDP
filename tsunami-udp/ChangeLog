@@ -1,4 +1,33 @@
-The current Tsunami protocol version is: v1.1
+
+** The unstable Tsunami protocol version is: v1.2 **
+
+ Improvements and protocol version compliant new features
+ are added in the cvs builds. 
+
+ Because v1.2 is in progress and the protocol features 
+ are not fixed yet, new builds from the v1.2 branch may 
+ not be compatible with earlier v1.2 builds.
+
+ The change in protocol version means that you
+ can not use Tsunami protocol v1.1 software 
+ to transfer data from a protocol v1.2 software
+ server, and vice versa.
+
+ v1.2 CvsBuild 1:
+  - very initial version, cleaned up a few things,
+    now using blockheader_t instead of fixed 6 bytes,
+    client.h's now /include/tsunami-client.h, 
+    server io.c's now combined
+  - changed block sequence number and target rate setting
+    from 32 to 64-bit
+    - transfer rates up to a few Pbit/s now possible, provided
+      you can find a sufficiently fast home Internet connection
+    - file sizes of several PB possible
+
+
+
+
+** The current stable Tsunami protocol version is: v1.1 **
 
 Improvements and protocol version compliant new features
 are added in the cvs builds.

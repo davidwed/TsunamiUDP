@@ -7,6 +7,8 @@
  * Copyright © 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -63,8 +65,7 @@
 #include <stdlib.h>  /* for malloc(), free(), etc. */
 #include <string.h>  /* for memset()               */
 
-#include "client.h"
-
+#include <tsunami-client.h>
 
 /*------------------------------------------------------------------------
  * Global constants.
@@ -80,7 +81,7 @@ const u_char     DEFAULT_VERBOSE_YN    = 1;            /* the default verbosity 
 const u_char     DEFAULT_TRANSCRIPT_YN = 0;            /* the default transcript setting               */
 const u_char     DEFAULT_IPV6_YN       = 0;            /* the default IPv6 setting                     */
 const u_char     DEFAULT_OUTPUT_MODE   = LINE_MODE;    /* the default output mode (SCREEN or LINE)     */
-const u_int32_t  DEFAULT_TARGET_RATE   = 650000000;    /* the default target rate (in bps)             */
+const u_int64_t  DEFAULT_TARGET_RATE   = 650000000;    /* the default target rate (in bps)             */
 const u_int32_t  DEFAULT_ERROR_RATE    = 7500;         /* the default threshhold error rate (% x 1000) */
 const u_int16_t  DEFAULT_SLOWER_NUM    = 25;           /* default numerator in the slowdown factor     */
 const u_int16_t  DEFAULT_SLOWER_DEN    = 24;           /* default denominator in the slowdown factor   */
@@ -105,7 +106,7 @@ void reset_client(ttp_parameter_t *parameter)
 {
     /* free the previous hostname if necessary */
     if (parameter->server_name != NULL)
-	free(parameter->server_name);
+        free(parameter->server_name);
 
     /* zero out the memory structure */
     memset(parameter, 0, sizeof(*parameter));
@@ -133,22 +134,11 @@ void reset_client(ttp_parameter_t *parameter)
 
     /* make sure the strdup() worked */
     if (parameter->server_name == NULL)
-      error("Could not reset default server name");
+        error("Could not reset default server name");
 }
 
 
 /*========================================================================
  * $Log$
- * Revision 1.3  2006/12/15 12:57:41  jwagnerhki
- * added client 'blockdump' block bitmap dump to file feature
- *
- * Revision 1.2  2006/07/21 07:55:35  jwagnerhki
- * new UDP port define
- *
- * Revision 1.1.1.1  2006/07/20 09:21:18  jwagnerhki
- * reimport
- *
- * Revision 1.1  2006/07/10 12:26:51  jwagnerhki
- * deleted unnecessary files
  *
  */

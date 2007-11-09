@@ -5,7 +5,7 @@
  * available on the server to disk for later analysis.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright  2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,10 +50,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NOWARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -141,12 +141,12 @@ void xscript_open(ttp_session_t *session)
     }
 
     /* write out all the header information */
-    fprintf(xfer->transcript, "filename = %s\n",    xfer->filename);
-    fprintf(xfer->transcript, "file_size = %llu\n", param->file_size);
-    fprintf(xfer->transcript, "block_count = %u\n", param->block_count);
-    fprintf(xfer->transcript, "udp_buffer = %u\n",  param->udp_buffer);
-    fprintf(xfer->transcript, "block_size = %u\n",  param->block_size);
-    fprintf(xfer->transcript, "target_rate = %u\n", param->target_rate);
+    fprintf(xfer->transcript, "filename = %s\n",      xfer->filename);
+    fprintf(xfer->transcript, "file_size = %llu\n",   param->file_size);
+    fprintf(xfer->transcript, "block_count = %llu\n", param->block_count);
+    fprintf(xfer->transcript, "udp_buffer = %u\n",    param->udp_buffer);
+    fprintf(xfer->transcript, "block_size = %u\n",    param->block_size);
+    fprintf(xfer->transcript, "target_rate = %llu\n", param->target_rate);
     fprintf(xfer->transcript, "error_rate = %u\n",  param->error_rate);
     fprintf(xfer->transcript, "slower_num = %u\n",  param->slower_num);
     fprintf(xfer->transcript, "slower_den = %u\n",  param->slower_den);
@@ -164,6 +164,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.4  2007/10/29 15:30:25  jwagnerhki
+ * timeout feature for rttsunamid too, added version info to transcripts, added --hbimeout srv cmd line param
+ *
  * Revision 1.3  2007/07/17 08:50:50  jwagnerhki
  * added fflush()es
  *

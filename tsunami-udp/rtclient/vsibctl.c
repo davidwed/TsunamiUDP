@@ -17,29 +17,31 @@
 
 /* Ensure 64-bit file support regardless of '-D_LARGEFILE64_SOURCE=1'
    in Makefile. */
+
 #define _LARGEFILE64_SOURCE 1  /* Large File Support (LFS) '*64()' functions. */ 
-#define _FILE_OFFSET_BITS 64  /* Automatic '*()' --> '*64()' replacement. */ 
+#define _FILE_OFFSET_BITS 64   /* Automatic '*()' --> '*64()' replacement. */ 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
 
 #include <sys/types.h>  /* open() */
-#include <sys/stat.h>  /* open() */
-#include <fcntl.h>  /* open() */
+#include <sys/stat.h>   /* open() */
+#include <fcntl.h>      /* open() */
 
-#include <sys/time.h>  /* gettimeofday() */
+#include <sys/time.h>   /* gettimeofday() */
 #include <time.h>
-#include <unistd.h>  /* gettimeofday(), usleep() */
+#include <unistd.h>     /* gettimeofday(), usleep() */
 
-#include <string.h>  /* strstr() */
+#include <string.h>     /* strstr() */
 
-#include <sys/ipc.h>  /* for shared memory */
+#include <sys/ipc.h>    /* for shared memory */
 #include <sys/shm.h>
 
 #include <sys/ioctl.h>
 #include "vsib_ioctl.h"
-#include "client.h"
+
+#include <tsunami-client.h>
 
 
 

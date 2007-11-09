@@ -8,6 +8,8 @@
  * Copyright © 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
+ * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
@@ -81,6 +83,21 @@
 #define min(a,b)  (((a) < (b)) ? (a) : (b))
 #define max(a,b)  (((a) > (b)) ? (a) : (b))
 
+#define read_into(fd,var)      read(fd, &var, sizeof(var))          /* safe'ish read from file/stream into variable */
+#define fread_into(fd,var)    fread(&var, sizeof(var), 1, fd)
+#define write_from(fd,var)    write(fd, &var, sizeof(var))         /* safe'ish write from variable to file/stream  */
+#define fwrite_from(fd,var)  fwrite(&var, sizeof(var), 1, fd)
+
+#define net_to_host(var) \
+    if      (sizeof(var) == sizeof(u_int16_t)) var = ntohs(var); \
+    else if (sizeof(var) == sizeof(u_int32_t)) var = ntohl(var); \
+    else if (sizeof(var) == sizeof(u_int64_t)) var = ntohll(var)  /* convert variable from net to host presentation */
+
+#define host_to_net(var) \
+    if      (sizeof(var) == sizeof(u_int16_t)) var = htons(var); \
+    else if (sizeof(var) == sizeof(u_int32_t)) var = htonl(var); \
+    else if (sizeof(var) == sizeof(u_int64_t)) var = htonll(var)  /* convert variable from host to net presentation */
+
 
 /*------------------------------------------------------------------------
  * Global constants.
@@ -112,10 +129,14 @@ extern const u_int16_t REQUEST_ERROR_RATE;
 /* retransmission request */
 typedef struct {
     u_int16_t           request_type;  /* the retransmission request type           */
-    u_int32_t           block;         /* the block number to retransmit {at}       */
+    u_int64_t           block;         /* the block number to retransmit {at}       */
     u_int32_t           error_rate;    /* the current error rate (in % x 1000)      */
 } retransmission_t;
 
+typedef struct {
+    u_int64_t           block;         /* the block number                          */
+    u_int16_t           type;          /* the block type                            */
+} blockheader_t;
 
 /*------------------------------------------------------------------------
  * Global variables.
@@ -143,4 +164,9 @@ u_int64_t  get_udp_in_errors       ();
 /* error.c */
 int        error_handler           (const char *file, int line, const char *message, int fatal_yn);
 
-#endif
+#endif // _TSUNAMI_H
+
+/*========================================================================
+ * $Log$
+ *
+ */
