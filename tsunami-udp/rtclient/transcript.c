@@ -5,7 +5,7 @@
  * available on the client to disk for later analysis.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -52,10 +52,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -144,11 +144,11 @@ void xscript_open(ttp_session_t *session)
     /* write out all the header information */
     fprintf(xfer->transcript, "remote_filename = %s\n", xfer->remote_filename);
     fprintf(xfer->transcript, "local_filename = %s\n",  xfer->local_filename);
-    fprintf(xfer->transcript, "file_size = %llu\n",     xfer->file_size);
-    fprintf(xfer->transcript, "block_count = %llu\n",   xfer->block_count);
+    fprintf(xfer->transcript, "file_size = %Lu\n",      (ull_t)xfer->file_size);
+    fprintf(xfer->transcript, "block_count = %Lu\n",    (ull_t)xfer->block_count);
     fprintf(xfer->transcript, "udp_buffer = %u\n",      param->udp_buffer);
     fprintf(xfer->transcript, "block_size = %u\n",      param->block_size);
-    fprintf(xfer->transcript, "target_rate = %llu\n",   param->target_rate);
+    fprintf(xfer->transcript, "target_rate = %Lu\n",    (ull_t)param->target_rate);
     fprintf(xfer->transcript, "error_rate = %u\n",      param->error_rate);
     fprintf(xfer->transcript, "slower_num = %u\n",      param->slower_num);
     fprintf(xfer->transcript, "slower_den = %u\n",      param->slower_den);
@@ -158,8 +158,8 @@ void xscript_open(ttp_session_t *session)
     fprintf(xfer->transcript, "lossless = %u\n",        param->lossless);
     fprintf(xfer->transcript, "losswindow = %u\n",      param->losswindow_ms);
     fprintf(xfer->transcript, "blockdump = %u\n",       param->blockdump);
-    fprintf(xfer->transcript, "update_period = %llu\n", UPDATE_PERIOD);
-    fprintf(xfer->transcript, "rexmit_period = %llu\n", UPDATE_PERIOD);
+    fprintf(xfer->transcript, "update_period = %Lu\n",  (ull_t)UPDATE_PERIOD);
+    fprintf(xfer->transcript, "rexmit_period = %Lu\n",  (ull_t)UPDATE_PERIOD);
     fprintf(xfer->transcript, "protocol_version = 0x%x\n", PROTOCOL_REVISION);
     fprintf(xfer->transcript, "software_version = %s\n",   TSUNAMI_CVS_BUILDNR);
     fprintf(xfer->transcript, "ipv6 = %u\n",            param->ipv6_yn);
@@ -168,7 +168,3 @@ void xscript_open(ttp_session_t *session)
 }
 
 
-/*========================================================================
- * $Log$
- *
- */

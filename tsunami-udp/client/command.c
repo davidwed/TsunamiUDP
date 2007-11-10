@@ -593,7 +593,7 @@ int command_get(command_t *command, ttp_session_t *session)
         printf("Mbits of data transmitted : %0.2f\n", xfer->file_size * 8.0 / (1024.0 * 1024.0));
         printf("Duration in seconds       : %0.2f\n", delta / 1000000.0);
         printf("THROUGHPUT (Mbps)         : %0.2f\n", xfer->file_size * 8.0 / delta);
-        printf("OS UDP packet rx errors   : delta %llu\n",  xfer->stats.this_udp_errors - xfer->stats.start_udp_errors);
+        printf("OS UDP packet rx errors   : delta %Lu\n",  (ull_t)(xfer->stats.this_udp_errors - xfer->stats.start_udp_errors));
         printf("Transfer type             : ");
         if (session->parameter->lossless) {
             printf("lossless\n");
@@ -603,8 +603,8 @@ int command_get(command_t *command, ttp_session_t *session)
             } else {
                 printf("semi-lossy, time window %d ms\n", session->parameter->losswindow_ms);
             }
-            printf("Missing data blocks count : %llu (%.2f%% of data) per user-specified time window constraint\n",
-                    lostcount, ( 100.0 * lostcount ) / xfer->block_count );
+            printf("Missing data blocks count : %Lu (%.2f%% of data) per user-specified time window constraint\n",
+                    (ull_t)lostcount, ( 100.0 * lostcount ) / xfer->block_count );
         }
         printf("\n");
 
@@ -837,7 +837,7 @@ int command_set(command_t *command, ttp_parameter_t *parameter)
     if (do_all || !strcasecmp(command->text[1], "transcript")) printf("transcript = %s\n",  parameter->transcript_yn ? "yes" : "no");
     if (do_all || !strcasecmp(command->text[1], "ip"))         printf("ip = %s\n",          parameter->ipv6_yn       ? "v6"  : "v4");
     if (do_all || !strcasecmp(command->text[1], "output"))     printf("output = %s\n",      (parameter->output_mode == SCREEN_MODE) ? "screen" : "line");
-    if (do_all || !strcasecmp(command->text[1], "rate"))       printf("rate = %llu\n",      parameter->target_rate);
+    if (do_all || !strcasecmp(command->text[1], "rate"))       printf("rate = %Lu\n",       (ull_t)(parameter->target_rate));
     if (do_all || !strcasecmp(command->text[1], "error"))      printf("error = %0.2f%%\n",  parameter->error_rate / 1000.0);
     if (do_all || !strcasecmp(command->text[1], "slowdown"))   printf("slowdown = %d/%d\n", parameter->slower_num, parameter->slower_den);
     if (do_all || !strcasecmp(command->text[1], "speedup"))    printf("speedup = %d/%d\n",  parameter->faster_num, parameter->faster_den);
@@ -918,11 +918,3 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
     return 0;
 }
 
-
-/*========================================================================
- * $Log$
- * Revision 1.25.2.1  2007/11/09 22:43:51  jwagnerhki
- * protocol v1.2 build 1
- *
- *
- */

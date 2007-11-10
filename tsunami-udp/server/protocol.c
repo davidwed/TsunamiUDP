@@ -5,7 +5,7 @@
  * transfer server.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright  2002 The Trustees of Indiana University.
+ * Copyright (C) 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -124,8 +124,8 @@ int ttp_accept_retransmit(ttp_session_t *session, retransmission_t *retransmissi
         }
 
         /* build the stats string */
-        sprintf(stats_line, "%6u %5uus %5uus %7llu %6.2f%% %3u\n",
-            retransmission->error_rate, xfer->ipd_current, param->ipd_time, xfer->block,
+        sprintf(stats_line, "%6u %5uus %5uus %7Lu %6.2f%% %3u\n",
+            retransmission->error_rate, xfer->ipd_current, param->ipd_time, (ull_t)xfer->block,
             100.0 * xfer->block / param->block_count, session->session_id);
 
         /* make sure the IPD is still in range, for later calculations */
@@ -146,7 +146,7 @@ int ttp_accept_retransmit(ttp_session_t *session, retransmission_t *retransmissi
 
         /* do range-checking first */
         if ((retransmission->block == 0) || (retransmission->block > param->block_count)) {
-            sprintf(g_error, "Attempt to restart at illegal block %llu", retransmission->block);
+            sprintf(g_error, "Attempt to restart at illegal block %Lu", (ull_t)retransmission->block);
             return warn(g_error);
         }
 
@@ -158,7 +158,7 @@ int ttp_accept_retransmit(ttp_session_t *session, retransmission_t *retransmissi
         /* build the retransmission */
         status = build_datagram(session, retransmission->block, TS_BLOCK_RETRANSMISSION, datagram);
         if (status < 0) {
-            sprintf(g_error, "Could not build retransmission for block %llu", retransmission->block);
+            sprintf(g_error, "Could not build retransmission for block %Lu", (ull_t)retransmission->block);
             return warn(g_error);
         }
 
@@ -168,7 +168,7 @@ int ttp_accept_retransmit(ttp_session_t *session, retransmission_t *retransmissi
                         xfer->udp_address,
                         xfer->udp_length);
         if (status < 0) {
-            sprintf(g_error, "Could not retransmit block %llu", retransmission->block);
+            sprintf(g_error, "Could not retransmit block %Lu", (ull_t)retransmission->block);
             return warn(g_error);
         }
 
@@ -346,19 +346,18 @@ int ttp_open_transfer(ttp_session_t *session)
     int              status;
     ttp_transfer_t  *xfer  = &session->transfer;
     ttp_parameter_t *param =  session->parameter;
+    char            size[10];                        /* for Jamil's GET* hack               */
+    char            file_no[10];
+    char            message[20];
+    int             i;
+    struct          timeval ping_s, ping_e;
 
     #ifdef VSIB_REALTIME
-    /* VLBI/VSIB-related variables */
-    struct evn_filename *ef;
-    double starttime;
-    struct timeval d;
+    unsigned long long  ull;                         /* helper for sscanf()                  */
+    struct evn_filename *ef;                         /* EVN filename information struct      */
+    double              starttime;                   /* start time in usec, gettimeofday()   */
+    struct timeval      d;
     #endif
-
-    char       size[10];
-    char       file_no[10];
-    char       message[20];
-    u_int16_t  i;
-    struct     timeval ping_s, ping_e;
 
     /* clear out the transfer data */
     memset(xfer, 0, sizeof(*xfer));
@@ -481,8 +480,8 @@ int ttp_open_transfer(ttp_session_t *session)
         starttime = ef->data_start_time - 0.5;
 
         assert( gettimeofday(&d, NULL) == 0 );
-        timedelta_usec = (unsigned long)((starttime - (double)d.tv_sec)* 1000000.0) - (double)d.tv_usec;
-        fprintf(stderr, "Sleeping until specified time (%s) for %llu usec...\n", ef->data_start_time_ascii, timedelta_usec);
+        timedelta_usec = (u_int64_t)((starttime - (double)d.tv_sec)* 1000000.0) - (double)d.tv_usec;
+        fprintf(stderr, "Sleeping until specified time (%s) for %Lu usec...\n", ef->data_start_time_ascii, (ull_t)timedelta_usec);
         usleep_that_works(timedelta_usec);
     }
 
@@ -535,13 +534,15 @@ int ttp_open_transfer(ttp_session_t *session)
     #else
     /* get length of recording in bytes from filename */
     if (get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo) != 0) {
-        sscanf(get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo), "%llu", (u_int64_t*) &(param->file_size));
+        sscanf(get_aux_entry("flen", ef->auxinfo, ef->nr_auxinfo), "%llu", &ull);
+        param->file_size = (u_int64_t)ull;
     } else if (get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo) != 0) {
-        sscanf(get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo), "%llu", (u_int64_t*) &(param->file_size));
+        sscanf(get_aux_entry("dl", ef->auxinfo, ef->nr_auxinfo), "%llu", &ull);
+        param->file_size = (u_int64_t)ull;
     } else {
         param->file_size = 60LL * 512000000LL * 4LL / 8; /* default to amount of bytes equivalent to 4 minutes at 512Mbps */
     }
-    fprintf(stderr, "Realtime file length in bytes: %llu\n", param->file_size);
+    fprintf(stderr, "Realtime file length in bytes: %Lu\n", (ull_t)param->file_size);
     #endif
 
     param->block_count = (param->file_size / param->block_size) + ((param->file_size % param->block_size) != 0);
@@ -574,11 +575,3 @@ int ttp_open_transfer(ttp_session_t *session)
     return 0;
 }
 
-
-/*========================================================================
- * $Log$
- * Revision 1.23.2.1  2007/11/09 22:43:52  jwagnerhki
- * protocol v1.2 build 1
- *
- *
- */

@@ -4,7 +4,7 @@
  * This contains disk I/O routines for the Tsunami file transfer client.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -51,10 +51,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -114,7 +114,7 @@ int accept_block(ttp_session_t *session, u_int64_t block_index, u_char *payload)
     if (block_index != (last_block + 1)) {
         status = fseeko64(transfer->file, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
         if (status < 0) {
-            sprintf(g_error, "Could not seek at block %llu of file", block_index);
+            sprintf(g_error, "Could not seek at block %llu of file", (ull_t)block_index);
             return warn(g_error);
         }
     }
@@ -122,7 +122,7 @@ int accept_block(ttp_session_t *session, u_int64_t block_index, u_char *payload)
     /* write the block to disk */
     status = fwrite(payload, 1, write_size, transfer->file);
     if (status < write_size) {
-        sprintf(g_error, "Could not write block %llu of file", block_index);
+        sprintf(g_error, "Could not write block %llu of file", (ull_t)block_index);
         return warn(g_error);
     }
     #endif
@@ -136,7 +136,3 @@ int accept_block(ttp_session_t *session, u_int64_t block_index, u_char *payload)
 }
 
 
-/*========================================================================
- * $Log$
- *
- */

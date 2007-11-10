@@ -575,25 +575,25 @@ int ttp_update_stats(ttp_session_t *session)
 
     /* build the stats string */    
     #ifdef STATS_MATLABFORMAT
-    sprintf(stats_line, "%02d\t%02d\t%02d\t%03d\t%6llu\t%6.2f\t%6.1f\t%5.1f\t%7llu\t%6.1f\t%6.1f\t%5.1f\t%5llu\t%5u\t%8llu\t%8u\t%8llu\n",
+    sprintf(stats_line, "%02d\t%02d\t%02d\t%03d\t%6Lu\t%6.2f\t%6.1f\t%5.1f\t%7Lu\t%6.1f\t%6.1f\t%5.1f\t%5Lu\t%5u\t%8Lu\t%8u\t%8Lu\n",
     #else
-    sprintf(stats_line, "%02d:%02d:%02d.%03d %6llu %6.2fM %6.1fMbps %5.1f%% %7llu %6.1fG %6.1fMbps %5.1f%% %5llu %5u %8llu %8u %8llu\n",
+    sprintf(stats_line, "%02d:%02d:%02d.%03d %6Lu %6.2fM %6.1fMbps %5.1f%% %7Lu %6.1fG %6.1fMbps %5.1f%% %5Lu %5u %8Lu %8u %8Lu\n",
     #endif
         hours, minutes, seconds, milliseconds,
-        stats->total_blocks - stats->this_blocks,
+        (ull_t)(stats->total_blocks - stats->this_blocks),
         stats->this_retransmit_rate,
         stats->this_transmit_rate,
         100.0 * stats->this_retransmits / (1.0 + stats->this_retransmits + stats->total_blocks - stats->this_blocks),
-        session->transfer.stats.total_blocks,
+        (ull_t)(session->transfer.stats.total_blocks),
         data_total / (1024.0 * 1024.0 * 1024.0),
         (data_total * 8.0 / delta_total),
         100.0 * stats->total_retransmits / (stats->total_retransmits + stats->total_blocks),
         session->transfer.retransmit.index_max,
         session->transfer.ring_buffer->count_data,
         //delta_useful * 8.0 / delta,
-        session->transfer.blocks_left,
+        (ull_t)(session->transfer.blocks_left),
         stats->this_retransmits, // NOTE: stats->this_retransmits seems to be 0 always ??
-        stats->this_udp_errors - stats->start_udp_errors
+        (ull_t)(stats->this_udp_errors - stats->start_udp_errors)
         );
 
     /* give the user a show if they want it */
@@ -605,16 +605,16 @@ int ttp_update_stats(ttp_session_t *session)
             printf("Current time:   %s\n", ctime(&now_epoch));
             printf("Elapsed time:   %02d:%02d:%02d.%03d\n\n", hours, minutes, seconds, milliseconds);
             printf("Last interval\n--------------------------------------------------\n");
-            printf("Blocks count:     %llu\n",           stats->total_blocks - stats->this_blocks);
+            printf("Blocks count:     %Lu\n",            (ull_t)(stats->total_blocks - stats->this_blocks));
             printf("Data transferred: %0.2f GB\n",       data_last  / (1024.0 * 1024.0 * 1024.0));
             printf("Transfer rate:    %0.2f Mbps\n",     (data_last  * 8.0 / delta));
             printf("Retransmissions:  %u (%0.2f%%)\n\n", stats->this_retransmits,  (100.0 * stats->this_retransmits / (stats->total_blocks - stats->this_blocks)));
             printf("Cumulative\n--------------------------------------------------\n");
-            printf("Blocks count:     %llu\n",           session->transfer.stats.total_blocks);
+            printf("Blocks count:     %Lu\n" ,           (ull_t)(session->transfer.stats.total_blocks));
             printf("Data transferred: %0.2f GB\n",       data_total / (1024.0 * 1024.0 * 1024.0));
             printf("Transfer rate:    %0.2f Mbps\n",     (data_total * 8.0 / delta_total));
             printf("Retransmissions:  %u (%0.2f%%)\n\n", stats->total_retransmits, (100.0 * stats->total_retransmits / stats->total_blocks));
-            printf("OS UDP rx errors: %llu\n",           stats->this_udp_errors - stats->start_udp_errors);
+            printf("OS UDP rx errors: %Lu\n" ,           (ull_t)(stats->this_udp_errors - stats->start_udp_errors));
 
         /* line mode */
         } else {
@@ -649,6 +649,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.21.2.3  2007/11/10 09:58:11  jwagnerhki
+ * more host to nets
+ *
  * Revision 1.21.2.2  2007/11/10 09:46:21  jwagnerhki
  * int to u_int64_t
  *

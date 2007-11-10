@@ -99,6 +99,8 @@
     else if (sizeof(var) == sizeof(u_int64_t)) var = htonll(var)  /* convert variable from host to net presentation */
 
 
+typedef unsigned long long ull_t;
+
 /*------------------------------------------------------------------------
  * Global constants.
  *------------------------------------------------------------------------*/
@@ -174,6 +176,9 @@ int        error_handler           (const char *file, int line, const char *mess
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.2  2007/11/10 14:15:17  jwagnerhki
+ * pragma pack(1)
+ *
  * Revision 1.8.2.1  2007/11/09 22:43:52  jwagnerhki
  * protocol v1.2 build 1
  *

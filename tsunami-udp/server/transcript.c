@@ -5,7 +5,7 @@
  * available on the server to disk for later analysis.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright  2002 The Trustees of Indiana University.
+ * Copyright (C) 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -50,7 +50,7 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NOWARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
  * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
@@ -142,44 +142,22 @@ void xscript_open(ttp_session_t *session)
 
     /* write out all the header information */
     fprintf(xfer->transcript, "filename = %s\n",      xfer->filename);
-    fprintf(xfer->transcript, "file_size = %llu\n",   param->file_size);
-    fprintf(xfer->transcript, "block_count = %llu\n", param->block_count);
+    fprintf(xfer->transcript, "file_size = %Lu\n",    (ull_t)param->file_size);
+    fprintf(xfer->transcript, "block_count = %Lu\n",  (ull_t)param->block_count);
     fprintf(xfer->transcript, "udp_buffer = %u\n",    param->udp_buffer);
     fprintf(xfer->transcript, "block_size = %u\n",    param->block_size);
-    fprintf(xfer->transcript, "target_rate = %llu\n", param->target_rate);
-    fprintf(xfer->transcript, "error_rate = %u\n",  param->error_rate);
-    fprintf(xfer->transcript, "slower_num = %u\n",  param->slower_num);
-    fprintf(xfer->transcript, "slower_den = %u\n",  param->slower_den);
-    fprintf(xfer->transcript, "faster_num = %u\n",  param->faster_num);
-    fprintf(xfer->transcript, "faster_den = %u\n",  param->faster_den);
-    fprintf(xfer->transcript, "ipd_time = %u\n",    param->ipd_time);
-    fprintf(xfer->transcript, "ipd_current = %u\n", xfer->ipd_current);
+    fprintf(xfer->transcript, "target_rate = %Lu\n",  (ull_t)param->target_rate);
+    fprintf(xfer->transcript, "error_rate = %u\n",    param->error_rate);
+    fprintf(xfer->transcript, "slower_num = %u\n",    param->slower_num);
+    fprintf(xfer->transcript, "slower_den = %u\n",    param->slower_den);
+    fprintf(xfer->transcript, "faster_num = %u\n",    param->faster_num);
+    fprintf(xfer->transcript, "faster_den = %u\n",    param->faster_den);
+    fprintf(xfer->transcript, "ipd_time = %u\n",      param->ipd_time);
+    fprintf(xfer->transcript, "ipd_current = %u\n",   xfer->ipd_current);
     fprintf(xfer->transcript, "protocol_version = 0x%x\n", PROTOCOL_REVISION);
     fprintf(xfer->transcript, "software_version = %s\n",   TSUNAMI_CVS_BUILDNR);
-    fprintf(xfer->transcript, "ipv6 = %u\n",        param->ipv6_yn);
+    fprintf(xfer->transcript, "ipv6 = %u\n",          param->ipv6_yn);
     fprintf(xfer->transcript, "\n");
     fflush(session->transfer.transcript);
 }
 
-
-/*========================================================================
- * $Log$
- * Revision 1.5  2007/10/29 15:30:25  jwagnerhki
- * timeout feature for rttsunamid too, added version info to transcripts, added --hbimeout srv cmd line param
- *
- * Revision 1.4  2007/07/17 08:50:50  jwagnerhki
- * added fflush()es
- *
- * Revision 1.3  2006/12/05 15:24:50  jwagnerhki
- * now noretransmit code in client only, merged rt client code
- *
- * Revision 1.2  2006/10/24 19:14:28  jwagnerhki
- * moved server.h into common tsunami-server.h
- *
- * Revision 1.1.1.1  2006/07/20 09:21:21  jwagnerhki
- * reimport
- *
- * Revision 1.1  2006/07/10 12:39:52  jwagnerhki
- * added to trunk
- *
- */

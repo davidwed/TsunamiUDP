@@ -4,7 +4,7 @@
  * This is the persistent process that sends out files upon request.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright  2002 The Trustees of Indiana University.
+ * Copyright (C) 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -301,7 +301,7 @@ void client_handler(ttp_session_t *session)
             block_type  = (xfer->block == param->block_count) ? TS_BLOCK_TERMINATE : TS_BLOCK_ORIGINAL;
             result      = build_datagram(session, xfer->block, block_type, datagram);
             if (result < 0) {
-                sprintf(g_error, "Could not read block #%llu", xfer->block);
+                sprintf(g_error, "Could not read block #%Lu", (ull_t)xfer->block);
                 error(g_error);
             }
 
@@ -310,7 +310,7 @@ void client_handler(ttp_session_t *session)
                             datagram, sizeof(blockheader_t) + param->block_size, 0,
                             xfer->udp_address, xfer->udp_length);
             if (result < 0) {
-                sprintf(g_error, "Could not transmit block #%llu", xfer->block);
+                sprintf(g_error, "Could not transmit block #%Lu", (ull_t)xfer->block);
                 warn(g_error);
                 continue;
             }
@@ -353,8 +353,8 @@ void client_handler(ttp_session_t *session)
             #endif
 
             /* show an (additional) statistics line */
-            sprintf(stats_line, "   n/a     n/a     n/a %7llu %6.2f%% %3u -- no heartbeat since %3.2fs\n",
-                                xfer->block, 100.0 * xfer->block / param->block_count, session->session_id,
+            sprintf(stats_line, "   n/a     n/a     n/a %7Lu %6.2f%% %3u -- no heartbeat since %3.2fs\n",
+                                (ull_t)xfer->block, 100.0 * xfer->block / param->block_count, session->session_id,
                                 1e-6*delta);
             if (param->transcript_yn)
                xscript_data_log(session, stats_line);
@@ -393,8 +393,8 @@ void client_handler(ttp_session_t *session)
 
     /* report on the transfer */
     if (param->verbose_yn)
-        fprintf(stderr, "Server %d transferred %llu bytes in %0.2f seconds (%0.1f Mbps)\n",
-                session->session_id, param->file_size, delta / 1000000.0, 8.0 * param->file_size / delta);
+        fprintf(stderr, "Server %d transferred %Lu bytes in %0.2f seconds (%0.1f Mbps)\n",
+                session->session_id, (ull_t)param->file_size, delta / 1000000.0, 8.0 * param->file_size / delta);
 
     /* close the transcript */
     if (param->transcript_yn)
@@ -581,7 +581,3 @@ void reap(int signum)
 }
 
 
-/*========================================================================
- * $Log$
- *
- */

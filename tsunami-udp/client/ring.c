@@ -6,7 +6,7 @@
  * transfer.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -53,10 +53,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -266,7 +266,7 @@ int ring_dump(ring_buffer_t *ring, FILE *out)
         datagram = ring->datagrams + ((index % MAX_BLOCKS_QUEUED) * ring->datagram_size);
         hdr      = (blockheader_t*)datagram;
         net_to_host(hdr->block);
-        fprintf(out, "%llu ", hdr->block);
+        fprintf(out, "%Lu ", (ull_t)(hdr->block));
     }
     fprintf(out, "]\n");
 
@@ -416,7 +416,3 @@ u_char *ring_reserve(ring_buffer_t *ring)
 }
 
 
-/*========================================================================
- * $Log$
- *
- */
