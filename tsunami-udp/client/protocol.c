@@ -141,12 +141,12 @@ int ttp_negotiate(ttp_session_t *session)
     int       status;
 
     /* send our protocol revision number to the server */
-    status = fwrite(&client_revision, 4, 1, session->server);
+    status = fwrite(&client_revision, sizeof(client_revision), 1, session->server);
     if ((status < 1) || fflush(session->server))
         return warn("Could not send protocol revision number");
 
     /* read the protocol revision number from the server */
-    status = fread(&server_revision, 4, 1, session->server);
+    status = fread(&server_revision, sizeof(server_revision), 1, session->server);
     if (status < 1)
         return warn("Could not read protocol revision number");
 
@@ -299,7 +299,7 @@ int ttp_open_port(ttp_session_t *session)
                 &((struct sockaddr_in *) &udp_address)->sin_port);
 
     /* send that port number to the server */
-    status = fwrite(port, 2, 1, session->server);
+    status = fwrite(port, sizeof(port), 1, session->server);
     if ((status < 1) || fflush(session->server)) {
         close(session->transfer.udp_fd);
         return warn("Could not send UDP port number");
@@ -493,7 +493,8 @@ int ttp_request_stop(ttp_session_t *session)
     int              status;
 
     /* initialize the retransmission structure */
-    retransmission.request_type = htons(REQUEST_STOP);
+    retransmission.request_type = REQUEST_STOP;
+    host_to_net(retransmission.request_type);
 
     /* send out the request */
     status = fwrite(&retransmission, sizeof(retransmission), 1, session->server);
@@ -648,6 +649,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.21.2.2  2007/11/10 09:46:21  jwagnerhki
+ * int to u_int64_t
+ *
  * Revision 1.21.2.1  2007/11/09 22:43:51  jwagnerhki
  * protocol v1.2 build 1
  *

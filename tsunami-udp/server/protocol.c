@@ -93,8 +93,8 @@
  *   REQUEST_ERROR_RATE -- Use the given error rate to adjust the IPD.
  *
  * For REQUEST_RETRANSMIT messsages, the given buffer must be large
- * enough to hold (block_size + 6) bytes.  For other messages, the
- * datagram parameter is ignored.
+ * enough to hold (block_size + |blockheader_t|) bytes.  For other messages,
+ * the datagram parameter is ignored.
  *
  * Returns 0 on success and non-zero on failure.
  *------------------------------------------------------------------------*/
@@ -577,5 +577,8 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.23.2.1  2007/11/09 22:43:52  jwagnerhki
+ * protocol v1.2 build 1
+ *
  *
  */
