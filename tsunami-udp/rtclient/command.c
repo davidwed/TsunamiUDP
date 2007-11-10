@@ -873,7 +873,6 @@ void *disk_thread(void *arg)
         /* get another block */
         datagram    = ring_peek(session->transfer.ring_buffer);
         hdr         = (blockheader_t*)datagram;
-        net_to_host(hdr->block);
 
         /* quit if we got the mythical 0 block */
         if (hdr->block == 0) {
@@ -922,5 +921,8 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
 
 /*========================================================================
  * $Log$
+ * Revision 1.25.2.1  2007/11/09 22:43:51  jwagnerhki
+ * protocol v1.2 build 1
+ *
  *
  */
