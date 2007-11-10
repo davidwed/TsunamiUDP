@@ -5,7 +5,7 @@
  * file transfer client.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright  2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -52,10 +52,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NOWARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -322,10 +322,10 @@ int ttp_open_port(ttp_session_t *session)
 int ttp_repeat_retransmit(ttp_session_t *session)
 {
     retransmission_t  retransmission[MAX_RETRANSMISSION_BUFFER];  /* the retransmission request object        */
-    int               entry;                                      /* an index into the retransmission table   */
-    int               status;
-    int               block;
-    int               count = 0;
+    u_int32_t         entry;                                      /* an index into the retransmission table   */
+    size_t            status;
+    u_int64_t         block;
+    u_int32_t         count = 0;
     retransmit_t     *rexmit = &(session->transfer.retransmit);
 
     /* report on the current status */
@@ -371,7 +371,7 @@ int ttp_repeat_retransmit(ttp_session_t *session)
 
     /* for each table entry, discard from the table those blocks we don't want, and */
     /* prepare a retransmit request */
-    session->transfer.stats.this_retransmits = 0;
+    count = 0;
     for (entry = 0; entry < rexmit->index_max; ++entry) {
 
         /* get the block number */
@@ -383,10 +383,6 @@ int ttp_repeat_retransmit(ttp_session_t *session)
             /* save it */
             rexmit->table[count] = block;
 
-            /* update the statistics */
-            ++(session->transfer.stats.total_retransmits);
-            ++(session->transfer.stats.this_retransmits);
-
             /* prepare a retransmit request */
             retransmission[count].request_type = REQUEST_RETRANSMIT;
             retransmission[count].block        = block;
@@ -396,9 +392,13 @@ int ttp_repeat_retransmit(ttp_session_t *session)
             ++count;
         }
     }
-    rexmit->index_max = count;
+
+    /* update the statistics */
+    session->transfer.stats.total_retransmits += count;
+    session->transfer.stats.this_retransmits   = count;
 
     /* send out the requests */
+    rexmit->index_max = count;
     if (count > 0) {
         status = fwrite(retransmission, sizeof(retransmission_t), count, session->server);
         if (status <= 0) {
@@ -498,7 +498,7 @@ int ttp_request_stop(ttp_session_t *session)
     /* send out the request */
     status = fwrite(&retransmission, sizeof(retransmission), 1, session->server);
     if ((status <= 0) || fflush(session->server))
-    return warn("Could not request end of transmission");
+        return warn("Could not request end of transmission");
 
     #ifdef VSIB_REALTIME
     /* stop the VSIB (func will wait until all pending data DMA'ed out) */
@@ -648,5 +648,8 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.21.2.1  2007/11/09 22:43:51  jwagnerhki
+ * protocol v1.2 build 1
+ *
  *
  */
