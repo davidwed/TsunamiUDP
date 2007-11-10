@@ -5,7 +5,7 @@
  * the Tsunami protocol suite.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -52,10 +52,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -126,6 +126,10 @@ extern const u_int16_t REQUEST_ERROR_RATE;
  * Data structures.
  *------------------------------------------------------------------------*/
 
+/* try to avoid compiler struct padding -- if structs are placed over network data... */
+#pragma pack(push)
+#pragma pack(1)
+
 /* retransmission request */
 typedef struct {
     u_int16_t           request_type;  /* the retransmission request type           */
@@ -137,6 +141,8 @@ typedef struct {
     u_int64_t           block;         /* the block number                          */
     u_int16_t           type;          /* the block type                            */
 } blockheader_t;
+
+#pragma pack(pop)
 
 /*------------------------------------------------------------------------
  * Global variables.
@@ -168,5 +174,8 @@ int        error_handler           (const char *file, int line, const char *mess
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.1  2007/11/09 22:43:52  jwagnerhki
+ * protocol v1.2 build 1
+ *
  *
  */
