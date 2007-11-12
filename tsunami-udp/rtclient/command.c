@@ -233,7 +233,7 @@ int command_dir(command_t *command, ttp_session_t *session)
         fprintf(stderr, " %2d) %-64s", i+1, read_str);
         fread_line(session->server, read_str, sizeof(read_str)-1);
         filelen = atol(read_str);
-        fprintf(stderr, "%8d bytes\n", filelen);
+        fprintf(stderr, "%8Lu bytes\n", (ull_t)filelen);
     } 
     fprintf(stderr, "\n");
     fwrite("\0", 1, 1, session->server);

@@ -377,7 +377,7 @@ int ttp_open_transfer(ttp_session_t *session)
         write(session->client_fd, file_no, strlen(file_no)+1);
         for(i=0; i<param->total_files; i++) {
             write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
-            snprintf(message, sizeof(message), "%d", param->file_sizes[i]);
+            snprintf(message, sizeof(message), "%Lu", (ull_t)param->file_sizes[i]);
             write(session->client_fd, message, strlen(message)+1);
         }
         read(session->client_fd, message, 1);

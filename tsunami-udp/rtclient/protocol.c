@@ -280,7 +280,7 @@ int ttp_open_transfer(ttp_session_t *session, const char *remote_filename, const
 int ttp_open_port(ttp_session_t *session)
 {
     struct sockaddr udp_address;
-    size_t          udp_length = sizeof(udp_address);
+    socklen_t       udp_length = sizeof(udp_address);
     int             status;
     u_int16_t      *port;
 
@@ -584,14 +584,14 @@ int ttp_update_stats(ttp_session_t *session)
         stats->this_retransmit_rate,
         stats->this_transmit_rate,
         100.0 * stats->this_retransmits / (1.0 + stats->this_retransmits + stats->total_blocks - stats->this_blocks),
-        (ull_t)(session->transfer.stats.total_blocks),
+        (ull_t)session->transfer.stats.total_blocks,
         data_total / (1024.0 * 1024.0 * 1024.0),
         (data_total * 8.0 / delta_total),
         100.0 * stats->total_retransmits / (stats->total_retransmits + stats->total_blocks),
-        session->transfer.retransmit.index_max,
+        (ull_t)session->transfer.retransmit.index_max,
         session->transfer.ring_buffer->count_data,
         //delta_useful * 8.0 / delta,
-        (ull_t)(session->transfer.blocks_left),
+        (ull_t)session->transfer.blocks_left,
         stats->this_retransmits, // NOTE: stats->this_retransmits seems to be 0 always ??
         (ull_t)(stats->this_udp_errors - stats->start_udp_errors)
         );
@@ -649,6 +649,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.21.2.4  2007/11/10 14:49:24  jwagnerhki
+ * first try at 64-bit 'clean' compile
+ *
  * Revision 1.21.2.3  2007/11/10 09:58:11  jwagnerhki
  * more host to nets
  *

@@ -93,8 +93,6 @@ int main(int argc, const char *argv[])
     int argc_curr       = 1;                            /* command line argument currently to be processed */
     char *ptr_command_text = &command_text[0];
 
-printf("bh_t = %u\n", sizeof(blockheader_t));
-
     /* reset the client */
     memset(&parameter, 0, sizeof(parameter));
     reset_client(&parameter);
@@ -245,6 +243,9 @@ void parse_command(command_t *command, char *buffer)
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.2  2007/11/10 14:49:24  jwagnerhki
+ * first try at 64-bit 'clean' compile
+ *
  * Revision 1.8.2.1  2007/11/09 22:43:51  jwagnerhki
  * protocol v1.2 build 1
  *
