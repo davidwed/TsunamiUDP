@@ -342,7 +342,7 @@ int ttp_open_transfer(ttp_session_t *session)
     u_int64_t        file_size;                      /* network-order version of file size   */
     u_int32_t        block_size;                     /* network-order version of block size  */
     u_int64_t        block_count;                    /* network-order version of block count */
-    time_t           epoch;
+    u_int64_t        epoch;
     int              status;
     ttp_transfer_t  *xfer  = &session->transfer;
     ttp_parameter_t *param =  session->parameter;
@@ -546,7 +546,7 @@ int ttp_open_transfer(ttp_session_t *session)
     #endif
 
     param->block_count = (param->file_size / param->block_size) + ((param->file_size % param->block_size) != 0);
-    param->epoch       = time(NULL);
+    param->epoch       = (u_int64_t)time(NULL);
 
     /* reply with the length, block size, number of blocks, and run epoch */
     file_size   = param->file_size;    host_to_net(file_size);
