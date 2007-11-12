@@ -343,6 +343,7 @@ void client_handler(ttp_session_t *session)
 
             /* time since last client report was received */
             delta = get_usec_since(&lastfeedback);
+            if (delta < UPDATE_PERIOD) continue;
 
             /* throttle IPD with fake 100% loss report */
             #ifndef VSIB_REALTIME

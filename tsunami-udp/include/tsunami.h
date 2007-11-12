@@ -124,6 +124,8 @@ extern const u_int16_t REQUEST_ERROR_RATE;
 
 #define  TS_DIRLIST_HACK_CMD        "!#DIR??" /* "file name" sent by the client to request a list of the shared files */
 
+#define  UPDATE_PERIOD              350000LL  /* length of the update/heartbeat period in usec */
+
 /*------------------------------------------------------------------------
  * Data structures.
  *------------------------------------------------------------------------*/
@@ -176,6 +178,9 @@ int        error_handler           (const char *file, int line, const char *mess
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.3  2007/11/10 14:49:24  jwagnerhki
+ * first try at 64-bit 'clean' compile
+ *
  * Revision 1.8.2.2  2007/11/10 14:15:17  jwagnerhki
  * pragma pack(1)
  *

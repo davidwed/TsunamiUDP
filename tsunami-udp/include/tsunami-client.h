@@ -106,7 +106,6 @@ extern const u_char     DEFAULT_BLOCKDUMP;      /* the default to write bitmap d
 #define MAX_COMMAND_WORDS          10           /* maximum number of words in any command       */
 #define MAX_RETRANSMISSION_BUFFER  2048         /* maximum number of requests to send at once   */
 #define MAX_BLOCKS_QUEUED          4096         /* maximum number of blocks in ring buffer      */
-#define UPDATE_PERIOD              350000LL     /* length of the update period in microseconds  */
 
 extern const int        MAX_COMMAND_LENGTH;     /* maximum length of a single command           */
 
@@ -281,6 +280,9 @@ void           xscript_open          (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.2.3  2007/11/12 14:43:11  jwagnerhki
+ * sizeof((int16*)port) fixed, send epoch as 64-bit
+ *
  * Revision 1.1.2.2  2007/11/10 09:28:24  jwagnerhki
  * trying to put into branch again
  *
