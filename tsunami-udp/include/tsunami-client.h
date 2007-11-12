@@ -189,7 +189,7 @@ typedef struct {
 
 /* state of a TTP transfer */
 typedef struct {
-    time_t              epoch;                    /* the Unix epoch used to identify this run    */
+    u_int64_t           epoch;                    /* the Unix epoch used to identify this run    */
     const char         *remote_filename;          /* the path to the file (on the server)        */
     const char         *local_filename;           /* the path to the file (locally)              */
     FILE               *file;                     /* the open file that we're receiving          */
@@ -281,5 +281,8 @@ void           xscript_open          (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.1.2.2  2007/11/10 09:28:24  jwagnerhki
+ * trying to put into branch again
+ *
  *
  */

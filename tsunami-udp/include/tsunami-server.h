@@ -114,7 +114,7 @@ typedef struct {
 
 /* Tsunami transfer protocol parameters */
 typedef struct {
-    time_t              epoch;          /* the Unix epoch used to identify this run   */
+    u_int64_t           epoch;          /* the Unix epoch used to identify this run   */
     u_char              verbose_yn;     /* verbose mode (0=no, 1=yes)                 */
     u_char              transcript_yn;  /* transcript mode (0=no, 1=yes)              */
     u_char              ipv6_yn;        /* IPv6 mode (0=no, 1=yes)                    */
@@ -207,5 +207,8 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.10.2.1  2007/11/09 22:43:52  jwagnerhki
+ * protocol v1.2 build 1
+ *
  *
  */

@@ -299,7 +299,7 @@ int ttp_open_port(ttp_session_t *session)
                 &((struct sockaddr_in *) &udp_address)->sin_port);
 
     /* send that port number to the server */
-    status = fwrite(port, sizeof(port), 1, session->server);
+    status = fwrite(port, 2, 1, session->server);
     if ((status < 1) || fflush(session->server)) {
         close(session->transfer.udp_fd);
         return warn("Could not send UDP port number");
@@ -649,6 +649,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.21.2.5  2007/11/12 14:20:59  jwagnerhki
+ * removed some printf warnings on x64 platforms
+ *
  * Revision 1.21.2.4  2007/11/10 14:49:24  jwagnerhki
  * first try at 64-bit 'clean' compile
  *
