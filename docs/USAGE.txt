@@ -283,6 +283,13 @@
     # load vsib with 144M 
     vsib bigbufsize=144000000
 
+ The seek() in the VSIB driver works only on page boundaries-
+ This means that in Tsunami the minimum blocksize you can set 
+ is
+    > set blocksize 4096
+ Or any integer multiple of 4096. Other block sizes result in
+ data loss.
+
  --Realtime Server--
 
  The realtime server will read data from the VSIB card and send
