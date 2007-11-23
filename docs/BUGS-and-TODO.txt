@@ -30,6 +30,9 @@ Current TODO and BUGS list:
 ==REALTIME SPECIFIC==
 
   BUGS
+  - block sizes smaller than 4096 bytes, or not a multiple of 4096,
+    causes a bug in the VSIB driver seek() to skip data! 
+    Using the default 32768 blocksize or 16384, 8192, 4096 is fine.
   TODO
   - server could send text messages back to client (e.g. "specified start time
     in the past, starting now", "Disk buffers full. Waiting.... Continuing."),
