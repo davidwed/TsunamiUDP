@@ -31,7 +31,11 @@ Compiling
 
  If there are ./configure Makefile.in complaints or similar, try 
 
-   $ ./recompile.sh
+   $ aclocal
+   $ automake
+   $ autoconf
+   $ ./configure
+   $ make
 
  That should build the entire tsunami, including everything in
  the subdirectories (in /server, /client, etc).
