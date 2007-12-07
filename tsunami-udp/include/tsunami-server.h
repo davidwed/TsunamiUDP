@@ -178,7 +178,7 @@ int  build_datagram       (ttp_session_t *session, u_int64_t block_index, u_int1
 #ifdef VSIB_REALTIME
 void start_vsib (ttp_session_t *session);
 void stop_vsib (ttp_session_t *session);
-void read_vsib_block(unsigned char *memblk, size_t blksize);
+void read_vsib_block(ttp_session_t* session, unsigned char *memblk, size_t blksize);
 #endif
 
 /* log.c */
@@ -207,6 +207,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.10.2.2  2007/11/12 14:43:11  jwagnerhki
+ * sizeof((int16*)port) fixed, send epoch as 64-bit
+ *
  * Revision 1.10.2.1  2007/11/09 22:43:52  jwagnerhki
  * protocol v1.2 build 1
  *

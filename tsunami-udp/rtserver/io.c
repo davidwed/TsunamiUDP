@@ -172,7 +172,7 @@ int build_datagram(ttp_session_t *session, u_int64_t block_index,
 
     /* read enough data to get over 4/3th of blocksize */
     fseeko64(session->transfer.vsib, vsib_byte_pos, SEEK_SET);
-    read_vsib_block(packingbuffer,  2 * block_size + 4); /* 2* vs. 4/3* */
+    read_vsib_block(session, packingbuffer,  2 * block_size + 4); /* 2* vs. 4/3* */
 
     /* copy, pack */
     inbufpos=0; outbufpos=0;
@@ -197,7 +197,7 @@ int build_datagram(ttp_session_t *session, u_int64_t block_index,
     }
 
     /* read payload data into the datagram */
-    read_vsib_block(payload, block_size);
+    read_vsib_block(session, payload, block_size);
 
     #endif
 
@@ -230,6 +230,9 @@ int build_datagram(ttp_session_t *session, u_int64_t block_index,
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.2  2007/11/10 14:49:25  jwagnerhki
+ * first try at 64-bit 'clean' compile
+ *
  * Revision 1.2.2.1  2007/11/09 22:43:52  jwagnerhki
  * protocol v1.2 build 1
  *

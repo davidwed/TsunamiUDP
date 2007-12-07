@@ -131,7 +131,6 @@ extern const u_int16_t REQUEST_ERROR_RATE;
  *------------------------------------------------------------------------*/
 
 /* try to avoid compiler struct padding -- if structs are placed over network data... */
-#pragma pack(push)
 #pragma pack(1)
 
 /* retransmission request */
@@ -146,7 +145,7 @@ typedef struct {
     u_int16_t           type;          /* the block type                            */
 } blockheader_t;
 
-#pragma pack(pop)
+#pragma pack()
 
 /*------------------------------------------------------------------------
  * Global variables.
@@ -178,6 +177,9 @@ int        error_handler           (const char *file, int line, const char *mess
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.4  2007/11/12 15:03:05  jwagnerhki
+ * defined UPDATE_PERIOD for both client and server, server 'no heartbeat' messages only after UPDATE_PERIOD usec passed
+ *
  * Revision 1.8.2.3  2007/11/10 14:49:24  jwagnerhki
  * first try at 64-bit 'clean' compile
  *
