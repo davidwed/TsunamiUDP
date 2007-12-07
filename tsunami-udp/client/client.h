@@ -1,3 +1,4 @@
+#if INC_UNUSED
 /*========================================================================
  * client.h  --  Global header for Tsunami client.
  *
@@ -274,10 +275,13 @@ void           xscript_data_stop     (ttp_session_t *session, const struct timev
 void           xscript_open          (ttp_session_t *session);
 
 #endif /* __CLIENT_H */
-
+#endif
 
 /*========================================================================
  * $Log$
+ * Revision 1.11  2007/08/22 14:07:30  jwagnerhki
+ * build 27: first implementation of client dir command
+ *
  * Revision 1.10  2007/08/17 10:56:31  jwagnerhki
  * added gapless_till_block client side counter
  *
@@ -312,3 +316,4 @@ void           xscript_open          (ttp_session_t *session);
  * deleted unnecessary files
  *
  */
+

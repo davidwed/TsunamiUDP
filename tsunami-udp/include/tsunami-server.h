@@ -4,7 +4,7 @@
  * This contains global definitions for the Tsunami file transfer client.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright  2002 The Trustees of Indiana University.
+ * Copyright (C) 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,7 +49,7 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NOWARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
  * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
@@ -190,6 +190,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.11  2007/11/29 10:58:46  jwagnerhki
+ * data skip fixed with vsib fread() not read(), heartbeat lost messages now in at most 350ms intervals
+ *
  * Revision 1.10  2007/10/29 15:30:25  jwagnerhki
  * timeout feature for rttsunamid too, added version info to transcripts, added --hbimeout srv cmd line param
  *

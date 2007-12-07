@@ -60,8 +60,7 @@
  * INFORMATION GENERATED USING SOFTWARE.
  *========================================================================*/
 
-#include "client.h"
-#include <string.h>    /* for memcpy() */
+#include <tsunami-client.h>
 
 /*------------------------------------------------------------------------
  * int accept_block(ttp_session_t *session,
@@ -130,6 +129,9 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2007/01/11 15:15:48  jwagnerhki
+ * rtclient merge, io.c now with VSIB_REALTIME, blocks_left not allowed negative fix, overwriting file check fixed, some memset()s to keep Valgrind warnings away
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:18  jwagnerhki
  * reimport
  *

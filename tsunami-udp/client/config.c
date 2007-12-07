@@ -4,7 +4,7 @@
  * This contains tuneable parameters for the Tsunami file transfer client.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright (C) 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,10 +49,10 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
- * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
+ * OR OTHER PROPRIETARY RIGHTS. INDIANA UNIVERSITY MAKES NO
  * WARRANTIES THAT SOFTWARE IS FREE FROM "BUGS", "VIRUSES", "TROJAN
  * HORSES", "TRAP DOORS", "WORMS", OR OTHER HARMFUL CODE.  LICENSEE
  * ASSUMES THE ENTIRE RISK AS TO THE PERFORMANCE OF SOFTWARE AND/OR
@@ -63,7 +63,7 @@
 #include <stdlib.h>  /* for malloc(), free(), etc. */
 #include <string.h>  /* for memset()               */
 
-#include "client.h"
+#include <tsunami-client.h>
 
 
 /*------------------------------------------------------------------------
@@ -139,6 +139,9 @@ void reset_client(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.4  2007/06/19 13:35:24  jwagnerhki
+ * replaced notretransmit option with better time-limited restransmission window, reduced ringbuffer from 8192 to 4096 entries
+ *
  * Revision 1.3  2006/12/15 12:57:41  jwagnerhki
  * added client 'blockdump' block bitmap dump to file feature
  *

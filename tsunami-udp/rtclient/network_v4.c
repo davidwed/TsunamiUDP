@@ -67,7 +67,7 @@
 #include <sys/socket.h>   /* for the BSD socket library     */
 #include <unistd.h>       /* for standard Unix system calls */
 
-#include "client.h"
+#include <tsunami-client.h>
 
 
 /*------------------------------------------------------------------------
@@ -184,6 +184,9 @@ int create_udp_socket_v4(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/07/21 07:56:42  jwagnerhki
+ * use client_port for UDP port nr
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:19  jwagnerhki
  * reimport
  *
