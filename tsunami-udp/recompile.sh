@@ -1,5 +1,12 @@
 #!/bin/sh
 
+rm -rf Makefile
+rm -rf Makefile.in
+rm -rf */Makefile
+rm -rf */Makefile.in
+rm -rf */.deps
+rm -rf autom4te.cache
+
 echo "Running aclocal..."
 aclocal
 echo "Running automake..."
