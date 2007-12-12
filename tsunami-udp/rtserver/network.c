@@ -171,6 +171,12 @@ int create_udp_socket(ttp_parameter_t *parameter)
 	return warn("Error in resizing UDP transmit buffer");
     }
 
+    /* disable unnecessary checksumming */
+    status = setsockopt(socket_fd, SOL_SOCKET, SO_NO_CHECK, &yes, sizeof(yes));
+    if (status < 0) {
+        warn("Could not disable UDP checksumming");
+    }
+
     /* return the file desscriptor */
     return socket_fd;
 }
@@ -178,6 +184,9 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/10/24 19:14:28  jwagnerhki
+ * moved server.h into common tsunami-server.h
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
  * reimport
  *
