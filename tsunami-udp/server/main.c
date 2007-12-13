@@ -332,8 +332,9 @@ void client_handler(ttp_session_t *session)
 
         /* delay for the next packet */
         ipd_time = get_usec_since(&delay);
-        ipd_time = ((ipd_time + 50) < xfer->ipd_current) ? ((u_int64_t) (xfer->ipd_current - ipd_time - 50)) : 0;
-        usleep_that_works(ipd_time);
+        if (ipd_time < xfer->ipd_current) {
+            usleep_that_works(xfer->ipd_current - ipd_time);
+        }
 
         /* monitor client heartbeat and disconnect dead client */
         if ((deadconnection_counter++) > 2048) {
