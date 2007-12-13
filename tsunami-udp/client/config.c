@@ -4,7 +4,7 @@
  * This contains tuneable parameters for the Tsunami file transfer client.
  *
  * Written by Mark Meiss (mmeiss@indiana.edu).
- * Copyright © 2002 The Trustees of Indiana University.
+ * Copyright (C) 2002 The Trustees of Indiana University.
  * All rights reserved.
  *
  * Pretty much rewritten by Jan Wagner (jwagner@wellidontwantspam)
@@ -51,7 +51,7 @@
  * otherwise.
  *
  * LICENSEE UNDERSTANDS THAT SOFTWARE IS PROVIDED "AS IS" FOR WHICH
- * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
+ * NO WARRANTIES AS TO CAPABILITIES OR ACCURACY ARE MADE. INDIANA
  * UNIVERSITY GIVES NO WARRANTIES AND MAKES NO REPRESENTATION THAT
  * SOFTWARE IS FREE OF INFRINGEMENT OF THIRD PARTY PATENT, COPYRIGHT,
  * OR OTHER PROPRIETARY RIGHTS.  INDIANA UNIVERSITY MAKES NO
@@ -71,7 +71,7 @@
  * Global constants.
  *------------------------------------------------------------------------*/
 
-const u_int32_t  DEFAULT_BLOCK_SIZE    = 32768;        /* default size of a single file block          */
+const u_int32_t  DEFAULT_BLOCK_SIZE    = 64512;        /* default size of a single file block          */
 const int        DEFAULT_TABLE_SIZE    = 2048;         /* initial size of the retransmission table     */
 const char      *DEFAULT_SERVER_NAME   = "localhost";  /* default name of the remote server            */
 const u_int16_t  DEFAULT_SERVER_PORT   = TS_TCP_PORT;  /* default TCP port of the remote server        */
@@ -140,5 +140,8 @@ void reset_client(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.4.2.1  2007/11/09 22:43:51  jwagnerhki
+ * protocol v1.2 build 1
+ *
  *
  */
