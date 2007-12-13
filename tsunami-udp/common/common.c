@@ -290,9 +290,11 @@ void usleep_that_works(u_int64_t usec)
     gettimeofday(&now, NULL);
 
     /* do the basic sleep */
-    delay.tv_sec  = sleep_time / 1000000;
-    delay.tv_usec = sleep_time % 1000000;
-    select(0, NULL, NULL, NULL, &delay);
+    if (usec > 10000) {
+        delay.tv_sec  = sleep_time / 1000000;
+        delay.tv_usec = sleep_time % 1000000;
+        select(0, NULL, NULL, NULL, &delay);
+    }
 
     /* and spin for the rest of the time */
     while (get_usec_since(&now) < usec);
@@ -345,6 +347,9 @@ u_int64_t get_udp_in_errors()
 
 /*========================================================================
  * $Log$
+ * Revision 1.7.2.1  2007/11/09 22:43:51  jwagnerhki
+ * protocol v1.2 build 1
+ *
  * Revision 1.7  2007/07/10 08:18:05  jwagnerhki
  * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
  *
