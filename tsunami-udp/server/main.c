@@ -78,6 +78,7 @@
 #include <arpa/inet.h>   /* for inet_ntoa()                       */
 #include <sys/wait.h>    /* for waitpid()                         */
 #include <unistd.h>      /* for Unix system calls                 */
+#include <sched.h>	 /* for process priority                  */
 
 #include <tsunami-server.h>
 #ifdef VSIB_REALTIME
@@ -202,6 +203,11 @@ void client_handler(ttp_session_t *session)
     ttp_parameter_t  *param =  session->parameter;
     u_int64_t         delta;
     u_int16_t         block_type;
+    struct sched_param sched_parameters;
+
+    /* boost our priority */
+    sched_parameters.sched_priority = sched_get_priority_max(SCHED_FIFO) - 5;
+    sched_setscheduler(0, SCHED_FIFO, &sched_parameters);
 
     /* negotiate the connection parameters */
     status = ttp_negotiate(session);

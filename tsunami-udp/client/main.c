@@ -66,6 +66,7 @@
 #include <stdlib.h>       /* for *alloc() and free()               */
 #include <string.h>       /* for standard string routines          */
 #include <unistd.h>       /* for standard Unix system calls        */
+#include <sched.h>        /* for process priority                  */
 
 #include <tsunami-client.h>
 
@@ -90,8 +91,15 @@ int main(int argc, const char *argv[])
     ttp_session_t   *session = NULL;
     ttp_parameter_t  parameter;
 
+    struct sched_param sched_parameters;
+
     int argc_curr       = 1;                            /* command line argument currently to be processed */
     char *ptr_command_text = &command_text[0];
+
+
+    /* boost our priority */
+    sched_parameters.sched_priority = sched_get_priority_max(SCHED_FIFO) - 5;
+    sched_setscheduler(0, SCHED_FIFO, &sched_parameters);
 
     /* reset the client */
     memset(&parameter, 0, sizeof(parameter));
@@ -243,6 +251,9 @@ void parse_command(command_t *command, char *buffer)
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.3  2007/11/12 14:20:59  jwagnerhki
+ * removed some printf warnings on x64 platforms
+ *
  * Revision 1.8.2.2  2007/11/10 14:49:24  jwagnerhki
  * first try at 64-bit 'clean' compile
  *
