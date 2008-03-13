@@ -203,11 +203,13 @@ void client_handler(ttp_session_t *session)
     ttp_parameter_t  *param =  session->parameter;
     u_int64_t         delta;
     u_int16_t         block_type;
-    struct sched_param sched_parameters;
 
     /* boost our priority */
-    sched_parameters.sched_priority = sched_get_priority_max(SCHED_FIFO) - 5;
+    #ifdef _POSIX_PRIORITY_SCHEDULING
+    struct sched_param sched_parameters;
+    sched_parameters.sched_priority = sched_get_priority_max(SCHED_FIFO);
     sched_setscheduler(0, SCHED_FIFO, &sched_parameters);
+    #endif
 
     /* negotiate the connection parameters */
     status = ttp_negotiate(session);
