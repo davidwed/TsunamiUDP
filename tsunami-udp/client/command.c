@@ -71,6 +71,7 @@
 #include <time.h>         /* for time()                            */
 #include <unistd.h>       /* for standard Unix system calls        */
 #include <ctype.h>        /* for toupper() etc                     */
+#include <sched.h>        /* for io thread priority                */
 
 #include <tsunami-client.h>
 
@@ -264,6 +265,8 @@ int command_get(command_t *command, ttp_session_t *session)
     retransmit_t   *rexmit        = &(session->transfer.retransmit);
     int             status = 0;
     pthread_t       disk_thread_id = 0;
+    pthread_attr_t  attr;
+    struct sched_param schedparam;
 
     /* The following variables will be used only in multiple file transfer
      * session they are used to recieve the file names and other parameters
@@ -403,7 +406,14 @@ int command_get(command_t *command, ttp_session_t *session)
             error("Could not allocate fast local datagram buffer in command_get()");
 
         /* start up the disk I/O thread */
-        status = pthread_create(&disk_thread_id, NULL, disk_thread, session);
+        pthread_attr_init(&attr);
+        #ifdef _POSIX_PRIORITY_SCHEDULING
+        schedparam.sched_priority = sched_get_priority_max(SCHED_FIFO);
+        pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
+        pthread_attr_setschedparam(&attr, &schedparam);
+        pthread_attr_setschedpolicy(&attr, SCHED_FIFO);
+        #endif
+        status = pthread_create(&disk_thread_id, &attr, disk_thread, session);
         if (status != 0)
             error("Could not create I/O thread");
 

@@ -91,15 +91,16 @@ int main(int argc, const char *argv[])
     ttp_session_t   *session = NULL;
     ttp_parameter_t  parameter;
 
-    struct sched_param sched_parameters;
 
     int argc_curr       = 1;                            /* command line argument currently to be processed */
     char *ptr_command_text = &command_text[0];
 
-
     /* boost our priority */
+    #ifdef _POSIX_PRIORITY_SCHEDULING
+    struct sched_param sched_parameters;
     sched_parameters.sched_priority = sched_get_priority_max(SCHED_FIFO) - 5;
     sched_setscheduler(0, SCHED_FIFO, &sched_parameters);
+    #endif
 
     /* reset the client */
     memset(&parameter, 0, sizeof(parameter));
@@ -251,6 +252,9 @@ void parse_command(command_t *command, char *buffer)
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.4  2008/03/12 14:02:36  jwagnerhki
+ * test: boosting process priority
+ *
  * Revision 1.8.2.3  2007/11/12 14:20:59  jwagnerhki
  * removed some printf warnings on x64 platforms
  *
