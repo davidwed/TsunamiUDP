@@ -163,6 +163,7 @@ int main(int argc, char *argv[])
             session.client_fd = client_fd;
             session.parameter = &parameter;
             memset(&session.transfer, 0, sizeof(session.transfer));
+            session.transfer.ipd_current = 0.0;
 
             /* and run the client handler */
             client_handler(&session);
@@ -578,6 +579,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.36  2008/01/16 11:14:24  jwagnerhki
+ * removed server --datagram option as this is client-side specified
+ *
  * Revision 1.35  2008/01/11 08:35:21  jwagnerhki
  * tighter IPD control like in v1.2 petabit Tsunami
  *

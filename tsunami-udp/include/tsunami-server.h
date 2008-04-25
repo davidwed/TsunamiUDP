@@ -134,7 +134,7 @@ typedef struct {
     int                 udp_fd;       /* the file descriptor of our UDP socket      */
     struct sockaddr    *udp_address;  /* the destination for our file data          */
     socklen_t           udp_length;   /* the length of the UDP socket address       */
-    u_int32_t           ipd_current;  /* the inter-packet delay currently in usec   */
+    double              ipd_current;  /* the inter-packet delay currently in usec   */
     u_int32_t           block;        /* the current block that we're up to         */
 } ttp_transfer_t;
 
@@ -190,6 +190,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.12  2007/12/07 18:09:37  jwagnerhki
+ * cleaned away 64-bit compile warnings, used tsunami-client.h
+ *
  * Revision 1.11  2007/11/29 10:58:46  jwagnerhki
  * data skip fixed with vsib fread() not read(), heartbeat lost messages now in at most 350ms intervals
  *
