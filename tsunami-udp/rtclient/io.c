@@ -81,13 +81,17 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
     #endif
 
     /* see if we need this block */
-    if (session->transfer.received[block_index / 8] & (1 << (block_index % 8)))
+    if (got_block(session, block_index))
 	return 0;
     
     /* figure out how many bytes to write */
-    write_size = (block_index == transfer->block_count) ? (transfer->file_size % block_size) : block_size;
-    if (write_size == 0)
-	write_size = block_size;
+    if (block_index == transfer->block_count) {
+        write_size = transfer->file_size % block_size;
+        if (write_size == 0)
+            write_size = block_size;
+    } else {
+        write_size = block_size;
+    }
 
     #ifdef VSIB_REALTIME
     /*These were added for real-time eVLBI */
@@ -129,6 +133,9 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
 
 /*========================================================================
  * $Log$
+ * Revision 1.5  2007/12/07 18:10:28  jwagnerhki
+ * cleaned away 64-bit compile warnings, used tsunami-client.h
+ *
  * Revision 1.4  2007/01/11 15:15:49  jwagnerhki
  * rtclient merge, io.c now with VSIB_REALTIME, blocks_left not allowed negative fix, overwriting file check fixed, some memset()s to keep Valgrind warnings away
  *
