@@ -230,6 +230,8 @@ int            command_quit          (command_t *command, ttp_session_t *session
 int            command_set           (command_t *command, ttp_parameter_t *parameter);
 int            command_dir           (command_t *command, ttp_session_t *session);
 
+int            got_block             (ttp_session_t* session, u_int32_t blocknr);
+
 /* config.c */
 void           reset_client          (ttp_parameter_t *parameter);
 
@@ -279,6 +281,9 @@ void           xscript_open          (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.4  2007/12/12 10:25:10  jwagnerhki
+ * declared write_vsib_block()
+ *
  * Revision 1.3  2007/12/07 18:09:37  jwagnerhki
  * cleaned away 64-bit compile warnings, used tsunami-client.h
  *
