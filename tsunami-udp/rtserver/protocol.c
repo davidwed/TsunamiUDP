@@ -123,13 +123,13 @@ int ttp_accept_retransmit(ttp_session_t *session, retransmission_t *retransmissi
 	    xfer->ipd_current *= (double) param->faster_num / param->faster_den;
 	}
 
+	/* make sure the IPD is still in range, for later calculations */
+	xfer->ipd_current = max(min(xfer->ipd_current, 10000.0), param->ipd_time);
+
 	/* build the stats string */
 	sprintf(stats_line, "%6u %5uus %5uus %7u %6.2f%% %3u\n",
 		retransmission->error_rate, (u_int32_t)xfer->ipd_current, param->ipd_time, xfer->block,
 		100.0 * xfer->block / param->block_count, session->session_id);
-
-    /* make sure the IPD is still in range, for later calculations */
-    xfer->ipd_current = max(min(xfer->ipd_current, 10000.0), param->ipd_time);
 
 	/* print a status report */
 	if (!(iteration++ % 23))
@@ -576,6 +576,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.29  2008/05/22 18:30:44  jwagnerhki
+ * Darwin fix LFS support fopen() not fopen64() etc
+ *
  * Revision 1.28  2008/04/25 10:37:15  jwagnerhki
  * build35 changed 'ipd_current' from int32 to double for much smoother rate changes
  *
