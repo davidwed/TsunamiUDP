@@ -622,7 +622,7 @@ int command_get(command_t *command, ttp_session_t *session)
        strcpy((char*)dump_file, xfer->local_filename);
        strcat((char*)dump_file, ".blockmap");
 
-       fbits = fopen64((char*)dump_file, "wb");
+       fbits = fopen((char*)dump_file, "wb");
        if (fbits != NULL) {
          fwrite(&xfer->block_count, sizeof(xfer->block_count), 1, fbits);
          fwrite(xfer->received, sizeof(u_char), xfer->block_count / 8 + 1, fbits);
@@ -927,6 +927,9 @@ int got_block(ttp_session_t* session, u_int32_t blocknr)
 
 /*========================================================================
  * $Log$
+ * Revision 1.16  2008/05/20 18:12:45  jwagnerhki
+ * got_block and tidying
+ *
  * Revision 1.15  2007/12/07 18:10:28  jwagnerhki
  * cleaned away 64-bit compile warnings, used tsunami-client.h
  *

@@ -107,7 +107,7 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
     #ifndef DEBUG_DISKLESS
     /* seek to the proper location */
     if (block_index != (last_block + 1)) {
-        status = fseeko64(transfer->file, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
+        status = fseeko(transfer->file, ((u_int64_t) block_size) * (block_index - 1), SEEK_SET);
         if (status < 0) {
             sprintf(g_error, "Could not seek at block %d of file", block_index);
             return warn(g_error);
@@ -133,6 +133,9 @@ int accept_block(ttp_session_t *session, u_int32_t block_index, u_char *block)
 
 /*========================================================================
  * $Log$
+ * Revision 1.6  2008/05/20 18:20:38  jwagnerhki
+ * got_block use
+ *
  * Revision 1.5  2007/12/07 18:10:28  jwagnerhki
  * cleaned away 64-bit compile warnings, used tsunami-client.h
  *
