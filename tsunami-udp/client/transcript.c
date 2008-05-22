@@ -72,11 +72,20 @@
  *------------------------------------------------------------------------*/
 void xscript_close(ttp_session_t *session, u_int64_t delta)
 {
+    double mb_thru, mb_good, secs;
     ttp_transfer_t *xfer = &session->transfer;
 
-    fprintf(xfer->transcript, "mb_transmitted = %0.2f\n", xfer->file_size / (1024.0 * 1024.0));
-    fprintf(xfer->transcript, "duration = %0.2f\n", delta / 1000000.0);
-    fprintf(xfer->transcript, "throughput = %0.2f\n", xfer->file_size * 8.0 / delta);
+    mb_thru  = xfer->stats.total_blocks * session->parameter->block_size;
+    mb_good  = mb_thru - xfer->stats.total_recvd_retransmits * session->parameter->block_size;
+    mb_thru /= (1024.0*1024.0);
+    mb_good /= (1024.0*1024.0);
+    secs     = delta/1e6;
+
+    fprintf(xfer->transcript, "mb_transmitted = %0.2f\n", mb_thru);
+    fprintf(xfer->transcript, "mb_usable = %0.2f\n", mb_good);
+    fprintf(xfer->transcript, "duration = %0.2f\n", secs);
+    fprintf(xfer->transcript, "throughput = %0.2f\n", 8.0 * mb_thru / secs);
+    fprintf(xfer->transcript, "goodput = %0.2f\n", 8.0 * mb_good / secs);
     fclose(xfer->transcript);
 }
 
@@ -170,6 +179,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.6  2008/05/22 17:58:51  jwagnerhki
+ * __darwin_suseconds_t fix
+ *
  * Revision 1.5  2007/12/07 18:10:28  jwagnerhki
  * cleaned away 64-bit compile warnings, used tsunami-client.h
  *
