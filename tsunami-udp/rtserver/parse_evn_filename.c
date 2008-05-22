@@ -39,6 +39,15 @@
 #include <math.h>
 #include "parse_evn_filename.h"
 
+char* substrdup(char* str, size_t maxlength) {
+   // a replacement for strndup() missing on BSD, Mac OS X / Darwin, some UNIX
+   char* s = malloc(sizeof(char)*(maxlength+1));
+   if (!s) return NULL;
+   strncpy(s, str, maxlength);
+   s[maxlength] = '\0';
+   return s;
+}
+
 void add_aux_entry(struct evn_filename *ef, char *auxentry) {
 	char **p;
 	ef->nr_auxinfo++;
@@ -261,7 +270,7 @@ char *get_token(char **str) {
 		retval = strdup(*str);
 		*str = p;
 	} else {
-		retval = (char*)strndup(*str, p - *str);
+		retval = (char*)substrdup(*str, p - *str);
 		*str = p + 1;
 	}
 	return retval;
@@ -399,6 +408,9 @@ int main(int argc, char *argv[]) {
 
 /*
  * $Log$
+ * Revision 1.10  2007/02/26 12:39:39  jwagnerhki
+ * flen and dl printout fix, long long int
+ *
  * Revision 1.9  2007/02/13 13:47:31  jwagnerhki
  * UTC parse fixes and extensions, dl in addition to flen for realtime bytelength
  *
