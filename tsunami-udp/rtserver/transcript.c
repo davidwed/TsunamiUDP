@@ -101,7 +101,8 @@ void xscript_data_log(ttp_session_t *session, const char *logline)
  *------------------------------------------------------------------------*/
 void xscript_data_start(ttp_session_t *session, const struct timeval *epoch)
 {
-    fprintf(session->transfer.transcript, "START %lu.%06lu\n", epoch->tv_sec, epoch->tv_usec);
+    fprintf(session->transfer.transcript, "START %lu.%06lu\n", 
+              (unsigned long)epoch->tv_sec, (unsigned long)epoch->tv_usec);
     fflush(session->transfer.transcript);
 }
 
@@ -115,7 +116,8 @@ void xscript_data_start(ttp_session_t *session, const struct timeval *epoch)
  *------------------------------------------------------------------------*/
 void xscript_data_stop(ttp_session_t *session, const struct timeval *epoch)
 {
-    fprintf(session->transfer.transcript, "STOP %lu.%06lu\n\n", epoch->tv_sec, epoch->tv_usec);
+    fprintf(session->transfer.transcript, "STOP %lu.%06lu\n\n", 
+              (unsigned long)epoch->tv_sec, (unsigned long)epoch->tv_usec);
     fflush(session->transfer.transcript);
 }
 
@@ -164,6 +166,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.6  2008/04/25 10:37:15  jwagnerhki
+ * build35 changed 'ipd_current' from int32 to double for much smoother rate changes
+ *
  * Revision 1.5  2007/12/07 18:10:28  jwagnerhki
  * cleaned away 64-bit compile warnings, used tsunami-client.h
  *
