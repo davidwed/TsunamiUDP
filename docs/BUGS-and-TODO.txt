@@ -7,11 +7,6 @@ Current TODO and BUGS list:
  BUGS
  - changing the blocksize to e.g. 65532 does not work in the 
    server -> "Warning: Could not transmit block #..."
- - Ind.Univ. design fault: REQUEST_RESTART gets stuck in loop if
-   more new (wrt sequence number) packets are still going on the line 
-   than what the retransmit request length limit is (possibly fixed
-   since v1.1 cvsbuild 11, but no guarantees that fix works in 100%
-   of cases)
  TODO
  - CPU load of server and client apps is much higher than necessary
  - "blocking": ring buffer blocking, add timeout so it doesn't 
@@ -26,6 +21,10 @@ Current TODO and BUGS list:
  - the target rate (bit/sec) is of type u_int32_t and limits
    the maximum rate to 4 Gbit/s, need to change this u_int64_t 
    and then increase the protocol version to break compatibility
+   => protocol v1.2 branch
+ - the client should detect if the server disconnects i.e. closes
+   its TCP connection (currently the transfer in the client will 
+   just halt "mysteriously" if server is Ctrl-C'ed)
 
 ==REALTIME SPECIFIC==
 
@@ -52,6 +51,12 @@ Past TODO and BUGS list:
      and client code
  - client, command line argument parsing, the command "get" doesn't work
    * fixed: 16 Oct 06 / CVS
+ - Ind.Univ. design fault: REQUEST_RESTART gets stuck in loop if
+   more new (wrt sequence number) packets are still going on the line 
+   than what the retransmit request length limit is (possibly fixed
+   since v1.1 cvsbuild 11, but no guarantees that fix works in 100%
+   of cases)
+   * seems to be fixed/confirmed: 26 May 08 / CVS v1.1 cvsbuild 36
  TODO
  - client, server: "dir" command:
    * added: 23 Aug 07 / CVS, build 27, now a "dir" in the client will
