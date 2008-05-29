@@ -118,7 +118,9 @@ int main(int argc, char *argv[])
     }
 
     /* install a signal handler for our children */
+    #ifndef VSIB_REALTIME
     signal(SIGCHLD, reap);
+    #endif
 
     /* now show version / build information */
     #ifdef VSIB_REALTIME
@@ -250,7 +252,11 @@ void client_handler(ttp_session_t *session)
     status = ttp_open_transfer(session);
     if (status < 0) {
         warn("Invalid file request");
+        #ifndef VSIB_REALTIME
         continue;
+        #else
+        return;
+        #endif
     }
 
     /* negotiate a data transfer port */
@@ -598,6 +604,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.38  2008/05/29 07:07:22  jwagnerhki
+ * first try at singleuser rtserver
+ *
  * Revision 1.37  2008/04/25 10:37:15  jwagnerhki
  * build35 changed 'ipd_current' from int32 to double for much smoother rate changes
  *
