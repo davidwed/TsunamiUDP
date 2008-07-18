@@ -138,8 +138,8 @@ void xscript_open(ttp_session_t *session)
     make_transcript_filename(filename, param->epoch, "tsus");
     xfer->transcript = fopen(filename, "w");
     if (xfer->transcript == NULL) {
-	warn("Could not create transcript file");
-	return;
+        warn("Could not create transcript file");
+        return;
     }
 
     /* write out all the header information */
@@ -166,6 +166,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.7  2008/05/22 17:58:51  jwagnerhki
+ * __darwin_suseconds_t fix
+ *
  * Revision 1.6  2008/04/25 10:37:15  jwagnerhki
  * build35 changed 'ipd_current' from int32 to double for much smoother rate changes
  *
