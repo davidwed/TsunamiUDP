@@ -237,7 +237,7 @@ int            command_quit          (command_t *command, ttp_session_t *session
 int            command_set           (command_t *command, ttp_parameter_t *parameter);
 int            command_dir           (command_t *command, ttp_session_t *session);
 
-int            got_block             (ttp_session_t* session, u_int32_t blocknr);
+inline int     got_block             (ttp_session_t* session, u_int32_t blocknr);
 
 /* config.c */
 void           reset_client          (ttp_parameter_t *parameter);
@@ -288,6 +288,9 @@ void           xscript_open          (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.8  2008/07/19 14:59:53  jwagnerhki
+ * added restart_wireclearidx variable
+ *
  * Revision 1.7  2008/05/22 23:33:21  jwagnerhki
  * much improved statistics
  *

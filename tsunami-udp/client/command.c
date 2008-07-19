@@ -964,7 +964,7 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
  *
  * Returns non-0 if the block has already been received
  *------------------------------------------------------------------------*/
-int got_block(ttp_session_t* session, u_int32_t blocknr)
+inline int got_block(ttp_session_t* session, u_int32_t blocknr)
 {
     return (session->transfer.received[blocknr / 8] & (1 << (blocknr % 8)));
 }
@@ -972,6 +972,9 @@ int got_block(ttp_session_t* session, u_int32_t blocknr)
 
 /*========================================================================
  * $Log$
+ * Revision 1.30  2008/05/26 07:47:50  jwagnerhki
+ * no TCP feedback freeze during Ringbuffer reserved warnings
+ *
  * Revision 1.29  2008/05/22 23:39:43  jwagnerhki
  * fixed possible threading prob with I/O thread changing bitmap and blocks_left, revised command_get receive loop, update and use improved statistics, message before diskflush, fixed total_lost counting to start from block 1 not 0
  *
