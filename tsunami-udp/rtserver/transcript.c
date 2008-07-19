@@ -77,7 +77,7 @@ void xscript_close(ttp_session_t *session, u_int64_t delta)
 
     fprintf(xfer->transcript, "mb_transmitted = %0.2f\n", param->file_size / (1024.0 * 1024.0));
     fprintf(xfer->transcript, "duration = %0.2f\n", delta / 1000000.0);
-    fprintf(xfer->transcript, "throughput = %0.2f\n", param->file_size * 8.0 / delta);
+    fprintf(xfer->transcript, "throughput = %0.2f\n", param->file_size * 8.0 / (delta * 1e-6 * 1024*1024));
     fclose(xfer->transcript);
 }
 
@@ -166,6 +166,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.8  2008/07/18 06:27:07  jwagnerhki
+ * build 37 with iperf-style server send rate control
+ *
  * Revision 1.7  2008/05/22 17:58:51  jwagnerhki
  * __darwin_suseconds_t fix
  *

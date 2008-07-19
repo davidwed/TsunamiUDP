@@ -410,7 +410,8 @@ void client_handler(ttp_session_t *session)
     /* report on the transfer */
     if (param->verbose_yn)
         fprintf(stderr, "Server %d transferred %Lu bytes in %0.2f seconds (%0.1f Mbps)\n",
-                session->session_id, (ull_t)param->file_size, delta / 1000000.0, 8.0 * param->file_size / delta);
+                session->session_id, (ull_t)param->file_size, delta / 1000000.0, 
+                8.0 * param->file_size / (delta * 1e-6 * 1024*1024) );
 
     /* close the transcript */
     if (param->transcript_yn)
@@ -592,6 +593,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.36  2008/07/18 06:27:07  jwagnerhki
+ * build 37 with iperf-style server send rate control
+ *
  * Revision 1.35  2008/04/25 10:37:15  jwagnerhki
  * build35 changed 'ipd_current' from int32 to double for much smoother rate changes
  *
