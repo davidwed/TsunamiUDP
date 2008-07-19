@@ -428,8 +428,10 @@ void client_handler(ttp_session_t *session)
     if (param->fileout) {
         fclose(xfer->file);
     }
+
     /* stop the VSIB */
     stop_vsib(session);
+    fclose(xfer->vsib);
 
     #endif
 
@@ -593,6 +595,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.37  2008/07/19 14:29:35  jwagnerhki
+ * Mbps rate reported with 2-pow-20
+ *
  * Revision 1.36  2008/07/18 06:27:07  jwagnerhki
  * build 37 with iperf-style server send rate control
  *
