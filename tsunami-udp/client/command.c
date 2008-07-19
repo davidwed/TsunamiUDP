@@ -640,6 +640,7 @@ int command_get(command_t *command, ttp_session_t *session)
     printf("Transfer duration     : %0.2f seconds\n", time_secs);
     printf("Total packet data     : %0.2f Mbit\n", mbit_thru);
     printf("Goodput data          : %0.2f Mbit\n", mbit_good);
+    printf("File data             : %0.2f Mbit\n", mbit_file);
     printf("Throughput            : %0.2f Mbps\n", mbit_thru / time_secs);
     printf("Goodput w/ restarts   : %0.2f Mbps\n", mbit_good / time_secs);
     printf("Final file rate       : %0.2f Mbps\n", mbit_file / time_secs);
@@ -982,6 +983,9 @@ inline int got_block(ttp_session_t* session, u_int32_t blocknr)
 
 /*========================================================================
  * $Log$
+ * Revision 1.33  2008/07/19 20:30:50  jwagnerhki
+ * added DEBUG_RETX, rate with req restarts, actual file transfer rate, comment cleanup
+ *
  * Revision 1.32  2008/07/19 20:01:25  jwagnerhki
  * gapless_to_block, ttp_repeat_retransmit changed to purge duplicates first then decide on request-restart, more DEBUG_RETX output
  *
