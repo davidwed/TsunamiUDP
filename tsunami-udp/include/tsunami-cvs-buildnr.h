@@ -17,6 +17,6 @@
 // Build number format:
 //   v[ongoing version] [devel/final] cvsbuild [incrementing number]
 
-#define TSUNAMI_CVS_BUILDNR	"v1.2 totally-alpha ;) cvsbuild 1 "
+#define TSUNAMI_CVS_BUILDNR	"v1.2 totally-alpha ;) cvsbuild 2"
 
 #endif

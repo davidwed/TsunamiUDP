@@ -191,13 +191,16 @@ void client_handler(ttp_session_t *session)
 {
     retransmission_t  retransmission;                /* the retransmission data object                 */
     struct timeval    start, stop;                   /* the start and stop times for the transfer      */
-    struct timeval    delay;                         /* the interpacket delay value                    */
+    struct timeval    prevpacketT;                   /* the send time of the previous packet           */
+    struct timeval    currpacketT;                   /* the interpacket delay value                    */
     struct timeval    lastfeedback;                  /* the time since last client feedback            */
+    struct timeval    lasthblostreport;              /* the time since last 'heartbeat lost' report    */
     u_int32_t         deadconnection_counter;        /* the counter for checking dead conn timeout     */
     int               result;                        /* number of bytes read from retransmission queue */
     u_char            datagram[MAX_BLOCK_SIZE + sizeof(blockheader_t)];
                                                      /* the datagram containing the file block         */
     u_int64_t         ipd_time;                      /* the time to delay after this packet            */
+    int64_t           ipd_usleep_diff;               /* the time correction to ipd_time, signed        */
     int               status;
     ttp_transfer_t   *xfer  = &session->transfer;
     ttp_parameter_t  *param =  session->parameter;
@@ -224,8 +227,8 @@ void client_handler(ttp_session_t *session)
     if (1==param->verbose_yn) {
         fprintf(stderr,"Client authenticated. Negotiated parameters are:\n");
         fprintf(stderr,"Block size: %d\n", param->block_size);
-        fprintf(stderr,"Buffer size: %d\n", param->udp_buffer); 
-        fprintf(stderr,"Port: %d\n", param->tcp_port);    
+        fprintf(stderr,"Buffer size: %d\n", param->udp_buffer);
+        fprintf(stderr,"Port: %d\n", param->tcp_port);
     }
 
     /* while we haven't been told to stop */
@@ -261,8 +264,13 @@ void client_handler(ttp_session_t *session)
     gettimeofday(&start, NULL);
     if (param->transcript_yn)
         xscript_data_start(session, &start);
-    lastfeedback = start;
+
+    lasthblostreport       = start;
+    lastfeedback           = start;
+    prevpacketT            = start;
     deadconnection_counter = 0;
+    ipd_time               = 0;
+    ipd_usleep_diff        = 0;
 
     /* start by blasting out every block */
     xfer->block = 0;
@@ -271,8 +279,15 @@ void client_handler(ttp_session_t *session)
         /* default: flag as retransmitted block */
         block_type = TS_BLOCK_RETRANSMISSION;
 
+        /* precalculate time to wait after sending the next packet */
+        gettimeofday(&currpacketT, NULL);
+        ipd_usleep_diff = xfer->ipd_current + tv_diff_usec(prevpacketT, currpacketT);
+        prevpacketT = currpacketT;
+        if (ipd_usleep_diff > 0 || ipd_time > 0) {
+            ipd_time += ipd_usleep_diff;
+        }
+
         /* see if transmit requests are available */
-        gettimeofday(&delay, NULL);
         result = read(session->client_fd, &retransmission, sizeof(retransmission));
         #ifndef VSIB_REALTIME
         if ((result <= 0) && (errno != EAGAIN))
@@ -286,7 +301,8 @@ void client_handler(ttp_session_t *session)
         if (result == sizeof(retransmission_t)) {
 
             /* store current time */
-            lastfeedback = delay;
+            lastfeedback           = currpacketT;
+            lasthblostreport       = currpacketT;
             deadconnection_counter = 0;
 
             /* if it's a stop request, go back to waiting for a filename */
@@ -299,7 +315,6 @@ void client_handler(ttp_session_t *session)
             status = ttp_accept_retransmit(session, &retransmission, datagram);
             if (status < 0)
                 warn("Retransmission error");
-            usleep_that_works(75);
 
         /* if we have no retransmission */
         } else if (result <= 0) {
@@ -338,21 +353,15 @@ void client_handler(ttp_session_t *session)
             continue;
         }
 
-        /* delay for the next packet */
-        ipd_time = get_usec_since(&delay);
-        if (ipd_time < xfer->ipd_current) {
-            usleep_that_works(xfer->ipd_current - ipd_time);
-        }
-
         /* monitor client heartbeat and disconnect dead client */
         if ((deadconnection_counter++) > 2048) {
             char stats_line[160];
 
             deadconnection_counter = 0;
 
-            /* time since last client report was received */
-            delta = get_usec_since(&lastfeedback);
-            if (delta < UPDATE_PERIOD) continue;
+            /* limit 'heartbeat lost' reports to 500ms intervals */
+            if (get_usec_since(&lasthblostreport) < 500000.0) continue;
+            gettimeofday(&lasthblostreport, NULL);
 
             /* throttle IPD with fake 100% loss report */
             #ifndef VSIB_REALTIME
@@ -361,6 +370,8 @@ void client_handler(ttp_session_t *session)
             retransmission.block = 0;
             ttp_accept_retransmit(session, &retransmission, datagram);
             #endif
+
+            delta = get_usec_since(&lastfeedback);
 
             /* show an (additional) statistics line */
             sprintf(stats_line, "   n/a     n/a     n/a %7Lu %6.2f%% %3u -- no heartbeat since %3.2fs\n",
@@ -386,11 +397,17 @@ void client_handler(ttp_session_t *session)
                     fprintf(stderr, "Heartbeat timeout of %d seconds reached and not doing local backup, terminating transfer now.\n", param->hb_timeout);
                     break;
                 } else {
-                    lastfeedback = delay;
+                    lastfeedback = currpacketT;
                 }
             }
             #endif
         }
+
+        /* wait before handling the next packet */
+        if (ipd_time > 0) {
+             usleep_that_works(ipd_time);
+        }
+
     }
 
     /*---------------------------
@@ -510,7 +527,7 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
         #endif
 
         /* otherwise    : display usage information */
-        default: 
+        default:
             fprintf(stderr, "Usage: tsunamid [--verbose] [--transcript] [--v6] [--port=n] [--datagram=bytes] [--buffer=bytes]\n");
             fprintf(stderr, "                [--hbtimeout=seconds] ");
             #ifdef VSIB_REALTIME

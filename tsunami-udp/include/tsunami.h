@@ -83,6 +83,8 @@
 #define min(a,b)  (((a) < (b)) ? (a) : (b))
 #define max(a,b)  (((a) > (b)) ? (a) : (b))
 
+#define tv_diff_usec(newer,older) ((newer.tv_sec-older.tv_sec)*1e6 + (newer.tv_usec-older.tv_usec))
+
 #define read_into(fd,var)      read(fd, &var, sizeof(var))          /* safe'ish read from file/stream into variable */
 #define fread_into(fd,var)    fread(&var, sizeof(var), 1, fd)
 #define write_from(fd,var)    write(fd, &var, sizeof(var))         /* safe'ish write from variable to file/stream  */
@@ -177,6 +179,9 @@ int        error_handler           (const char *file, int line, const char *mess
 
 /*========================================================================
  * $Log$
+ * Revision 1.8.2.5  2007/12/07 15:10:05  jwagnerhki
+ * pragma backwards comp fix, read_vsib_block calls with session
+ *
  * Revision 1.8.2.4  2007/11/12 15:03:05  jwagnerhki
  * defined UPDATE_PERIOD for both client and server, server 'no heartbeat' messages only after UPDATE_PERIOD usec passed
  *

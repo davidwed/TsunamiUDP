@@ -13,6 +13,10 @@
  to transfer data from a protocol v1.2 software
  server, and vice versa.
 
+ v1.2 CvsBuild 2:
+  - copied the 'iperf'-style packet spacing code
+    over from v1.1 cvs head
+
  v1.2 CvsBuild 1:
   - very initial version, cleaned up a few things,
     now using blockheader_t instead of fixed 6 bytes,
