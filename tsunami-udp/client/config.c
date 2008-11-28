@@ -70,8 +70,8 @@
  * Global constants.
  *------------------------------------------------------------------------*/
 
-const u_int32_t  DEFAULT_BLOCK_SIZE    = 32768;        /* default size of a single file block          */
-const int        DEFAULT_TABLE_SIZE    = 2048;         /* initial size of the retransmission table     */
+const u_int32_t  DEFAULT_BLOCK_SIZE    = 1024;         /* default size of a single file block          */
+const int        DEFAULT_TABLE_SIZE    = 4096;         /* initial size of the retransmission table     */
 const char      *DEFAULT_SERVER_NAME   = "localhost";  /* default name of the remote server            */
 const u_int16_t  DEFAULT_SERVER_PORT   = TS_TCP_PORT;  /* default TCP port of the remote server        */
 const u_int16_t  DEFAULT_CLIENT_PORT   = TS_UDP_PORT;  /* default UDP port of the client               */
@@ -139,6 +139,9 @@ void reset_client(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.5  2007/12/07 18:10:28  jwagnerhki
+ * cleaned away 64-bit compile warnings, used tsunami-client.h
+ *
  * Revision 1.4  2007/06/19 13:35:24  jwagnerhki
  * replaced notretransmit option with better time-limited restransmission window, reduced ringbuffer from 8192 to 4096 entries
  *
