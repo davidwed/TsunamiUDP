@@ -69,7 +69,7 @@
  * Global constants.
  *------------------------------------------------------------------------*/
 
-const u_int32_t  DEFAULT_BLOCK_SIZE    = 32768;     /* default size of a single file block     */
+const u_int32_t  DEFAULT_BLOCK_SIZE    = 1024;      /* default size of a single file block     */
 const u_char    *DEFAULT_SECRET        = (u_char*)"kitten";  /* default shared secret          */
 const u_int16_t  DEFAULT_TCP_PORT      = TS_TCP_PORT;/* default TCP port to listen on          */
 const u_int32_t  DEFAULT_UDP_BUFFER    = 20000000;  /* default size of the UDP transmit buffer */
@@ -102,6 +102,9 @@ void reset_server(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.6  2007/10/29 15:30:25  jwagnerhki
+ * timeout feature for rttsunamid too, added version info to transcripts, added --hbimeout srv cmd line param
+ *
  * Revision 1.5  2007/07/10 08:18:07  jwagnerhki
  * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
  *
