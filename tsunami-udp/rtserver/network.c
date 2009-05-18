@@ -167,8 +167,7 @@ int create_udp_socket(ttp_parameter_t *parameter)
     /* set the transmit buffer size */
     status = setsockopt(socket_fd, SOL_SOCKET, SO_SNDBUF, &parameter->udp_buffer, sizeof(parameter->udp_buffer));
     if (status < 0) {
-	close(socket_fd);
-	return warn("Error in resizing UDP transmit buffer");
+	warn("Error in resizing UDP transmit buffer");
     }
 
     /* return the file desscriptor */
@@ -178,6 +177,9 @@ int create_udp_socket(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.2  2006/10/24 19:14:28  jwagnerhki
+ * moved server.h into common tsunami-server.h
+ *
  * Revision 1.1.1.1  2006/07/20 09:21:20  jwagnerhki
  * reimport
  *
