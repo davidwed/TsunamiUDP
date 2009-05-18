@@ -144,7 +144,7 @@ void xscript_open(ttp_session_t *session)
 
     /* write out all the header information */
     fprintf(xfer->transcript, "filename = %s\n",    xfer->filename);
-    fprintf(xfer->transcript, "file_size = %Lu\n",  (ull_t)param->file_size);
+    fprintf(xfer->transcript, "file_size = %llu\n",  (ull_t)param->file_size);
     fprintf(xfer->transcript, "block_count = %u\n", param->block_count);
     fprintf(xfer->transcript, "udp_buffer = %u\n",  param->udp_buffer);
     fprintf(xfer->transcript, "block_size = %u\n",  param->block_size);
@@ -166,6 +166,9 @@ void xscript_open(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.9  2008/07/19 14:29:35  jwagnerhki
+ * Mbps rate reported with 2-pow-20
+ *
  * Revision 1.8  2008/07/18 06:27:07  jwagnerhki
  * build 37 with iperf-style server send rate control
  *

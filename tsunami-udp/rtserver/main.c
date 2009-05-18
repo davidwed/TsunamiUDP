@@ -434,7 +434,7 @@ void client_handler(ttp_session_t *session)
 
     /* report on the transfer */
     if (param->verbose_yn)
-        fprintf(stderr, "Server %d transferred %Lu bytes in %0.2f seconds (%0.1f Mbps)\n",
+        fprintf(stderr, "Server %d transferred %llu bytes in %0.2f seconds (%0.1f Mbps)\n",
                 session->session_id, (ull_t)param->file_size, delta / 1000000.0,
                 8.0 * param->file_size / (delta * 1e-6 * 1024*1024) );
 
@@ -586,7 +586,7 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
             stat(parameter->file_names[counter], &filestat);
             parameter->file_sizes[counter] = filestat.st_size;
             parameter->file_name_size += strlen(parameter->file_names[counter])+1;
-            fprintf(stderr, " %3d)   %-20s  %Lu bytes\n", counter+1, parameter->file_names[counter], (ull_t)parameter->file_sizes[counter]);
+            fprintf(stderr, " %3d)   %-20s  %llu bytes\n", counter+1, parameter->file_names[counter], (ull_t)parameter->file_sizes[counter]);
         }
         fprintf(stderr, "total characters %d\n", parameter->file_name_size);
     }
@@ -620,6 +620,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.42  2008/07/19 14:29:35  jwagnerhki
+ * Mbps rate reported with 2-pow-20
+ *
  * Revision 1.41  2008/07/18 06:27:06  jwagnerhki
  * build 37 with iperf-style server send rate control
  *
