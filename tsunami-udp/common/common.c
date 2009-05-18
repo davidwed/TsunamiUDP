@@ -316,7 +316,7 @@ u_int64_t get_udp_in_errors()
     /* need to reopen /proc/net/snmp file each time, it won't update otherwise */
     f = fopen("/proc/net/snmp", "r");
     if (!f) {
-        warn("could not open /proc/net/snmp");
+        // warn("could not open /proc/net/snmp");
         return 0;
     }
 
@@ -347,6 +347,9 @@ u_int64_t get_udp_in_errors()
 
 /*========================================================================
  * $Log$
+ * Revision 1.8  2008/07/18 06:27:05  jwagnerhki
+ * build 37 with iperf-style server send rate control
+ *
  * Revision 1.7  2007/07/10 08:18:05  jwagnerhki
  * rtclient merge, multiget cleaned up and improved, allow 65530 files in multiget
  *
