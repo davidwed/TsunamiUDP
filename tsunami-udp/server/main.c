@@ -364,7 +364,8 @@ void client_handler(ttp_session_t *session)
             delta = get_usec_since(&lastfeedback);
 
             /* show an (additional) statistics line */
-            sprintf(stats_line, "   n/a     n/a     n/a %7u %6.2f%% %3u -- no heartbeat since %3.2fs\n",
+            snprintf(stats_line, sizeof(stats_line)-1,
+                                "   n/a     n/a     n/a %7u %6.2f %3u -- no heartbeat since %3.2fs\n",
                                 xfer->block, 100.0 * xfer->block / param->block_count, session->session_id,
                                 1e-6*delta);
             if (param->transcript_yn)
@@ -596,6 +597,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.40  2009/05/18 08:40:29  jwagnerhki
+ * Lu formatting to llu
+ *
  * Revision 1.39  2008/11/07 08:58:14  jwagnerhki
  * report broken message
  *
