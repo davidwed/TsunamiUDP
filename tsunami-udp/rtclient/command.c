@@ -523,7 +523,7 @@ int command_get(command_t *command, ttp_session_t *session)
           }//if(missing blocks)
 
           /* advance the index of the gapless section going from start block to highest block  */
-          while (got_block(session, xfer->gapless_to_block + 1)) {
+          while (got_block(session, xfer->gapless_to_block + 1) && (xfer->gapless_to_block < xfer->block_count)) {
               xfer->gapless_to_block++;
           }
 
@@ -984,6 +984,9 @@ inline int got_block(ttp_session_t* session, u_int32_t blocknr)
 
 /*========================================================================
  * $Log$
+ * Revision 1.24  2009/12/21 17:05:09  jwagnerhki
+ * sends stats even during restart pending
+ *
  * Revision 1.23  2008/07/19 20:59:15  jwagnerhki
  * use xfer->restart_wireclearidx as upper limit to ignored blocks
  *
