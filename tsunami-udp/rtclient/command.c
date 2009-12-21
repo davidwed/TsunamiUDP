@@ -478,7 +478,7 @@ int command_get(command_t *command, ttp_session_t *session)
           /* transmit restart: avoid re-triggering on blocks still down the wire before server reacts */
           if ((xfer->restart_pending) && (this_type != TS_BLOCK_TERMINATE)) {
               if ((this_block > xfer->restart_lastidx) && (this_block <= xfer->restart_wireclearidx)) {
-                  continue;
+                  goto send_stats;
               }
           }
 
@@ -568,6 +568,8 @@ int command_get(command_t *command, ttp_session_t *session)
           }
 
       }//if(not a duplicate block)
+
+    send_stats:
 
       /* repeat our server feedback and requests if it's time */
       if (!(xfer->stats.total_blocks % 50)) {
@@ -982,6 +984,9 @@ inline int got_block(ttp_session_t* session, u_int32_t blocknr)
 
 /*========================================================================
  * $Log$
+ * Revision 1.23  2008/07/19 20:59:15  jwagnerhki
+ * use xfer->restart_wireclearidx as upper limit to ignored blocks
+ *
  * Revision 1.22  2008/07/19 20:44:34  jwagnerhki
  * show Mbit File Data, transcript.c show mbyte_transmitted mbyte_usable mbyte_file
  *
