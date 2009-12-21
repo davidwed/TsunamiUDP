@@ -134,7 +134,7 @@ int ttp_accept_retransmit(ttp_session_t *session, retransmission_t *retransmissi
 	/* print a status report */
 	if (!(iteration++ % 23))
 	    printf(" erate     ipd  target   block   %%done srvNr\n");
-	printf(stats_line);
+	printf("%s", stats_line);
 
 	/* print to the transcript if the user wants */
 	if (param->transcript_yn)
@@ -587,6 +587,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.33  2009/05/18 09:46:14  jwagnerhki
+ * removed %% from stats line
+ *
  * Revision 1.32  2008/07/18 06:27:06  jwagnerhki
  * build 37 with iperf-style server send rate control
  *

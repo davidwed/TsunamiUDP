@@ -394,7 +394,7 @@ void client_handler(ttp_session_t *session)
                                 1e-6*delta);
             if (param->transcript_yn)
                xscript_data_log(session, stats_line);
-            fprintf(stderr, stats_line);
+            fprintf(stderr, "%s", stats_line);
 
             /* handle timeout for normal file transfers */
             #ifndef VSIB_REALTIME
@@ -621,6 +621,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.44  2009/05/18 09:46:14  jwagnerhki
+ * removed %% from stats line
+ *
  * Revision 1.43  2009/05/18 08:40:31  jwagnerhki
  * Lu formatting to llu
  *
