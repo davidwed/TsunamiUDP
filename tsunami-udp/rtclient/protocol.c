@@ -436,6 +436,10 @@ int ttp_request_retransmit(ttp_session_t *session, u_int32_t block)
    /* if we don't have space for the request */
    if (rexmit->index_max >= rexmit->table_size) {
 
+      /* don't overgrow the table */
+      if (rexmit->index_max >= 32*MAX_RETRANSMISSION_BUFFER)
+         return 0;
+
       /* try to reallocate the table twice the size*/
       ptr = (u_int32_t *) realloc(rexmit->table, 2 * sizeof(u_int32_t)*rexmit->table_size);
       if (ptr == NULL)
@@ -690,6 +694,9 @@ int ttp_update_stats(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.17  2008/07/19 20:01:25  jwagnerhki
+ * gapless_to_block, ttp_repeat_retransmit changed to purge duplicates first then decide on request-restart, more DEBUG_RETX output
+ *
  * Revision 1.16  2008/07/19 14:59:53  jwagnerhki
  * added restart_wireclearidx variable
  *
