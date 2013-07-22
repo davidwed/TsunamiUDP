@@ -66,6 +66,7 @@
 #include <sys/types.h>   /* for standard system data types */
 #include <inttypes.h>    /* for scanf/printf data types    */
 #include <sys/socket.h>  /* for the BSD sockets library    */
+#include <netdb.h>
 #include <sys/time.h>    /* gettimeofday()                 */
 #include <time.h>        /* for time()                     */
 #include <unistd.h>      /* for standard Unix system calls */
@@ -285,13 +286,47 @@ int ttp_open_port(ttp_session_t *session)
     u_char              ipv6_yn = session->parameter->ipv6_yn;
 
     /* create the address structure */
-    session->transfer.udp_length = ipv6_yn ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in);
-    address = (struct sockaddr *) malloc(session->transfer.udp_length);
-    if (address == NULL)
-	error("Could not allocate space for UDP socket address");
+    if (session->parameter->client == NULL) { // Connect back to IP address of TCP connection
 
-    /* prepare the UDP address structure, minus the UDP port number */
-    getpeername(session->client_fd, address, &(session->transfer.udp_length));
+       /* create the address structure */
+       session->transfer.udp_length = ipv6_yn ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in);
+       address = (struct sockaddr *) malloc(session->transfer.udp_length);
+       if (address == NULL)
+          error("Could not allocate space for UDP socket address");
+
+      /* prepare the UDP address structure, minus the UDP port number */
+      getpeername(session->client_fd, address, &(session->transfer.udp_length));
+
+    } else {
+
+      struct addrinfo *result;
+      char errmsg[256];
+ 
+      int status = getaddrinfo(session->parameter->client, NULL, NULL, &result);
+      if (status) {     
+         sprintf(errmsg, "error in getaddrinfo: %s\n", gai_strerror(status));
+         error(errmsg);
+         return EXIT_FAILURE;
+      }   
+
+      /* Just use the first result */
+      if (result->ai_family==AF_INET6) 
+         ipv6_yn = 1;
+      else
+         ipv6_yn = 0;
+      session->parameter->ipv6_yn = ipv6_yn;
+      
+      session->transfer.udp_length = result->ai_addrlen;
+      address = (struct sockaddr *) malloc(result->ai_addrlen);
+      if (address == NULL)
+         error("Could not allocate space for UDP socket address");
+
+      memcpy(address, result->ai_addr, result->ai_addrlen);
+
+      if (result->ai_canonname != NULL)
+         printf("Sending data to: %s\n", result->ai_canonname);
+      freeaddrinfo(result);
+    }
 
     /* read in the port number from the client */
     status = full_read(session->client_fd, &port, 2);
@@ -577,6 +612,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.31  2009/12/21 15:03:35  jwagnerhki
+ * use full_read full_write
+ *
  * Revision 1.30  2009/12/21 14:44:17  jwagnerhki
  * fix Ubuntu Karmic compile warning, clear str message before read
  *

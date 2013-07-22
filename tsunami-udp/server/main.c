@@ -464,6 +464,7 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
                      { "buffer",     1, NULL, 'b' },
                      { "hbtimeout",  1, NULL, 'h' },
                      { "v",          0, NULL, 'v' },
+                     { "client",     1, NULL, 'c' },
                      #ifdef VSIB_REALTIME
                      { "vsibmode",   1, NULL, 'M' },
                      { "vsibskip",   1, NULL, 'S' },
@@ -498,6 +499,10 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
         case 's':  parameter->secret     = (unsigned char*)optarg;
              break;
 
+        /* --client=c   : Force different client IP from TCP connection */
+        case 'c':  parameter->client     = optarg;
+             break;
+
         /* --buffer=i   : size of socket buffer */
         case 'b':  parameter->udp_buffer = atoi(optarg);
              break;
@@ -530,6 +535,7 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
              fprintf(stderr, "v6           : operates using IPv6 instead of (not in addition to!) IPv4\n");
              fprintf(stderr, "port         : specifies which TCP port on which to listen to incoming connections\n");
              fprintf(stderr, "secret       : specifies the shared secret for the client and server\n");
+             fprintf(stderr, "client       : specifies an alternate client IP or host where to send data\n");
              fprintf(stderr, "buffer       : specifies the desired size for UDP socket send buffer (in bytes)\n");
              fprintf(stderr, "hbtimeout    : specifies the timeout in seconds for disconnect after client heartbeat lost\n");
              #ifdef VSIB_REALTIME
@@ -598,6 +604,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.45  2009/12/22 23:13:48  jwagnerhki
+ * fix retransmitlen
+ *
  * Revision 1.44  2009/12/22 23:04:36  jwagnerhki
  * throttle the blast speed of terminate-block
  *

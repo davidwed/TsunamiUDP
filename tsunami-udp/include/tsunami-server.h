@@ -101,6 +101,7 @@ typedef struct {
     u_int32_t           udp_buffer;     /* size of the UDP send buffer in bytes       */
     u_int16_t           hb_timeout;     /* the client heartbeat timeout               */
     const u_char       *secret;         /* the shared secret for users to prove       */
+    const char         *client;         /* the alternate client IP to stream to       */
     u_int32_t           block_size;     /* the size of each block (in bytes)          */
     u_int64_t           file_size;      /* the total file size (in bytes)             */
     u_int32_t           block_count;    /* the total number of blocks in the file     */
@@ -189,6 +190,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.14  2008/05/22 18:28:56  jwagnerhki
+ * mcheck.h not on MacOSX or some others
+ *
  * Revision 1.13  2008/04/25 10:37:14  jwagnerhki
  * build35 changed 'ipd_current' from int32 to double for much smoother rate changes
  *
