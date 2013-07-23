@@ -91,6 +91,7 @@ void reset_server(ttp_parameter_t *parameter)
     /* fill the fields with their defaults */
     parameter->block_size    = DEFAULT_BLOCK_SIZE;
     parameter->secret        = DEFAULT_SECRET;
+    parameter->client        = NULL;
     parameter->tcp_port      = DEFAULT_TCP_PORT;
     parameter->udp_buffer    = DEFAULT_UDP_BUFFER;
     parameter->hb_timeout    = DEFAULT_HEARTBEAT_TIMEOUT;
@@ -102,6 +103,9 @@ void reset_server(ttp_parameter_t *parameter)
 
 /*========================================================================
  * $Log$
+ * Revision 1.7  2008/12/01 09:06:56  jwagnerhki
+ * reduced 32kB to 1kB default block size
+ *
  * Revision 1.6  2007/10/29 15:30:25  jwagnerhki
  * timeout feature for rttsunamid too, added version info to transcripts, added --hbimeout srv cmd line param
  *

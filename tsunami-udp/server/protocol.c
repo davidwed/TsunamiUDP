@@ -72,7 +72,8 @@
 #include <unistd.h>      /* for standard Unix system calls */
 #include <assert.h>
 #include <math.h>        /* floor() */
-
+#include <stdio.h>
+#include <glob.h>
 
 #include <tsunami-server.h>
 
@@ -612,6 +613,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.32  2013/07/22 21:19:54  jwagnerhki
+ * added Chris Phillips change to allow server sending only to fixed ip that may be different from connecting client ip
+ *
  * Revision 1.31  2009/12/21 15:03:35  jwagnerhki
  * use full_read full_write
  *

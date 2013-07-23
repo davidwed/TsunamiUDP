@@ -102,6 +102,8 @@ typedef struct {
     u_int16_t           hb_timeout;     /* the client heartbeat timeout               */
     const u_char       *secret;         /* the shared secret for users to prove       */
     const char         *client;         /* the alternate client IP to stream to       */
+    const u_char       *finishhook;     /* program to run after successful copy       */
+    const u_char       *allhook;        /* program to run to get listing of files for "get *" */
     u_int32_t           block_size;     /* the size of each block (in bytes)          */
     u_int64_t           file_size;      /* the total file size (in bytes)             */
     u_int32_t           block_count;    /* the total number of blocks in the file     */
@@ -190,6 +192,9 @@ void xscript_open         (ttp_session_t *session);
 
 /*========================================================================
  * $Log$
+ * Revision 1.15  2013/07/22 21:19:54  jwagnerhki
+ * added Chris Phillips change to allow server sending only to fixed ip that may be different from connecting client ip
+ *
  * Revision 1.14  2008/05/22 18:28:56  jwagnerhki
  * mcheck.h not on MacOSX or some others
  *

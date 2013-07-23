@@ -303,7 +303,27 @@ void client_handler(ttp_session_t *session)
 
             /* if it's a stop request, go back to waiting for a filename */
             if (ntohs(retransmission.request_type) == REQUEST_STOP) {
-                fprintf(stderr, "Transmission complete.\n");
+
+               fprintf(stderr, "Transmission of %s complete.\n", xfer->filename);
+
+               if(param->finishhook)
+               {
+                   const int MaxCommandLength = 1024;
+                   char cmd[MaxCommandLength];
+                   int v;
+
+                   v = snprintf(cmd, MaxCommandLength, "%s %s", param->finishhook, xfer->filename);
+                   if(v >= MaxCommandLength)
+                   {
+                       fprintf(stderr, "Error: command buffer too short\n");
+                   }
+                   else
+                   {
+                       fprintf(stderr, "Executing: %s\n", cmd);
+                       system(cmd);
+                   }
+                }
+
                 break;
             }
 
@@ -465,6 +485,8 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
                      { "hbtimeout",  1, NULL, 'h' },
                      { "v",          0, NULL, 'v' },
                      { "client",     1, NULL, 'c' },
+                     { "finishhook", 1, NULL, 'f' },
+                     { "allhook",    1, NULL, 'a' },
                      #ifdef VSIB_REALTIME
                      { "vsibmode",   1, NULL, 'M' },
                      { "vsibskip",   1, NULL, 'S' },
@@ -503,13 +525,21 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
         case 'c':  parameter->client     = optarg;
              break;
 
+        /* --finishhook=h : program to execute after transfer completes */
+        case 'f':  parameter->finishhook = (unsigned char*)optarg;
+             break;
+
+        /* --finishhook=h : program to execute to get list of files for get * */
+        case 'a':  parameter->allhook = (unsigned char*)optarg;
+             break;
+
         /* --buffer=i   : size of socket buffer */
         case 'b':  parameter->udp_buffer = atoi(optarg);
              break;
 
         /* --hbtimeout=i : client heartbeat timeout in seconds */
         case 'h': parameter->hb_timeout = atoi(optarg);
-            break;
+             break;
 
         #ifdef VSIB_REALTIME
         /* --vsibmode=i   : size of socket buffer */
@@ -536,6 +566,7 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
              fprintf(stderr, "port         : specifies which TCP port on which to listen to incoming connections\n");
              fprintf(stderr, "secret       : specifies the shared secret for the client and server\n");
              fprintf(stderr, "client       : specifies an alternate client IP or host where to send data\n");
+             fprintf(stderr, "finishhook   : specified program to run on successful transfer of file\n");
              fprintf(stderr, "buffer       : specifies the desired size for UDP socket send buffer (in bytes)\n");
              fprintf(stderr, "hbtimeout    : specifies the timeout in seconds for disconnect after client heartbeat lost\n");
              #ifdef VSIB_REALTIME
@@ -604,6 +635,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.46  2013/07/22 21:19:54  jwagnerhki
+ * added Chris Phillips change to allow server sending only to fixed ip that may be different from connecting client ip
+ *
  * Revision 1.45  2009/12/22 23:13:48  jwagnerhki
  * fix retransmitlen
  *
