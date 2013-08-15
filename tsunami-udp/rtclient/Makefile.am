@@ -10,14 +10,13 @@
 # $Id$
 #
 
-INCLUDES		= -I$(top_srcdir)/include
+AM_CPPFLAGS		= -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/common/libtsunami_common.a
 
 bin_PROGRAMS		= rttsunami
 
 rttsunami_SOURCES		= \
-			client.h \
 			command.c \
 			config.c \
 			io.c \
@@ -26,7 +25,10 @@ rttsunami_SOURCES		= \
 			protocol.c \
 			ring.c \
 			vsibctl.c \
-			transcript.c
+			transcript.c \
+			vsibctl.h \
+			vsib_ioctl.h
+
 rttsunami_LDADD		= $(common_lib) -lpthread
 rttsunami_DEPENDENCIES	= $(common_lib)
 AM_CFLAGS               = -DVSIB_REALTIME # -DRETX_REQBLOCK_SORTING too slow

@@ -10,7 +10,7 @@
 # $Id$
 #
 
-INCLUDES		= -I$(top_srcdir)/include
+AM_CPPFLAGS		= -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/common/libtsunami_common.a
 
@@ -23,7 +23,6 @@ tsunamid_SOURCES	= \
 			main.c \
 			network.c \
 			protocol.c \
-			transcript.c \
-			server.h
+			transcript.c
 tsunamid_LDADD		= $(common_lib)
 tsunamid_DEPENDENCIES	= $(common_lib)

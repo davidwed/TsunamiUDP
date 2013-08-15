@@ -10,7 +10,7 @@
 # $Id$
 #
 
-INCLUDES		= -I$(top_srcdir)/include
+AM_CPPFLAGS		= -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/common/libtsunami_common.a
 
@@ -26,7 +26,11 @@ rttsunamid_SOURCES	= \
 			transcript.c \
 			vsibctl.c \
 			parse_evn_filename.c \
-			server.h
+			parse_evn_filename.h \
+			registration.h \
+			vsibctl.h \
+			vsib_ioctl.h
+
 rttsunamid_LDADD	= $(common_lib) -lm
 rttsunamid_DEPENDENCIES	= $(common_lib)
 AM_CFLAGS		= -DVSIB_REALTIME

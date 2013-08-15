@@ -323,24 +323,31 @@ int command_get(command_t *command, ttp_session_t *session)
        sscanf(file_count, "%u", &f_total);
 
        if (f_total <= 0) {
+          /* get the \x008 failure signal */
+          char dummy[1];
+          status = fread(dummy, sizeof(char), 1, session->server);
+
           return warn("Server advertised no files to get");
        }
-       printf("\nServer is sharing %u files\n", f_total);
+       else
+       {
+          printf("\nServer is sharing %u files\n", f_total);
 
-       /* Read the file list */
-       file_names = malloc(f_total * sizeof(char*));
-       if(file_names == NULL)
-          error("Could not allocate memory\n");
+          /* Read the file list */
+          file_names = malloc(f_total * sizeof(char*));
+          if(file_names == NULL)
+             error("Could not allocate memory\n");
 
-       printf("Multi-GET of %d files:\n", f_total);
-       for(f_counter=0; f_counter<f_total; f_counter++) {
-          char tmpname[1024];
-          fread_line(session->server, tmpname, 1024);
-          file_names[f_counter] = strdup(tmpname);
-          printf("%s ", file_names[f_counter]);
+          printf("Multi-GET of %d files:\n", f_total);
+          for(f_counter=0; f_counter<f_total; f_counter++) {
+             char tmpname[1024];
+             fread_line(session->server, tmpname, 1024);
+             file_names[f_counter] = strdup(tmpname);
+             printf("%s ", file_names[f_counter]);
+          }
+          fprintf(session->server, "got list");
+          printf("\n");
        }
-       fprintf(session->server, "got list");
-       printf("\n");
 
     } else {
        f_total = 1;
@@ -1016,6 +1023,9 @@ void dump_blockmap(const char *postfix, const ttp_transfer_t *xfer)
 
 /*========================================================================
  * $Log$
+ * Revision 1.45  2009/12/22 23:42:51  jwagnerhki
+ * close UDP already before signaling server to stop
+ *
  * Revision 1.44  2009/12/22 23:22:42  jwagnerhki
  * at end of xfer first stop server then flush
  *

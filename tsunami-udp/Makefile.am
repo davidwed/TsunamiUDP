@@ -16,4 +16,13 @@ SUBDIRS			= include common client server util rtserver rtclient
 # For some reason, we have to list depcomp explicitly, even though
 # it's an automake-generated file.  :-(
 
-EXTRA_DIST		= LICENSE README.txt depcomp
+EXTRA_DIST = \
+	LICENSE.txt \
+	README.txt \
+	depcomp \
+	tsunami.spec.in
+
+# another ugly but needed hack for RPM generation
+
+dist-hook: tsunami.spec
+	cp tsunami.spec $(distdir)

@@ -62,17 +62,16 @@
  *========================================================================*/
 
 #include <stdlib.h>      /* for *alloc() and free()        */
+#include <stdio.h>
 #include <string.h>      /* for memset(), strdup(), etc.   */
 #include <sys/types.h>   /* for standard system data types */
 #include <inttypes.h>    /* for scanf/printf data types    */
 #include <sys/socket.h>  /* for the BSD sockets library    */
-#include <netdb.h>
 #include <sys/time.h>    /* gettimeofday()                 */
 #include <time.h>        /* for time()                     */
 #include <unistd.h>      /* for standard Unix system calls */
 #include <assert.h>
 #include <math.h>        /* floor() */
-#include <stdio.h>
 #include <glob.h>
 
 #include <tsunami-server.h>
@@ -400,59 +399,135 @@ int ttp_open_transfer(ttp_session_t *session)
 
     if(!strcmp(filename, TS_DIRLIST_HACK_CMD)) {
 
-      /* The client requested listing of files and their sizes (dir command)
-       * Send strings:   NNN \0   name1 \0 len1 \0     nameN \0 lenN \0
-       */
-       snprintf(file_no, sizeof(file_no), "%u", param->total_files);
-       full_write(session->client_fd, file_no, strlen(file_no)+1);
-       for(i=0; i<param->total_files; i++) {
-          full_write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
-          snprintf(message, sizeof(message), "%Lu", (ull_t)(param->file_sizes[i]));
-          full_write(session->client_fd, message, strlen(message)+1);
-       }
-       full_read(session->client_fd, message, 1);
-       return warn("File list sent!");
+       /* The client requested listing of files and their sizes (dir command)
+        * Send strings:   NNN \0   name1 \0 len1 \0     nameN \0 lenN \0
+        */
+        snprintf(file_no, sizeof(file_no), "%u", param->total_files);
+        full_write(session->client_fd, file_no, strlen(file_no)+1);
+        for(i=0; i<param->total_files; i++) {
+            full_write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
+            snprintf(message, sizeof(message), "%Lu", (ull_t)(param->file_sizes[i]));
+            full_write(session->client_fd, message, strlen(message)+1);
+        }
+        full_read(session->client_fd, message, 1);
+        return warn("File list sent!");
 
     } else if(!strcmp(filename,"*")) {
+      
+        if(param->allhook != 0)
+        {
+           /* execute the provided program on server side to see what files 
+            * should be gotten
+            */
+            FILE *p;
 
-      /* A multiple file request - sent the file names first, 
-       * and next the client requests a download of each in turn (get * command)
-       */
-       memset(size, 0, sizeof(size));
-       snprintf(size, sizeof(size), "%u", param->file_name_size);
-       full_write(session->client_fd, size, 10);
+            fprintf(stderr, "Using allhook program: %s\n", param->allhook);
+            p = popen((char *)(param->allhook), "r");
+            if(p)
+            {
+                const int MaxFileListLength = 32768;
+                char fileList[MaxFileListLength];
+                const char *fl;
+                int nFile = 0;
+                int length = 0;
+                int l;
 
-       memset(file_no, 0, sizeof(file_no));
-       snprintf(file_no, sizeof(file_no), "%u", param->total_files);
-       full_write(session->client_fd, file_no, 10);
+                memset(fileList, 0, MaxFileListLength);
 
-       printf("\nSent multi-GET filename count and array size to client\n");
-       memset(message, 0, sizeof(message));
-       full_read(session->client_fd, message, 8);
-       printf("Client response: %s\n", message);
+                while(1)
+                {
+                    if(fgets(message, sizeof(message), p) == 0)
+                        break;
 
-       for(i=0; i<param->total_files; i++)
-          full_write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
+                    /* get lenght of string and strip non printable chars */
+                    for(l = 0; message[l] >= ' '; ++l) {}
+                    message[l] = 0;
 
-       memset(message, 0, sizeof(message));
-       full_read(session->client_fd, message, 8);
-       printf("Sent file list, client response: %s\n", message);
+                    fprintf(stdout, "  '%s'\n", message);
 
-       status = read_line(session->client_fd, filename, MAX_FILENAME_LENGTH);
+                    if(l + length >= MaxFileListLength)
+                        break;
 
-       if (status < 0)
-          error("Could not read filename from client");
+                    strncpy(fileList + length, message, l);
+                    length += l + 1;
+                    ++nFile;
+                }
+            }
+            pclose(p);
 
+            memset(size, 0, sizeof(size));
+            snprintf(size, sizeof(size), "%u", length);
+            full_write(session->client_fd, size, 10);
+
+            memset(file_no, 0, sizeof(file_no));
+            snprintf(file_no, sizeof(file_no), "%u", nFile);
+            full_write(session->client_fd, file_no, 10);
+
+            printf("\nSent multi-GET filename count and array size to client\n");
+            memset(message, 0, sizeof(message));
+            full_read(session->client_fd, message, 8);
+            printf("Client response: %s\n", message);
+
+            fl = fileList;
+            if(nFile > 0)
+            {
+                for(i=0; i<nFile; i++)
+                {
+                    l = strlen(fl);
+                    full_write(session->client_fd, fl, l+1);
+                    fl += l+1;
+                }
+
+                memset(message, 0, sizeof(message));
+                full_read(session->client_fd, message, 8);
+                printf("Sent file list, client response: %s\n", message);
+
+                status = read_line(session->client_fd, filename, MAX_FILENAME_LENGTH);
+
+                if (status < 0)
+                    error("Could not read filename from client");
+            }
+
+        } else {
+
+           /* A multiple file request - sent the file names first, 
+            * and next the client requests a download of each in turn (get * command)
+            */
+            memset(size, 0, sizeof(size));
+            snprintf(size, sizeof(size), "%u", param->file_name_size);
+            full_write(session->client_fd, size, 10);
+
+            memset(file_no, 0, sizeof(file_no));
+            snprintf(file_no, sizeof(file_no), "%u", param->total_files);
+            full_write(session->client_fd, file_no, 10);
+
+            printf("\nSent multi-GET filename count and array size to client\n");
+            memset(message, 0, sizeof(message));
+            full_read(session->client_fd, message, 8);
+            printf("Client response: %s\n", message);
+
+            for(i=0; i<param->total_files; i++)
+                full_write(session->client_fd, param->file_names[i], strlen(param->file_names[i])+1);
+
+            memset(message, 0, sizeof(message));
+            full_read(session->client_fd, message, 8);
+            printf("Sent file list, client response: %s\n", message);
+
+            status = read_line(session->client_fd, filename, MAX_FILENAME_LENGTH);
+
+            if (status < 0)
+                error("Could not read filename from client");
+        }
     }
 
     /* store the filename in the transfer object */
     xfer->filename = strdup(filename);
     if (xfer->filename == NULL)
-	return warn("Memory allocation error");
+        return warn("Memory allocation error");
 
     /* make a note of the request */
     if (param->verbose_yn)
-	printf("Request for file: '%s'\n", filename);
+        printf("Request for file: '%s'\n", filename);
 
     #ifndef VSIB_REALTIME
 
@@ -460,9 +535,9 @@ int ttp_open_transfer(ttp_session_t *session)
     xfer->file = fopen(filename, "r");
     if (xfer->file == NULL) {
         sprintf(g_error, "File '%s' does not exist or cannot be read", filename);
-    	/* signal failure to the client */
-    	status = full_write(session->client_fd, "\x008", 1);
-    	if (status < 0)
+        /* signal failure to the client */
+        status = full_write(session->client_fd, "\x008", 1);
+        if (status < 0)
             warn("Could not signal request failure to client");
         return warn(g_error);
     }
@@ -551,7 +626,7 @@ int ttp_open_transfer(ttp_session_t *session)
     /* try to signal success to the client */
     status = full_write(session->client_fd, "\000", 1);
     if (status < 0)
-	return warn("Could not signal request approval to client");
+        return warn("Could not signal request approval to client");
 
     /* read in the block size, target bitrate, and error rate */
     if (full_read(session->client_fd, &param->block_size,  4) < 0) return warn("Could not read block size");            param->block_size  = ntohl(param->block_size);
@@ -604,7 +679,7 @@ int ttp_open_transfer(ttp_session_t *session)
 
     /* if we're doing a transcript */
     if (param->transcript_yn)
-	xscript_open(session);
+        xscript_open(session);
 
     /* we succeeded! */
     return 0;
@@ -613,6 +688,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.33  2013/07/23 00:02:09  jwagnerhki
+ * added first part of Walter Briskens new features
+ *
  * Revision 1.32  2013/07/22 21:19:54  jwagnerhki
  * added Chris Phillips change to allow server sending only to fixed ip that may be different from connecting client ip
  *

@@ -10,4 +10,10 @@
 # $Id$
 #
 
-include_HEADERS		= md5.h tsunami.h
+noinst_HEADERS = \
+	md5.h \
+	tsunami.h \
+	tsunami-client.h \
+	tsunami-cvs-buildnr.h \
+	tsunami-server.h
+

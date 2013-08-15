@@ -10,14 +10,13 @@
 # $Id$
 #
 
-INCLUDES		= -I$(top_srcdir)/include
+AM_CPPFLAGS             = -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/common/libtsunami_common.a
 
 bin_PROGRAMS		= tsunami
 
 tsunami_SOURCES		= \
-			client.h \
 			command.c \
 			config.c \
 			io.c \

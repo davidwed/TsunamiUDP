@@ -10,9 +10,9 @@
 # $Id$
 #
 
-INCLUDES		= -I$(top_srcdir)/include
+AM_CPPFLAGS		= -I$(top_srcdir)/include
 
-lib_LIBRARIES		= libtsunami_common.a
+noinst_LIBRARIES		= libtsunami_common.a
 libtsunami_common_a_SOURCES= md5.c common.c error.c
 
 # Uncomment this on Playstation3 or other big endian platforms

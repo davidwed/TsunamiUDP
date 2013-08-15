@@ -10,11 +10,11 @@
 # $Id$
 #
 
-INCLUDES		= -I$(top_srcdir)/include
+AM_CPPFLAGS		= -I$(top_srcdir)/include
 
 common_lib		= $(top_builddir)/util/libtsunami_common.a
 
-bin_PROGRAMS		= readtest writetest fusereadtest
+noinst_PROGRAMS		= readtest writetest fusereadtest
 readtest_SOURCES	= readtest.c
 #readtest_LDADD		= $(common_lib)
 #readtest_DEPENDENCIES	= $(common_lib)
