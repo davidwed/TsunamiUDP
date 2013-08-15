@@ -11,7 +11,7 @@ rm -rf autom4te.cache
 echo "Running aclocal..."
 aclocal
 echo "Running automake..."
-automake
+automake --add-missing
 echo "Running autoconf..."
 autoconf
 ./configure
