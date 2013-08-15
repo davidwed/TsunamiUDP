@@ -27,6 +27,7 @@ echo "Configuring Tsunami version AC_PACKAGE_VERSION"
 # Init automake
 #
 AM_INIT_AUTOMAKE([foreign])
+AM_CONFIG_HEADER(config.h:config.in)
 
 #
 # Make automake clean emacs ~ files for "make clean"
