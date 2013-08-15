@@ -14,21 +14,19 @@
 # Init autoconf
 #
 
-AC_INIT(./common/common.c)
+
+AC_INIT([tsunami], [9.2wb])
+
+echo "Configuring Tsunami version AC_PACKAGE_VERSION"
 
 #
 # Announce
 #
 
-VERSION="1.1b43"
-echo "Configuring Tsunami version $VERSION"
-
 #
 # Init automake
-# The third argument to AM_INIT_AUTOMAKE surpresses the PACKAGE and
-# VERSION macors
 #
-AM_INIT_AUTOMAKE(tsunami, $VERSION, 'no')
+AM_INIT_AUTOMAKE([foreign])
 
 #
 # Make automake clean emacs ~ files for "make clean"
@@ -87,12 +85,17 @@ if test "$HAPPY" = "0"; then
     AC_MSG_ERROR([Cannot continue])
 fi
 
+# version info needed for .spec file generation
+version=AC_PACKAGE_VERSION
+AC_SUBST(version)
+
 #
 # Party on
 #
 
-AC_CONFIG_FILES([
+AC_OUTPUT([
     Makefile
+    tsunami.spec
     client/Makefile
     rtclient/Makefile
     common/Makefile
@@ -101,4 +104,3 @@ AC_CONFIG_FILES([
     rtserver/Makefile
     util/Makefile
 ])
-AC_OUTPUT
