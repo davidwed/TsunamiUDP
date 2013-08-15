@@ -68,6 +68,7 @@
 #include <inttypes.h>    /* for scanf/printf data types    */
 #include <sys/socket.h>  /* for the BSD sockets library    */
 #include <sys/time.h>    /* gettimeofday()                 */
+#include <netdb.h>       /* needed on OS X                 */
 #include <time.h>        /* for time()                     */
 #include <unistd.h>      /* for standard Unix system calls */
 #include <assert.h>
@@ -419,18 +420,18 @@ int ttp_open_transfer(ttp_session_t *session)
            /* execute the provided program on server side to see what files 
             * should be gotten
             */
+			const int MaxFileListLength = 32768;
+			char fileList[MaxFileListLength];
+			const char *fl;
+			int nFile = 0;
+			int length = 0;
+			int l;
             FILE *p;
 
             fprintf(stderr, "Using allhook program: %s\n", param->allhook);
             p = popen((char *)(param->allhook), "r");
             if(p)
             {
-                const int MaxFileListLength = 32768;
-                char fileList[MaxFileListLength];
-                const char *fl;
-                int nFile = 0;
-                int length = 0;
-                int l;
 
                 memset(fileList, 0, MaxFileListLength);
 
@@ -688,6 +689,9 @@ int ttp_open_transfer(ttp_session_t *session)
 
 /*========================================================================
  * $Log$
+ * Revision 1.34  2013/08/15 14:56:53  jwagnerhki
+ * merged more of WBs v9.2 changes
+ *
  * Revision 1.33  2013/07/23 00:02:09  jwagnerhki
  * added first part of Walter Briskens new features
  *
