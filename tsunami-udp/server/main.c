@@ -554,7 +554,8 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
         /* otherwise    : display usage information */
         default: 
              fprintf(stderr, "Usage: tsunamid [--verbose] [--transcript] [--v6] [--port=n] [--buffer=bytes]\n");
-             fprintf(stderr, "                [--hbtimeout=seconds] ");
+             fprintf(stderr, "                [--hbtimeout=seconds] [--allhook=cmd] [--finishhook=cmd]\n");
+			 fprintf(stderr, "                ");
              #ifdef VSIB_REALTIME
              fprintf(stderr, "[--vsibmode=mode] [--vsibskip=skip] [filename1 filename2 ...]\n\n");
              #else
@@ -566,9 +567,10 @@ void process_options(int argc, char *argv[], ttp_parameter_t *parameter)
              fprintf(stderr, "port         : specifies which TCP port on which to listen to incoming connections\n");
              fprintf(stderr, "secret       : specifies the shared secret for the client and server\n");
              fprintf(stderr, "client       : specifies an alternate client IP or host where to send data\n");
-             fprintf(stderr, "finishhook   : specified program to run on successful transfer of file\n");
              fprintf(stderr, "buffer       : specifies the desired size for UDP socket send buffer (in bytes)\n");
              fprintf(stderr, "hbtimeout    : specifies the timeout in seconds for disconnect after client heartbeat lost\n");
+			 fprintf(stderr, "finishhook   : run command on transfer completion, file name is appended automatically\n");
+			 fprintf(stderr, "allhook      : run command on 'get *' to produce a custom file list for client downloads\n");			 
              #ifdef VSIB_REALTIME
              fprintf(stderr, "vsibmode     : specifies the VSIB mode to use (see VSIB documentation for modes)\n");
              fprintf(stderr, "vsibskip     : a value N other than 0 will skip N samples after every 1 sample\n");
@@ -635,6 +637,9 @@ void reap(int signum)
 
 /*========================================================================
  * $Log$
+ * Revision 1.47  2013/07/23 00:02:09  jwagnerhki
+ * added first part of Walter Briskens new features
+ *
  * Revision 1.46  2013/07/22 21:19:54  jwagnerhki
  * added Chris Phillips change to allow server sending only to fixed ip that may be different from connecting client ip
  *

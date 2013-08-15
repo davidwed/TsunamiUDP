@@ -15,6 +15,8 @@
 -----------------------------------------------------------
 
  CHANGES
+ 15 Aug 2013:
+   - added server feature updates by Chris Phillips and Walter Brisken
  09 Nov 2007:
    - added description of heartbeat timeout feature
  31 Oct 2006:
@@ -170,66 +172,88 @@
                               that may be ignored
    passphrase = default    -- specify a different non-default passphrase for login to the server
 
-
-
+   
  4. Settings in the Tsunami Server
  ============
 
  $ tsunamid --help
    Usage: tsunamid [--verbose] [--transcript] [--v6] [--port=n] [--datagram=bytes] [--buffer=bytes]
-                [--hbtimeout=seconds] [filename1 filename2 ...]
+                [--hbtimeout=seconds] [--allhook=cmd] [--finishhook=cmd] [filename1 filename2 ...]
 
    verbose or v : turns on verbose output mode
    transcript   : turns on transcript mode for statistics recording
    v6           : operates using IPv6 instead of (not in addition to!) IPv4
    port         : specifies which TCP port on which to listen to incoming connections
    secret       : specifies the shared secret for the client and server
+   client       : specifies an alternate client IP or host where to send data
    datagram     : specifies the desired datagram size (in bytes)
    buffer       : specifies the desired size for UDP socket send buffer (in bytes)
    hbtimeout    : specifies the timeout in seconds for disconnect after client heartbeat lost
+   finishhook   : run command on transfer completion, file name is appended automatically
+   allhook      : run command on 'get *' to produce a custom file list for client downloads
    filenames    : list of files to share for downloaded via a client 'GET *'
-  
-   Defaults: ...
 
  $ rttsunamid --help
    Usage: tsunamid [--verbose] [--transcript] [--v6] [--port=n] [--datagram=bytes] [--buffer=bytes]
-                [--hbtimeout=seconds] [--vsibmode=mode] [--vsibskip=skip] [filename1 filename2 ...]
-
-   [same as above 'tsunamid', plus these:]
+                   [--hbtimeout=seconds] [--allhook=cmd] [--finishhook=cmd]
+				   [--vsibmode=mode] [--vsibskip=skip] [filename1 filename2 ...]
+   ...
    vsibmode     : specifies the VSIB mode to use (see VSIB documentation for modes)
    vsibskip     : a value N other than 0 will skip N samples after every 1 sample
 
-   Defaults: ...
 
- The default 'hbtimeout' after the client heartbeat is lost is 15 seconds.
+  --client=host option:
+  
+    The fast UDP data are always sent to the specified host or IP, instead of being
+	sent back to the TCP connection IP of the connected client. This allows 
+	a single client with two IP addresses (e.g. two Ethernet adapters with 
+	different IP). Be careful that the specified 'host' is correct and without
+	typos, otherwise an incorrect host is flooded with UDP data...
 
- The heartbeat is the packetloss report that the client sends to the server 
- in 350ms or shorter intervals.
+  --hbtimeout=sec option:
 
- The 'hbtimeout' behaviour after the first missing client packetloss report
- is briefly as follows:
+    The default 'hbtimeout' after the client heartbeat is lost is 15 seconds.
 
-   The server interrupts the transfer after 'hbtimeout' seconds of
-   no client activity. This can happen at any completion %.
-   A backupping realtime server waits until all requested data (100%) has 
-   been stored to disk, and then waits for 'hbtimeout'.
+    The heartbeat is identical to the packetloss report that the client sends to 
+	the server in 350ms or shorter intervals. The 'hbtimeout' behaviour after the first 
+	missing client packetloss report is briefly as follows:
 
- The same in more detail:
+      The server interrupts the transfer after 'hbtimeout' seconds of
+      no client activity. This can happen at any completion %.
+      A backupping realtime server waits until all requested data (100%) has 
+      been stored to disk, and then waits for 'hbtimeout'.
 
-   - The file server 'tsunamid', or a realtime 'rttsunamid' that has _not_ been 
-   instructed to write a local backup copy of VSIB data, will both continue 
-   sending new UDP-packetized data while waiting for the next heartbeat.
-   - If no heartbeat is received within the hbtimeout time, the connection is closed.
-   - If an EOF of the TCP connection is encountered, the connection is closed
-   immediately without timeout checks.
-   
-   - A realtime 'rttsunamid' that _has_ been instructed to write a local backup
-   copy of VSIB data will continue to send data, even if there is no feedback
-   from the client. 
-   - Even if an EOF is encountered, the connection is not closed.
-   - Only after the server has sent the last block of data (and thus the entire
-   requested VSIB data is complete on the disk), the hbtimeout setting
-   becomes effective.
+    The same in more detail:
+
+      - The file server 'tsunamid', or a realtime 'rttsunamid' that has _not_ been 
+        instructed to write a local backup copy of VSIB data, will both continue 
+        sending new UDP-packetized data while waiting for the next heartbeat.
+      - If no heartbeat is received within the hbtimeout time, the connection is closed.
+      - If an EOF of the TCP connection is encountered, the connection is closed
+        immediately without timeout checks.
+      - A realtime 'rttsunamid' that _has_ been instructed to write a local backup
+        copy of VSIB data will continue to send data, even if there is no feedback
+        from the client. 
+      - Even if an EOF is encountered, the connection is not closed.
+      - Only after the server has sent the last block of data (and thus the entire
+        requested VSIB data is complete on the disk), the hbtimeout setting
+        becomes effective.
+
+ --finishhook=cmd option:
+
+   If this is specified, then on completion of a file transfer the command is run with 
+   the filename appended.  For example, if --finishhook=rm is specified, the transfered 
+   file is simply removed (from the server) once it is transferred.  More complicated 
+   things could be done in a shell script, python program, or whatever, such as sending 
+   email notification, moving to a different directory, or ...
+
+ --allhook=cmd option: 
+ 
+   If this is specified, the provided program will be run and its output will be used as 
+   the file list to be transferred.  For example, if --allhook="ls -1" is supplied on the 
+   command line, the list of files in the local directory will be listed and queued for 
+   retrieval.  In a more complicated situation one could do file filtration based on filename 
+   on file date, or .
 
 
 
