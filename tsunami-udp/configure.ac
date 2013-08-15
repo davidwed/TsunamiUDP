@@ -15,7 +15,7 @@
 #
 
 
-AC_INIT([tsunami], [9.2wb])
+AC_INIT([tsunami], [1.1b43])
 
 echo "Configuring Tsunami version AC_PACKAGE_VERSION"
 
