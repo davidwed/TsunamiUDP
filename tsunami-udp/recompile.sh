@@ -8,12 +8,17 @@ rm -f */Makefile.in
 rm -rf */.deps
 rm -rf autom4te.cache
 
-echo "Running aclocal..."
-aclocal
-echo "Running automake..."
-automake --add-missing
-echo "Running autoconf..."
-autoconf
+echo "Running autoreconf..."
+autoreconf -i -f
+#echo "Running aclocal..."
+#aclocal
+#echo "Running autoheader..."
+#autoheader
+#echo "Running automake..."
+#automake --add-missing
+#echo "Running autoconf..."
+#autoconf
+
 ./configure
 make clean
 make
