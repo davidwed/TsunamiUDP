@@ -84,3 +84,10 @@ Compiling
        request, fast, discards duplicates, may improve disk I/O 
        since more contiguous access on server side
        
+ For compiling on Solaris:
+
+   $ ./configure CC=gcc CPPFLAGS=-Du_int64_t=uint64_t -Du_int32_t=uint32_t \
+       -Du_int16_t=uint16_t -Du_int8_t=uint8_t LIBS=-lsocket -lnsl -lrt 
+
+   If gcc is not avaliable one needs to remove the -Wall from EXTRA_FLAGS 
+   otherwise it fails.
