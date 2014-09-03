@@ -9,7 +9,7 @@ rm -rf */.deps
 rm -rf autom4te.cache
 
 echo "Running autoreconf..."
-autoreconf -i -f
+autoreconf -i -f -s
 #echo "Running aclocal..."
 #aclocal
 #echo "Running autoheader..."
@@ -21,7 +21,7 @@ autoreconf -i -f
 
 ./configure
 make clean
-make
+make -j8
 
 echo
 echo "You can do a 'sudo make install' to install binaries into /usr/bin"
