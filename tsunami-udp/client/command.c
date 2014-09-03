@@ -985,7 +985,7 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
  *
  * Returns non-0 if the block has already been received
  *------------------------------------------------------------------------*/
-inline int got_block(ttp_session_t* session, u_int32_t blocknr)
+int got_block(ttp_session_t* session, u_int32_t blocknr)
 {
     if (blocknr > session->transfer.block_count)
         return 1;
@@ -1023,6 +1023,9 @@ void dump_blockmap(const char *postfix, const ttp_transfer_t *xfer)
 
 /*========================================================================
  * $Log$
+ * Revision 1.46  2013/08/15 14:56:53  jwagnerhki
+ * merged more of WBs v9.2 changes
+ *
  * Revision 1.45  2009/12/22 23:42:51  jwagnerhki
  * close UDP already before signaling server to stop
  *

@@ -976,7 +976,7 @@ int parse_fraction(const char *fraction, u_int16_t *num, u_int16_t *den)
  *
  * Returns non-0 if the block has already been received
  *------------------------------------------------------------------------*/
-inline int got_block(ttp_session_t* session, u_int32_t blocknr)
+int got_block(ttp_session_t* session, u_int32_t blocknr)
 {
     return (session->transfer.received[blocknr / 8] & (1 << (blocknr % 8)));
 }
@@ -984,6 +984,9 @@ inline int got_block(ttp_session_t* session, u_int32_t blocknr)
 
 /*========================================================================
  * $Log$
+ * Revision 1.26  2009/12/22 23:22:42  jwagnerhki
+ * at end of xfer first stop server then flush
+ *
  * Revision 1.25  2009/12/21 17:14:10  jwagnerhki
  * dont increment gapless_to_block infinitely
  *
