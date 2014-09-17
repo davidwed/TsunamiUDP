@@ -19,6 +19,7 @@ Current TODO and BUGS list:
  - the client should detect if the server disconnects i.e. closes
    its TCP connection (currently the transfer in the client will 
    just halt "mysteriously" if server is Ctrl-C'ed)
+ - add automatic support for UDP hole punching for NAT?
 
  (- the target rate (bit/sec) is of type u_int32_t and limits
    the maximum rate to 4 Gbit/s, need to change this u_int64_t 
