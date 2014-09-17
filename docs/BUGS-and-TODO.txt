@@ -4,9 +4,6 @@ Current TODO and BUGS list:
 
 ==GENERAL==
 
- BUGS
- - changing the blocksize to e.g. 65532 does not work in the 
-   server -> "Warning: Could not transmit block #..."
  TODO
  - CPU load of server and client apps is much higher than necessary
  - "blocking": ring buffer blocking, add timeout so it doesn't 
@@ -16,15 +13,20 @@ Current TODO and BUGS list:
    (to not break compatibility with ancient Tsunami implementations
    try specific filelength value as "extension" indicator. or then
    just forget about ancient Tsunami revisions.)
- - copy command control block things over from FTP client/server
-   control code (get, mget, ls, quote, ...)
- - the target rate (bit/sec) is of type u_int32_t and limits
-   the maximum rate to 4 Gbit/s, need to change this u_int64_t 
-   and then increase the protocol version to break compatibility
-   => protocol v1.2 branch
+ - copy command control block things over from external FTP program 
+   client/server control code (to have 'get', 'mget', 'ls', 'quote', 
+   and other FTP commands)
  - the client should detect if the server disconnects i.e. closes
    its TCP connection (currently the transfer in the client will 
    just halt "mysteriously" if server is Ctrl-C'ed)
+
+ (- the target rate (bit/sec) is of type u_int32_t and limits
+   the maximum rate to 4 Gbit/s, need to change this u_int64_t 
+   and then increase the protocol version to break compatibility
+     => see the protocol v1.2 branch for a >4 Gbit/s version.
+     You can switch to the v1.2 source code via:
+     $ cvs update -r protocol_v12_branch
+ )
 
 ==REALTIME SPECIFIC==
 
@@ -41,6 +43,10 @@ Past TODO and BUGS list:
 ==GENERAL==
 
  BUGS
+ - changing the blocksize to e.g. 65532 does not work in the 
+   server -> "Warning: Could not transmit block #..."
+   * not a bug?  payload 65532 + 4-byte packet sequence nr = 65536 byte, which
+     is too large for UDP that by IPv4 standard has a max size of 65535 bytes
  - client segfaults on CLOSE if not connected
    * fixed: 11 Dec 06 / CVS, better checking
  - using two tsunami clients concurrently does not work right
