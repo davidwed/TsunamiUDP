@@ -7,7 +7,10 @@ rm -f */Makefile
 rm -f */Makefile.in
 rm -rf */.deps
 rm -rf autom4te.cache
+rm -rf m4
 
+echo "Runing libtoolize..."
+libtoolize --force
 echo "Running autoreconf..."
 autoreconf -i -f -s
 #echo "Running aclocal..."
