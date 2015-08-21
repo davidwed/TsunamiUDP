@@ -23,7 +23,7 @@ autoreconf -i -f -s
 
 # The following config flags were reported by R.G. Dodson to be
 # necessary when compiling for Solaris:
-#./configure CC=gcc CPPFLAGS=-Du_int64_t=uint64_t -Du_int32_t=uint32_t -Du_int16_t=uint16_t -Du_int8_t=uint8_t LIBS=-lsocket -lnsl -lrt 
+#./configure CC=gcc CPPFLAGS="-Du_int64_t=uint64_t -Du_int32_t=uint32_t -Du_int16_t=uint16_t -Du_int8_t=uint8_t" LIBS="-lsocket -lnsl -lrt"
 
 make clean
 make -j8
