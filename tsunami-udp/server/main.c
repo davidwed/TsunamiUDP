@@ -199,7 +199,7 @@ void client_handler(ttp_session_t *session)
     int               result;                        /* number of bytes read from retransmission queue */
     u_char            datagram[MAX_BLOCK_SIZE + sizeof(blockheader_t)];
                                                      /* the datagram containing the file block         */
-    u_int64_t         ipd_time;                      /* the time to delay after this packet            */
+    int64_t           ipd_time;                      /* the time to delay after this packet            */
     int64_t           ipd_usleep_diff;               /* the time correction to ipd_time, signed        */
     int               status;
     ttp_transfer_t   *xfer  = &session->transfer;
