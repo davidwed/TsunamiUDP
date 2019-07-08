@@ -42,10 +42,10 @@ under the original IU open source license.
 <p>Version 1.1 cvsbuild 40 has automatic achieved rate memorization and several changes for smoother transfers. 
 Beginning with version 1.1 cvsbuild 29 Tsunami now (09/2007) supports transfers between different-endian machines. 
 Listing shared files with <i>dir</i> is supported since cvsbuild 27. Mac OS X / Darwin works beginning with cvsuild 
-36. For more changes, see the <a 
-href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/tsunami-udp/ChangeLog">changelog</a>.
+36. For more changes, see the <a href="https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/tsunami-udp/ChangeLog">changelog</a>.
 
-<p>The previous CVS update was on 22 December 2009.
+<p>The previous CVS update was on 22 December 2009.<br>
+The code was migrated from CVS to Git in July 2019.
 
 <h3>Background</h3>
 
@@ -68,13 +68,13 @@ or toolkits are required. Microsoft Windows and Vista are not supported (XP offe
 optional POSIX layer, but some parts of Tsunami code would have to be slightly adapted 
 neverheless, and unfortunately in Vista Microsoft has abandoned POSIX altogether).
 
-<p>Any current version of source code pulled from CVS <i>HEAD</i> will compile and 
-work, and has been tested somewhat extensively. The CVS version is likely to contain new 
+<p>Any current version of source code pulled from Git <i>master</i> will compile and 
+work, and has been tested somewhat extensively. The Git version is likely to contain new 
 features. There are no guarantees any new features are going to work correctly with 
 older versions of the Tsunami client/server. Nevertheless, in the basic features, Tsunami 
 generally is backwards compatible.
 
-<p>If you want to get a non-changing stable release version, you may check out the following CVS tags: 
+<p>If you want to get a non-changing stable release version, you may check out the following Git tags (former CVS tags): 
 <i>v10_RTM_protorev20061025</i> (v1.0 released 31. Nov 2006), <i>v11_build11_protorev20061025</i> (v1.1 build 11 released 
 5. Jan 2007), <i>v11_build16_protorev20061025</i> (v1.1 build 16 released 24. May 2007),
 <i>v11_build29_protorev20061025</i> (v1.1 build 29 released 29. Aug 2007), <i>v11_build36_protorev20061025</i> 
@@ -87,44 +87,38 @@ href="https://sourceforge.net/project/showfiles.php?group_id=171972">file releas
 <p><table border="0">
 <tr><th colspan=2><big>Source code and compile cheatsheet</big></th></tr>
 <tr>
-<td valign=top colspan=2><nobr><b>Anonymous CVS checkout:</b></nobr><br>
- current version<br>
- <small><b>cvs -z3 -d:pserver:anonymous@tsunami-udp.cvs.sourceforge.net:/cvsroot/tsunami-udp co -P  
- tsunami-udp</b></small><br>
- older versions by tag, for example<br>
- <small>cvs -z3 -d:pserver:anonymous@tsunami-udp.cvs.sourceforge.net:/cvsroot/tsunami-udp co -P -r 
- v11_build29_protorev20061025 tsunami-udp</small>
+<td valign=top><nobr><b>Git checkout:</b></nobr></td>
+<td>
+ git clone https://git.code.sf.net/p/tsunami-udp/code_git tsunami-udp-code_git<br>
+ (and for a particular tag then e.g. 'git checkout v11_build29_protorev20061025')
 </td>
 </tr>
 <tr>
-<td><nobr><b>ViewCVS repository source:</b></nobr></td>
-<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/tsunami-udp/">http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/tsunami-udp/</a></small></td>
+<td><nobr><b>Repository source:</b></nobr></td>
+<td><small><a href="https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/tsunami-udp/">https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/tsunami-udp/</a></small></td>
 </tr>
 <tr>
 <td><nobr><b>ViewCVS repository docs:</b></nobr></td>
-<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/docs/">http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/docs/</a></small></td>
+<td><small><a href="https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/docs/">https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/docs/</a></small></td>
 </tr>
 <tr>
 <td><nobr><b>Compiling:</b></nobr></td>
-<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/COMPILING.txt">COMPILING.txt</a></small></td>
+<td><small><a href="https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/tsunami-udp/COMPILING.txt">COMPILING.txt</a></small></td>
 </tr>
 <tr>
 <td><nobr><b>Changelog:</b></nobr></td>
-<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/tsunami-udp/ChangeLog">ChangeLog</a></small></td>
+<td><small><a href="https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/tsunami-udp/ChangeLog">ChangeLog</a></small></td>
 </tr>
 <tr>
-<td><nobr><b>TODO and known bugs:</b></nobr></td>
-<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/BUGS-and-TODO.txt">BUGS-and-TODO.txt</a></small></td>
-</tr>
 <tr><td colspan=2>&nbsp; </td></tr>
 <tr><th colspan=2><big>Users Guide, Troubleshooting and Realtime</big></th></tr>
 <tr>
 <td><nobr><b>Quick Guide:</b></nobr></td>
-<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/USAGE.txt">USAGE.txt</a> including Troubleshooting</small></td>
+<td><small><a href="https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/docs/USAGE.txt">USAGE.txt</a> including Troubleshooting</small></td>
 </tr>
 <tr>
 <td><nobr><b>How Tsunami works:</b></nobr></td>
-<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/howTsunamiWorks.txt">howTsunamiWorks.txt</a></small></td>
+<td><small><a href="https://sourceforge.net/p/tsunami-udp/code_git/ci/master/tree/docs/howTsunamiWorks.txt">howTsunamiWorks.txt</a></small></td>
 </tr>
 </table>
 
