@@ -2,16 +2,16 @@
 Get the code 
 ============
 
-If you have not yet downloaded the source code, you can do so with
-an anonymous CVS checkout:
+If you have not yet downloaded the source code, you can do this from
+the git repository via:
 
-   cvs -z3 -d:pserver:anonymous@tsunami-udp.cvs.sf.net:/cvsroot/tsunami-udp co -P tsunami-udp
+   clone https://git.code.sf.net/p/tsunami-udp/code_git tsunami-udp-code_git
 
 Later you can use the usual
 
-   cvs update
+   git pull
 
-command to get and merge updates from the CVS into your local copy 
+command to get and merge updates from the repository into your local copy 
 of the code.
 
    
