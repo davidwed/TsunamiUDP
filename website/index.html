@@ -1,0 +1,207 @@
+<html><head><title>Tsunami UDP Protocol</title>
+<style>
+BODY {
+        font-family : Arial;
+}
+TD.c1 {
+        background-color : LightGrey;
+}
+H1 {
+	font-family : Arial;
+        color : white;
+        background-color : #D29E53; //Goldenrod;
+}
+H3 {
+	font-family : Arial;
+        color : white;
+        margin-top       : 36px;
+        background-color : Silver;
+}
+</style>
+</head>
+<body bgcolor=white>
+<blockquote>
+<A href="http://sourceforge.net"><IMG 
+src="http://sourceforge.net/sflogo.php?group_id=123684&amp;type=5" width="210" 
+height="62" border="0" alt="SourceForge.net Logo" align="right"/></A>
+
+<h1>Tsunami UDP Protocol</h1>
+
+<p>Tsunami UDP Protocol: A fast user-space file transfer protocol that uses TCP control and UDP data for transfer 
+over very high speed long distance networks (&ge; 1 Gbps and even 10 GE), designed to provide more throughput than 
+possible with TCP over the same networks. The project is based on original Indiana University 2002 Tsunami source 
+code, but has been significantly improved and extended. As such, large portions of the program today are courtesy 
+by <a href="http://www.aalto.fi">Aalto University</a> <a href="http://www.metsahovi.fi/en/">Mets&auml;hovi Radio Observatory</a>.
+
+<p>Includes FTP-like client and server command line applications for normal file transfers. It has additionally been 
+extended for high rate real-time data streaming in eVLBI radio astronomy and geodesy (VSIB, PCEVN DAQ). Licensed 
+under the original IU open source license.
+
+<h3>Updates</h3>
+
+<p>Version 1.1 cvsbuild 40 has automatic achieved rate memorization and several changes for smoother transfers. 
+Beginning with version 1.1 cvsbuild 29 Tsunami now (09/2007) supports transfers between different-endian machines. 
+Listing shared files with <i>dir</i> is supported since cvsbuild 27. Mac OS X / Darwin works beginning with cvsuild 
+36. For more changes, see the <a 
+href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/tsunami-udp/ChangeLog">changelog</a>.
+
+<p>The previous CVS update was on 22 December 2009.
+
+<h3>Background</h3>
+
+<p>The original early Tsunami UDP transfer protocol developed and 
+released to the public in 2002 by Mark Meiss et al. at the Pervasive 
+Technology Labs at Indiana University (IU) can still be found at <a 
+href="http://anml.iu.edu/research.shtml?prim=lab_research">http://anml.iu.edu/research.shtml?prim=lab_research</a>. 
+
+<p>This project is a derived work - if not a complete rewrite - of the original IU source code. The new Tsunami
+includes a large number of bug fixes, improvements and new features. File releases in the form of compressed 
+source code archives can be downloaded from the project page at <a 
+href="http://sourceforge.net/projects/tsunami-udp">http://sourceforge.net/projects/tsunami-udp</a>, 
+but I recommend you'd use the CVS version.
+
+<h3>Source code access</h3>
+
+<p>Currently no binaries are distributed, only the source code is available and should be compiled on the target 
+system. It should compile fine on all POSIX systems and on GNU/Linux, no special libraries 
+or toolkits are required. Microsoft Windows and Vista are not supported (XP offers an 
+optional POSIX layer, but some parts of Tsunami code would have to be slightly adapted 
+neverheless, and unfortunately in Vista Microsoft has abandoned POSIX altogether).
+
+<p>Any current version of source code pulled from CVS <i>HEAD</i> will compile and 
+work, and has been tested somewhat extensively. The CVS version is likely to contain new 
+features. There are no guarantees any new features are going to work correctly with 
+older versions of the Tsunami client/server. Nevertheless, in the basic features, Tsunami 
+generally is backwards compatible.
+
+<p>If you want to get a non-changing stable release version, you may check out the following CVS tags: 
+<i>v10_RTM_protorev20061025</i> (v1.0 released 31. Nov 2006), <i>v11_build11_protorev20061025</i> (v1.1 build 11 released 
+5. Jan 2007), <i>v11_build16_protorev20061025</i> (v1.1 build 16 released 24. May 2007),
+<i>v11_build29_protorev20061025</i> (v1.1 build 29 released 29. Aug 2007), <i>v11_build36_protorev20061025</i> 
+(v1.1 build 36 released 26. May 2008). There are other tags, please see ViewCV. Alternatively, some probably 
+significantly less up to date source code .tar.gz files can be downloaded from <a  
+href="https://sourceforge.net/project/showfiles.php?group_id=171972">file releases</a>.
+<br>
+<br>
+
+<p><table border="0">
+<tr><th colspan=2><big>Source code and compile cheatsheet</big></th></tr>
+<tr>
+<td valign=top colspan=2><nobr><b>Anonymous CVS checkout:</b></nobr><br>
+ current version<br>
+ <small><b>cvs -z3 -d:pserver:anonymous@tsunami-udp.cvs.sourceforge.net:/cvsroot/tsunami-udp co -P  
+ tsunami-udp</b></small><br>
+ older versions by tag, for example<br>
+ <small>cvs -z3 -d:pserver:anonymous@tsunami-udp.cvs.sourceforge.net:/cvsroot/tsunami-udp co -P -r 
+ v11_build29_protorev20061025 tsunami-udp</small>
+</td>
+</tr>
+<tr>
+<td><nobr><b>ViewCVS repository source:</b></nobr></td>
+<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/tsunami-udp/">http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/tsunami-udp/</a></small></td>
+</tr>
+<tr>
+<td><nobr><b>ViewCVS repository docs:</b></nobr></td>
+<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/docs/">http://tsunami-udp.cvs.sourceforge.net/tsunami-udp/docs/</a></small></td>
+</tr>
+<tr>
+<td><nobr><b>Compiling:</b></nobr></td>
+<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/COMPILING.txt">COMPILING.txt</a></small></td>
+</tr>
+<tr>
+<td><nobr><b>Changelog:</b></nobr></td>
+<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/tsunami-udp/ChangeLog">ChangeLog</a></small></td>
+</tr>
+<tr>
+<td><nobr><b>TODO and known bugs:</b></nobr></td>
+<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/BUGS-and-TODO.txt">BUGS-and-TODO.txt</a></small></td>
+</tr>
+<tr><td colspan=2>&nbsp; </td></tr>
+<tr><th colspan=2><big>Users Guide, Troubleshooting and Realtime</big></th></tr>
+<tr>
+<td><nobr><b>Quick Guide:</b></nobr></td>
+<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/USAGE.txt">USAGE.txt</a> including Troubleshooting</small></td>
+</tr>
+<tr>
+<td><nobr><b>How Tsunami works:</b></nobr></td>
+<td><small><a href="http://tsunami-udp.cvs.sourceforge.net/*checkout*/tsunami-udp/docs/howTsunamiWorks.txt">howTsunamiWorks.txt</a></small></td>
+</tr>
+</table>
+
+<br>
+
+<p>09Nov07: Those with a sluggish Petabit/sec network connection ;) can try the protocol version 1.2 in CVS branch 
+<i>protocol_v12_branch</i>. Still unstable and experimental. The <i>set rate</i> value in v1.1 has only 32 bits and 
+thus limits the user-settable rate to 4 Gbps. Not so in v1.2. Checkout like above but with tag 
+<nobr><i>-r protocol_v12_branch tsunami-udp</i></nobr>. Note that v1.2 can't connect to v1.1 protocol
+version software and vice versa. Later goals are to add blocking send_data() and receive_data() API functions
+to make Tsunami less a file and more a data transfer protocol.
+<br>
+<br>
+
+<hr size=1 width="100%">
+
+<h3>Hardware requirements</h3>
+
+Here is a short summary of vague hardware requirements. It's nothing fancy apart from the RAID-0 disk requirement.
+
+<ul>
+<li>Consumer PC motherboards are highly suitable
+<li>Disk: to achieve high transfer rates, disk I/O must be adequately fast. It is essential to use fast RAID, e.g. RAID0 with a large 
+chunk size setting such as 512 kB. Linux software RAID using mdadm performs well enough - typical performance with 4 
+SATA disks is around 1.8 Gbit/s (05/2007). You can check your disk throughput with <nobr>hdparm -t /dev/md0</nobr>, 
+it should be 100 MB/s or better. 
+<li>CPU: the CPU should be Pentium4 or better. Consumer multi-core CPUs are quite nice.
+<li>RAM: the client program requires up to 128MB of free memory for internal buffers, and swapping has to be avoided 
+at all cost, thus at least 512MB of RAM is strongly recommended. 
+<li>NIC: any motherboard 1 Gbit/s Ethernet is usually sufficiently fast. Server grade NICs are completely 
+unnecessary. Usual 10 Gbit/s PCIe NICs can be used, too.
+<li>Network: the network connection should be faster than the typical home broadband connection, for example a 630 
+Mbit/s or 1/10/40/100 Gbit/s fibre connection. Jumbo frames are not strictly required, but they can boost performance 
+if you want to use rates higher than 5 Gbit/s. Lightpaths, guaranteed bandwidth QoS services etc are a matter 
+of debate, my take is to only consider them after (if ever) network people start complaining about your traffic (and 
+then first try the 'you sold us a 10 Gbit/s connection so we darn well are going to transfer at 10 Gbit/s' route 
+;-).
+</ul>
+
+<hr size=1 width="100%">
+<h2>Typical transfer rate examples</h2>
+
+<p>Below are a few examples of transfer rates that Tsunami can achieve over the Internet. On a 
+local LAN, for disk-to-disk transfers rates near the limit of the PC NIC or on-board LAN 
+are easily achieved, which is usually around 940 Mbps for 1G LAN. This is provided that the 
+disk system in both PCs is adequately fast, e.g. simple software RAID-0 with three or four 
+SATA disks (no RAID controller necessary).
+
+<p><center><table><tr><td>
+<center><img src="tsunami-1Geth-inet.gif" alt="Disk-to-disk averaging 800 Mbps over 
+Internet with cheap PCs and motherboard 1G LAN"><br>
+<br>
+Figure 1 - international transfer over the Internet, averaging 800 Mbit/second</center></td></tr>
+</table></center>
+
+<p>Figure 1 shows a throughput plot of a disk-to-disk transfer where several multi-gigabyte 
+files are transferred one after another from Helsinki, Finland to Bonn, Germany. Both PCs 
+have a fast (>1 Gbps capable) RAID-0. Linux software RAID-0 with 4 SATA disks on the sending 
+side, with a Dell Optiplex GX620 cheap PC. SATA RAID card at the receiving side. The server 
+side had 10 Gbps fibre to the Finnish 'Funet' GEANT2 NREN, the client side had a shared 
+fibre to the Viola GEANT2 NREN with ~1 Gbps allocated capacity.
+
+<p><center><table><tr><td>
+<center><a href="4gbps-tsunami-plot.png"><img src="4gbps-tsunami-plot.png" width="780" alt="Steady Tsunami v1.2 transfer plot of a 
+20GB filetransferred over 10G LAN to disk" border=1></a><br>
+Figure 2 - a short 20GB file transferred with Tsunami v1.2 over local 10 Gbps LAN at Mets&auml;hovi.</center></td></tr>
+</table></center>
+
+<p>Figure 2 shows a Tsunami v1.2 test transfer on the local 10G LAN at Mets&auml;hovi. RAID-0 were built with Samsung SpinPoint F1 
+disks on dual and quad-core consumer computer systems with Chelsio 10G cards connected via a HP6400cl switch. The transfer rate is 
+limited to 4.3 Gbps by disk I/O. With diskless transfer a rate of 7 Gbps could be achieved.
+
+<p>&nbsp;
+
+<hr size=1 width="100%">
+<center>Project admin and developer: Jan Wagner, <img alt"mail: ján dót wágnèr ât iki dót fi" 
+src="myemail.jpg" align="absbottom"></center>
+</blockquote>
+</body>
+</html>	
